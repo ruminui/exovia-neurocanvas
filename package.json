@@ -1,13 +1,19 @@
 {
   "name": "exovia-neurocanvas",
-  "version": "0.1.0",
+  "version": "0.8.0",
   "private": true,
-  "description": "Offline-first visual knowledge explorer for OpenAI Build Week 2026",
+  "description": "Offline-first visual knowledge explorer and auditable human-AI secondary brain.",
   "type": "module",
   "scripts": {
     "test": "node --test",
     "validate": "node scripts/validate.mjs",
+    "verify:static": "node scripts/verify-frontend.mjs",
+    "test:e2e": "playwright test",
+    "verify": "npm run validate && npm run verify:static && npm run test && npm run test:e2e",
     "serve": "python -m http.server 8080"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.0"
   },
   "engines": {
     "node": ">=20"
