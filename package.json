@@ -1,6 +1,6 @@
 {
   "name": "exovia-neurocanvas",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "private": true,
   "description": "Offline-first visual knowledge explorer and auditable human-AI secondary brain.",
   "type": "module",
@@ -10,7 +10,7 @@
     "verify:static": "node scripts/verify-frontend.mjs",
     "test:e2e": "playwright test",
     "verify": "npm run validate && npm run verify:static && npm run test && npm run test:e2e",
-    "serve": "python -m http.server 8080"
+    "serve": "node scripts/serve.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.58.0"
