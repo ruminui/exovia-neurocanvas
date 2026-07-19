@@ -1,0 +1,90 @@
+name: Bug report
+description: Report a reproducible NeuroCanvas problem
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Remove private data, tokens and confidential documents before submitting.
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+      placeholder: 1.0.0-rc.2 or commit SHA
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Startup / launcher
+        - Visual graph
+        - Import / export
+        - Persistence
+        - Answer & Audit
+        - Knowledge Health
+        - Agent Replay
+        - System Check
+        - Human + AI bridge
+        - MCP backend
+        - Mobile / PWA
+        - Documentation
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction steps
+      placeholder: |
+        1. Open...
+        2. Click...
+        3. Observe...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: Windows 11, Chrome 128, desktop or mobile, Node 20
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: System Check and logs
+      description: Paste sanitized output. Never include tokens or private document contents.
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options:
+        - Blocks startup
+        - Data loss or corruption risk
+        - Core function broken
+        - Usability problem
+        - Cosmetic
+    validations:
+      required: true
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Confirmation
+      options:
+        - label: I removed secrets, credentials and private information.
+          required: true
+        - label: I tested again after a clean reload.
+          required: true
