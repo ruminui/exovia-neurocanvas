@@ -3,8 +3,8 @@ import path from 'node:path';
 import process from 'node:process';
 
 const ROOT = process.cwd();
-const RUNTIME_SCRIPTS = ['core.js', 'upgrade.js', 'product.js', 'mobile.js', 'brain.js', 'ai-bridge.js', 'intelligence.js'];
-const STYLESHEETS = ['styles.css', 'upgrade.css', 'product.css', 'mobile.css', 'brain.css', 'ai-bridge.css', 'intelligence.css'];
+const RUNTIME_SCRIPTS = ['core.js', 'upgrade.js', 'product.js', 'mobile.js', 'brain.js', 'ai-bridge.js', 'intelligence.js', 'diagnostics.js'];
+const STYLESHEETS = ['styles.css', 'upgrade.css', 'product.css', 'mobile.css', 'brain.css', 'ai-bridge.css', 'intelligence.css', 'diagnostics.css'];
 const REQUIRED = [
   'index.html',
   'manifest.webmanifest',
@@ -30,6 +30,8 @@ for (const file of REQUIRED) {
 const html = await fs.readFile(path.join(ROOT, 'index.html'), 'utf8');
 const manifest = JSON.parse(await fs.readFile(path.join(ROOT, 'manifest.webmanifest'), 'utf8'));
 const serviceWorker = await fs.readFile(path.join(ROOT, 'sw.js'), 'utf8');
+const intelligence = await fs.readFile(path.join(ROOT, 'src/intelligence.js'), 'utf8');
+const diagnostics = await fs.readFile(path.join(ROOT, 'src/diagnostics.js'), 'utf8');
 
 const refs = [...html.matchAll(/(?:src|href)=["']([^"']+)["']/g)]
   .map(match => match[1])
@@ -57,6 +59,17 @@ for (const stylesheet of STYLESHEETS) {
   if (html.includes(token)) pass(`stylesheet wired: ${token}`);
   else fail(`stylesheet missing from index.html: ${token}`);
 }
+
+const capabilityMarkers = [
+  ['answer engine', intelligence.includes('function answer(')],
+  ['knowledge health', intelligence.includes('function health(')],
+  ['contradiction radar', intelligence.includes('function contradictionRadar(')],
+  ['agent replay', intelligence.includes('function replay(')],
+  ['guided judge mode', intelligence.includes('async function judgeMode(')],
+  ['runtime diagnostics', diagnostics.includes('async function runDiagnostics(')],
+  ['diagnostics public API', diagnostics.includes('window.ExoviaDiagnostics')]
+];
+for (const [name, present] of capabilityMarkers) present ? pass(`capability entry point: ${name}`) : fail(`missing capability entry point: ${name}`);
 
 if (manifest.name && manifest.short_name && manifest.start_url && manifest.display) pass('manifest contains installability metadata');
 else fail('manifest is missing required installability metadata');
