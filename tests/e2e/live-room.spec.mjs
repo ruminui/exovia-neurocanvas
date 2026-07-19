@@ -40,15 +40,19 @@ test('projects a live room into a traceable NeuroCanvas graph', async ({ page })
   expect(projected.audit.some(item => item.action === 'LIVE_ROOM_PROJECTED')).toBe(true);
 });
 
-test('live room public API rejects malformed room data', async ({ page }) => {
+test('live room public API rejects duplicate identities', async ({ page }) => {
   await page.goto('/');
   const error = await page.evaluate(() => {
     try {
-      window.ExoviaLiveRoom.validateRoom({ format: 'exovia-live-room-v1', participants: [], evidenceAssets: [], decisions: [], executions: [], events: [] });
+      window.ExoviaLiveRoom.validateRoom({
+        format: 'exovia-live-room-v1', roomId: 'duplicate-id', title: 'Invalid room', revision: 0,
+        participants: [{ id: 'duplicate-id', kind: 'human', displayName: 'Duplicate', role: 'observer', capabilities: [] }],
+        evidenceAssets: [], decisions: [], executions: [], events: []
+      });
       return null;
     } catch (failure) {
       return failure.message;
     }
   });
-  expect(error).toMatch(/duplicate IDs|unsupported|missing/i);
+  expect(error).toMatch(/duplicate IDs/i);
 });
