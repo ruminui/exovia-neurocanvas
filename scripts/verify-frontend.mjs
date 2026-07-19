@@ -9,6 +9,17 @@ const REQUIRED = [
   'index.html',
   'manifest.webmanifest',
   'sw.js',
+  'README.md',
+  'SECURITY.md',
+  'CONTRIBUTING.md',
+  'LEEME_PRIMERO.txt',
+  'INICIAR_EXOVIA.bat',
+  'INICIAR_EXOVIA.command',
+  'INICIAR_EXOVIA.sh',
+  'docs/MANUAL_USUARIO.md',
+  'docs/GUEST_HELPER_GUIDE.md',
+  'docs/TESTER_CHECKLIST.md',
+  'docs/CAPABILITY_VERIFICATION_MATRIX.md',
   ...RUNTIME_SCRIPTS.map(file => `src/${file}`),
   ...STYLESHEETS.map(file => `src/${file}`)
 ];
@@ -32,6 +43,8 @@ const manifest = JSON.parse(await fs.readFile(path.join(ROOT, 'manifest.webmanif
 const serviceWorker = await fs.readFile(path.join(ROOT, 'sw.js'), 'utf8');
 const intelligence = await fs.readFile(path.join(ROOT, 'src/intelligence.js'), 'utf8');
 const diagnostics = await fs.readFile(path.join(ROOT, 'src/diagnostics.js'), 'utf8');
+const bridge = await fs.readFile(path.join(ROOT, 'src/ai-bridge.js'), 'utf8');
+const security = await fs.readFile(path.join(ROOT, 'SECURITY.md'), 'utf8');
 
 const refs = [...html.matchAll(/(?:src|href)=["']([^"']+)["']/g)]
   .map(match => match[1])
@@ -70,6 +83,16 @@ const capabilityMarkers = [
   ['diagnostics public API', diagnostics.includes('window.ExoviaDiagnostics')]
 ];
 for (const [name, present] of capabilityMarkers) present ? pass(`capability entry point: ${name}`) : fail(`missing capability entry point: ${name}`);
+
+const securityMarkers = [
+  ['bridge token is session-only', bridge.includes("sessionStorage.getItem('exovia:bridgeToken')") && !bridge.includes("localStorage.setItem('exovia:bridgeToken'")],
+  ['remote bridge requires HTTPS', bridge.includes("Remote bridge URLs must use HTTPS")],
+  ['authenticated event streaming', bridge.includes("Accept: 'text/event-stream'") && bridge.includes('...authHeaders()')],
+  ['bridge reconnect backoff', bridge.includes('RECONNECT_MAX_MS') && bridge.includes('scheduleReconnect')],
+  ['human review before AI load', bridge.includes('AI_CHANGES_REVIEWED_AND_LOADED')],
+  ['security policy documents boundaries', /Do not expose the local bridge directly to the public Internet/i.test(security)]
+];
+for (const [name, present] of securityMarkers) present ? pass(`security invariant: ${name}`) : fail(`missing security invariant: ${name}`);
 
 if (manifest.name && manifest.short_name && manifest.start_url && manifest.display) pass('manifest contains installability metadata');
 else fail('manifest is missing required installability metadata');
