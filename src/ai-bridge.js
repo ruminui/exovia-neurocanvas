@@ -62,6 +62,25 @@
     return tools;
   }
 
+  async function pullReviewedChanges() {
+    const current = getMap();
+    const projectId = current?.projectId;
+    if (!projectId) throw new Error('Sync the active project before pulling AI changes.');
+    const result = await callMcp('tools/call', {
+      name: 'neurocanvas_get_project',
+      arguments: { project_id: projectId }
+    });
+    const project = result.result?.structuredContent;
+    if (!project || !Array.isArray(project.nodes) || !Array.isArray(project.edges)) throw new Error('The bridge did not return a valid project.');
+    const summary = `${project.nodes.length} nodes and ${project.edges.length} edges`;
+    if (!confirm(`Review and load AI-side changes for “${project.title || projectId}” (${summary})?\n\nCurrent unsaved browser changes will be replaced.`)) return;
+    project.audit ||= [];
+    project.audit.push({ time: new Date().toISOString(), action: 'AI_CHANGES_REVIEWED_AND_LOADED', detail: 'Human approved loading the bridge version into the visual workspace.' });
+    const view = window.ExoviaRuntime?.getView?.() || (project.kind === 'pulse' ? 'pulse' : 'network');
+    window.ExoviaRuntime?.loadMap?.(project, view);
+    notify('Reviewed AI changes loaded. Save the project to persist them locally.', 'success');
+  }
+
   function escapeHtml(value) {
     return String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[char]));
   }
@@ -80,6 +99,7 @@
     row.innerHTML = `<time>${escapeHtml(new Date(event.time).toLocaleTimeString())}</time><strong>${escapeHtml(event.type)}</strong><span>${escapeHtml(JSON.stringify(event.payload))}</span>`;
     host.prepend(row);
     while (host.children.length > 20) host.lastElementChild.remove();
+    if (event.type === 'project.changed') notify('AI-side project change detected. Review it from Human + AI.', 'info');
   }
 
   function subscribe() {
@@ -125,9 +145,10 @@
           <div class="bridgeActions">
             <button id="bridgeSaveBtn" type="button">Connect</button>
             <button id="bridgeSyncBtn" type="button">Sync active project</button>
+            <button id="bridgePullBtn" type="button">Review AI changes</button>
           </div>
           <div id="bridgeStatus" class="bridgeStatus"><strong>not connected</strong><span>Start the local bridge first.</span></div>
-          <p class="bridgeNote">Human interactions happen in NeuroCanvas. AI clients use the same projects through MCP tools and resources. Hook events keep both sides observable.</p>
+          <p class="bridgeNote">Human interactions happen in NeuroCanvas. AI clients use the same projects through MCP tools and resources. Hook events keep both sides observable. AI changes are loaded only after explicit human review.</p>
         </section>
         <section>
           <h3>MCP tools</h3>
@@ -145,10 +166,11 @@
     dialog.querySelector('[data-close]').addEventListener('click', () => dialog.close());
     $('bridgeSaveBtn').addEventListener('click', saveSettings);
     $('bridgeSyncBtn').addEventListener('click', () => syncProject().catch(error => notify(error.message, 'error')));
+    $('bridgePullBtn').addEventListener('click', () => pullReviewedChanges().catch(error => notify(error.message, 'error')));
     $('bridgeToolsBtn').addEventListener('click', () => listMcpTools().catch(error => notify(error.message, 'error')));
   }
 
-  window.ExoviaBridge = { checkHealth, syncProject, callMcp, listMcpTools };
+  window.ExoviaBridge = { checkHealth, syncProject, pullReviewedChanges, callMcp, listMcpTools };
   window.addEventListener('DOMContentLoaded', () => {
     buildUi();
     subscribe();
