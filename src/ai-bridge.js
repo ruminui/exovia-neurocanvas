@@ -2,9 +2,13 @@
   'use strict';
 
   const DEFAULT_URL = 'http://127.0.0.1:8787';
+  const RECONNECT_MIN_MS = 1_000;
+  const RECONNECT_MAX_MS = 30_000;
   let bridgeUrl = localStorage.getItem('exovia:bridgeUrl') || DEFAULT_URL;
-  let bridgeToken = localStorage.getItem('exovia:bridgeToken') || '';
-  let eventSource = null;
+  let bridgeToken = sessionStorage.getItem('exovia:bridgeToken') || '';
+  let streamController = null;
+  let reconnectTimer = null;
+  let reconnectDelay = RECONNECT_MIN_MS;
 
   const $ = id => document.getElementById(id);
   const notify = (message, kind = 'info') => window.ExoviaNotify ? window.ExoviaNotify(message, kind) : console.log(message);
@@ -13,22 +17,47 @@
     return window.ExoviaRuntime?.getMap?.() || null;
   }
 
+  function normalizeBridgeUrl(value) {
+    const candidate = String(value || '').trim().replace(/\/$/, '') || DEFAULT_URL;
+    const url = new URL(candidate);
+    const localHost = ['localhost', '127.0.0.1', '::1'].includes(url.hostname);
+    if (!localHost && url.protocol !== 'https:') throw new Error('Remote bridge URLs must use HTTPS.');
+    if (!['http:', 'https:'].includes(url.protocol)) throw new Error('Bridge URL must use HTTP or HTTPS.');
+    return url.origin;
+  }
+
   function authHeaders() {
     return bridgeToken ? { Authorization: `Bearer ${bridgeToken}` } : {};
   }
 
   async function request(path, options = {}) {
-    const response = await fetch(`${bridgeUrl}${path}`, {
-      ...options,
-      headers: { 'content-type': 'application/json', ...authHeaders(), ...(options.headers || {}) }
-    });
-    const payload = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(payload.error || `Bridge request failed: ${response.status}`);
-    return payload;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), Number(options.timeoutMs || 12_000));
+    try {
+      const response = await fetch(`${bridgeUrl}${path}`, {
+        ...options,
+        signal: options.signal || controller.signal,
+        headers: { 'content-type': 'application/json', ...authHeaders(), ...(options.headers || {}) }
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        const message = payload.error || payload.message || `Bridge request failed: ${response.status}`;
+        const error = new Error(message);
+        error.status = response.status;
+        error.code = payload.code || payload.error_code;
+        throw error;
+      }
+      return payload;
+    } catch (error) {
+      if (error.name === 'AbortError') throw new Error('Bridge request timed out.');
+      throw error;
+    } finally {
+      clearTimeout(timeout);
+    }
   }
 
   async function checkHealth() {
-    const health = await request('/health', { method: 'GET', headers: authHeaders() });
+    const health = await request('/health', { method: 'GET' });
     renderStatus(health);
     notify('AI bridge connected.', 'success');
     return health;
@@ -88,7 +117,7 @@
   function renderStatus(health) {
     const host = $('bridgeStatus');
     if (!host) return;
-    host.innerHTML = `<strong>${escapeHtml(health.status || 'unknown')}</strong><span>${Number(health.projects || 0)} projects · ${Number(health.events || 0)} events</span>`;
+    host.innerHTML = `<strong>${escapeHtml(health.status || 'unknown')}</strong><span>${Number(health.projects || 0)} projects · ${Number(health.events || 0)} events${health.version ? ` · v${escapeHtml(health.version)}` : ''}</span>`;
     host.dataset.state = health.status === 'ok' ? 'ok' : 'warn';
   }
 
@@ -102,23 +131,81 @@
     if (event.type === 'project.changed') notify('AI-side project change detected. Review it from Human + AI.', 'info');
   }
 
-  function subscribe() {
-    eventSource?.close();
-    const url = new URL(`${bridgeUrl}/hooks/events`);
-    eventSource = new EventSource(url);
-    eventSource.onmessage = event => {
-      try { renderEvent(JSON.parse(event.data)); } catch {}
-    };
-    eventSource.onerror = () => renderStatus({ status: 'disconnected', projects: 0, events: 0 });
+  function scheduleReconnect() {
+    clearTimeout(reconnectTimer);
+    reconnectTimer = setTimeout(() => {
+      subscribe().catch(() => {});
+    }, reconnectDelay);
+    reconnectDelay = Math.min(RECONNECT_MAX_MS, reconnectDelay * 2);
+  }
+
+  function parseEventBlock(block) {
+    let eventType = 'message';
+    const data = [];
+    for (const line of block.split(/\r?\n/)) {
+      if (line.startsWith('event:')) eventType = line.slice(6).trim();
+      if (line.startsWith('data:')) data.push(line.slice(5).trimStart());
+    }
+    if (!data.length) return;
+    try {
+      const event = JSON.parse(data.join('\n'));
+      event.type ||= eventType;
+      renderEvent(event);
+    } catch {}
+  }
+
+  async function subscribe() {
+    clearTimeout(reconnectTimer);
+    streamController?.abort();
+    streamController = new AbortController();
+    try {
+      const response = await fetch(`${bridgeUrl}/hooks/events`, {
+        method: 'GET',
+        headers: { Accept: 'text/event-stream', ...authHeaders() },
+        signal: streamController.signal,
+        cache: 'no-store'
+      });
+      if (!response.ok || !response.body) throw new Error(`Event stream failed: ${response.status}`);
+      reconnectDelay = RECONNECT_MIN_MS;
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const blocks = buffer.split(/\r?\n\r?\n/);
+        buffer = blocks.pop() || '';
+        for (const block of blocks) parseEventBlock(block);
+      }
+      throw new Error('Event stream closed.');
+    } catch (error) {
+      if (error.name === 'AbortError') return;
+      renderStatus({ status: 'disconnected', projects: 0, events: 0 });
+      scheduleReconnect();
+    }
   }
 
   function saveSettings() {
-    bridgeUrl = $('bridgeUrl').value.trim().replace(/\/$/, '') || DEFAULT_URL;
-    bridgeToken = $('bridgeToken').value.trim();
-    localStorage.setItem('exovia:bridgeUrl', bridgeUrl);
-    if (bridgeToken) localStorage.setItem('exovia:bridgeToken', bridgeToken); else localStorage.removeItem('exovia:bridgeToken');
-    subscribe();
-    checkHealth().catch(error => notify(error.message, 'error'));
+    try {
+      bridgeUrl = normalizeBridgeUrl($('bridgeUrl').value);
+      bridgeToken = $('bridgeToken').value.trim();
+      localStorage.setItem('exovia:bridgeUrl', bridgeUrl);
+      if (bridgeToken) sessionStorage.setItem('exovia:bridgeToken', bridgeToken); else sessionStorage.removeItem('exovia:bridgeToken');
+      subscribe().catch(() => {});
+      checkHealth().catch(error => notify(error.message, 'error'));
+    } catch (error) {
+      notify(error.message, 'error');
+    }
+  }
+
+  function disconnect() {
+    streamController?.abort();
+    clearTimeout(reconnectTimer);
+    bridgeToken = '';
+    sessionStorage.removeItem('exovia:bridgeToken');
+    renderStatus({ status: 'disconnected', projects: 0, events: 0 });
+    notify('AI bridge disconnected for this browser session.', 'info');
   }
 
   function buildUi() {
@@ -140,15 +227,16 @@
       <div class="bridgeGrid">
         <section>
           <h3>Connection</h3>
-          <label>Bridge URL<input id="bridgeUrl" value="${escapeHtml(bridgeUrl)}" /></label>
-          <label>Optional local token<input id="bridgeToken" type="password" value="${escapeHtml(bridgeToken)}" autocomplete="off" /></label>
+          <label>Bridge URL<input id="bridgeUrl" value="${escapeHtml(bridgeUrl)}" inputmode="url" spellcheck="false" /></label>
+          <label>Optional session token<input id="bridgeToken" type="password" value="${escapeHtml(bridgeToken)}" autocomplete="off" /></label>
           <div class="bridgeActions">
             <button id="bridgeSaveBtn" type="button">Connect</button>
+            <button id="bridgeDisconnectBtn" type="button">Disconnect</button>
             <button id="bridgeSyncBtn" type="button">Sync active project</button>
             <button id="bridgePullBtn" type="button">Review AI changes</button>
           </div>
           <div id="bridgeStatus" class="bridgeStatus"><strong>not connected</strong><span>Start the local bridge first.</span></div>
-          <p class="bridgeNote">Human interactions happen in NeuroCanvas. AI clients use the same projects through MCP tools and resources. Hook events keep both sides observable. AI changes are loaded only after explicit human review.</p>
+          <p class="bridgeNote">Tokens are kept only for the current browser session. Remote bridges must use HTTPS. AI changes are loaded only after explicit human review.</p>
         </section>
         <section>
           <h3>MCP tools</h3>
@@ -165,15 +253,17 @@
     button.addEventListener('click', () => dialog.showModal());
     dialog.querySelector('[data-close]').addEventListener('click', () => dialog.close());
     $('bridgeSaveBtn').addEventListener('click', saveSettings);
+    $('bridgeDisconnectBtn').addEventListener('click', disconnect);
     $('bridgeSyncBtn').addEventListener('click', () => syncProject().catch(error => notify(error.message, 'error')));
     $('bridgePullBtn').addEventListener('click', () => pullReviewedChanges().catch(error => notify(error.message, 'error')));
     $('bridgeToolsBtn').addEventListener('click', () => listMcpTools().catch(error => notify(error.message, 'error')));
   }
 
-  window.ExoviaBridge = { checkHealth, syncProject, pullReviewedChanges, callMcp, listMcpTools };
+  window.ExoviaBridge = { checkHealth, syncProject, pullReviewedChanges, callMcp, listMcpTools, subscribe, disconnect };
   window.addEventListener('DOMContentLoaded', () => {
     buildUi();
-    subscribe();
+    subscribe().catch(() => {});
     checkHealth().catch(() => {});
   });
+  window.addEventListener('beforeunload', () => streamController?.abort());
 })();
