@@ -1,0 +1,92 @@
+name: External QA run
+about: Record a complete NeuroCanvas verification run with reproducible evidence.
+title: "[QA] External verification on "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form after running `VALIDAR_EXOVIA.bat` or the equivalent manual commands. Do not include tokens, private documents or secrets.
+  - type: input
+    id: commit
+    attributes:
+      label: Commit SHA
+      placeholder: Full repository commit SHA
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Operating system, browser and Node.js versions.
+      placeholder: Windows 11, Chrome 140, Node 20.x
+    validations:
+      required: true
+  - type: dropdown
+    id: source
+    attributes:
+      label: Installation source
+      options:
+        - Clean ZIP download
+        - Fresh git clone
+        - Existing checkout
+    validations:
+      required: true
+  - type: dropdown
+    id: root_verify
+    attributes:
+      label: Root verification result
+      options:
+        - PASS
+        - FAIL
+        - NOT RUN
+    validations:
+      required: true
+  - type: dropdown
+    id: backend_verify
+    attributes:
+      label: Backend verification result
+      options:
+        - PASS
+        - FAIL
+        - NOT RUN
+    validations:
+      required: true
+  - type: dropdown
+    id: system_check
+    attributes:
+      label: In-app System Check result
+      options:
+        - PASS
+        - ATTENTION
+        - NOT RUN
+    validations:
+      required: true
+  - type: textarea
+    id: flows
+    attributes:
+      label: Flows tested
+      description: Record startup, ingestion, persistence, Answer & Audit, Exil, mobile and any other tested flows.
+    validations:
+      required: true
+  - type: textarea
+    id: failures
+    attributes:
+      label: Failures and reproduction steps
+      description: Include exact steps, expected result and actual result. Write "None" when everything passed.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Attach screenshots, sanitized logs, readiness report or Playwright report.
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety confirmation
+      options:
+        - label: I removed secrets, tokens and private documents from this report.
+          required: true
