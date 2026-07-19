@@ -1,0 +1,47 @@
+EXOVIA NEUROCANVAS - GUIA RAPIDA
+=================================
+
+PARA ABRIR EN WINDOWS
+1. Descomprimir la carpeta completa.
+2. Abrir la carpeta descomprimida.
+3. Hacer doble clic en INICIAR_EXOVIA.bat
+4. Esperar unos segundos. El navegador se abrira automaticamente.
+5. No cerrar la ventana negra mientras uses la aplicacion.
+
+REQUISITO
+- Node.js 20 o superior.
+- Si no esta instalado, descargar la version LTS desde: https://nodejs.org
+
+PRIMER RECORRIDO RECOMENDADO
+1. Pulsar "New workspace".
+2. Mover y acercar el mapa con mouse o touch.
+3. Pulsar un nodo para ver su evidencia.
+4. Abrir "Answer & Audit".
+5. Escribir una pregunta y pulsar "Navigate to answer".
+6. Probar "Knowledge health" y "Agent replay".
+7. Pulsar "Export" para guardar una copia del proyecto.
+
+PARA IMPORTAR INFORMACION
+- "Open file": archivos TXT, MD, JSON, EXIAL o LOG.
+- "Import text": pegar texto directamente.
+- "Secondary Brain": conectores e importadores adicionales.
+
+DONDE SE GUARDAN LOS DATOS
+- El proyecto se guarda localmente en el navegador del equipo.
+- Exporta un JSON para tener una copia que puedas enviar o restaurar.
+- No borres los datos del navegador antes de exportar.
+
+SI ALGO FALLA
+1. Sacar una captura de la pantalla.
+2. Sacar una captura de la ventana negra del iniciador.
+3. Anotar que boton se pulso y que se esperaba que ocurriera.
+4. Indicar sistema operativo y navegador.
+
+PARA CERRAR
+- Cerrar la pestaña del navegador.
+- Volver a la ventana negra y pulsar Ctrl+C.
+
+IMPORTANTE
+- El backend de IA/MCP es opcional y no hace falta para probar la interfaz principal.
+- La respuesta actual puede funcionar con el motor local de evidencia.
+- No ingresar claves privadas ni datos sensibles durante las pruebas.
