@@ -46,6 +46,16 @@ Beginner instructions are available in:
 - [`docs/MANUAL_USUARIO.md`](docs/MANUAL_USUARIO.md)
 - [`docs/TESTER_CHECKLIST.md`](docs/TESTER_CHECKLIST.md)
 
+## Help the project
+
+You do not need to know programming to contribute.
+
+- Guest, tester, design and video help: [`docs/GUEST_HELPER_GUIDE.md`](docs/GUEST_HELPER_GUIDE.md)
+- Code and pull-request workflow: [`CONTRIBUTING.md`](CONTRIBUTING.md)
+- Verified capability status: [`docs/CAPABILITY_VERIFICATION_MATRIX.md`](docs/CAPABILITY_VERIFICATION_MATRIX.md)
+
+Useful contributions include testing on another device, reporting confusing steps, taking clean screenshots, reviewing copy, editing the demo video, checking accessibility and proposing focused code fixes.
+
 ## First five-minute tour
 
 1. Press **New workspace**.
