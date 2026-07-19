@@ -24,10 +24,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Setup Node
+      - name: Setup Node 24 LTS
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
       - name: Verify backend
         run: npm run verify
 
@@ -38,10 +38,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Setup Node
+      - name: Setup Node 24 LTS
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
       - name: Check JavaScript syntax
         shell: bash
         run: |
@@ -72,10 +72,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Setup Node
+      - name: Setup Node 24 LTS
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
       - name: Install test dependencies
         run: npm install --no-audit --no-fund
       - name: Install Chromium
