@@ -19,7 +19,7 @@ const required = [
   'src/core.js', 'src/product.js', 'src/intelligence.js', 'src/diagnostics.js',
   'src/ai-bridge.js', 'server/mcp-server.mjs', 'server/package.json', 'server/test.mjs',
   'tests/e2e/neurocanvas.spec.mjs', 'tests/e2e/project-lifecycle.spec.mjs',
-  '.github/workflows/verify.yml'
+  'tests/e2e/import-export.spec.mjs', '.github/workflows/verify.yml'
 ];
 
 const missing = [];
@@ -52,12 +52,17 @@ const capabilityEntries = ['function answer(', 'function health(', 'function con
 const capabilityCount = capabilityEntries.filter(marker => intelligence.includes(marker)).length;
 add('differentiated_capabilities', capabilityCount === capabilityEntries.length ? 'PASS' : 'FAIL', `${capabilityCount}/${capabilityEntries.length} differentiated intelligence entry points detected.`, ['src/intelligence.js']);
 
-const coreTests = await read('tests/e2e/neurocanvas.spec.mjs');
-const lifecycleTests = await read('tests/e2e/project-lifecycle.spec.mjs');
-const allTests = `${coreTests}\n${lifecycleTests}`.toLowerCase();
-const journeys = ['persistent workspace', 'restores the last saved project', 'answer, health and replay', 'system check', 'mobile viewport', 'real pasted text', 'malformed project maps', 'exil rejects', 'creates edits deletes', 'recovery snapshot', 'duplicates a project'];
+const testFiles = ['tests/e2e/neurocanvas.spec.mjs', 'tests/e2e/project-lifecycle.spec.mjs', 'tests/e2e/import-export.spec.mjs'];
+const allTests = (await Promise.all(testFiles.map(read))).join('\n').toLowerCase();
+const journeys = [
+  'persistent workspace', 'restores the last saved project', 'answer, health and replay',
+  'system check', 'mobile viewport', 'real pasted text', 'malformed project maps',
+  'exil rejects', 'creates edits deletes', 'recovery snapshot', 'duplicates a project',
+  'removes its snapshots', 'imports txt', 'imports valid neurocanvas json',
+  'imports exial', 're-imports it without graph loss'
+];
 const covered = journeys.filter(marker => allTests.includes(marker));
-add('browser_journey_coverage', covered.length >= 10 ? 'PASS' : 'WARN', `${covered.length}/${journeys.length} essential browser journeys have named coverage.`, ['tests/e2e/neurocanvas.spec.mjs', 'tests/e2e/project-lifecycle.spec.mjs']);
+add('browser_journey_coverage', covered.length >= 15 ? 'PASS' : 'WARN', `${covered.length}/${journeys.length} essential browser journeys have named coverage.`, testFiles);
 
 const serviceWorker = await read('sw.js');
 const offlineControls = [serviceWorker.includes("request.mode === 'navigate'"), serviceWorker.includes('url.origin !== self.location.origin'), serviceWorker.includes("response.type === 'basic'"), serviceWorker.includes('Offline asset unavailable')];
