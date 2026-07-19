@@ -27,7 +27,7 @@
     <div class="toolbar" aria-label="Project actions">
       <button id="demoBtn">New workspace</button>
       <button id="pulseDemoBtn">New ExiaL map</button>
-      <label class="fileButton">Open file<input id="fileInput" type="file" accept=".txt,.md,.json,.exial,.log" /></label>
+      <label class="fileButton">Open file<input id="fileInput" type="file" accept=".txt,.md,.json,.exial,.log" aria-label="Open a NeuroCanvas source or project file" /></label>
       <button id="pasteBtn">Import text</button>
       <button id="intentBtn">Exil intent</button>
       <button id="exportBtn">Export</button>
@@ -63,7 +63,7 @@
     </section>
 
     <section class="canvasWrap">
-      <canvas id="canvas" aria-label="Interactive knowledge graph"></canvas>
+      <canvas id="canvas" tabindex="0" aria-label="Interactive knowledge graph"></canvas>
       <div class="canvasBadge">LOCAL-FIRST · PERSISTENT · EDITABLE · EVIDENCE-PRESERVING</div>
       <div id="emptyState" class="emptyState">
         <div class="heroMark" aria-hidden="true">∞</div>
@@ -80,25 +80,28 @@
     </aside>
   </main>
 
-  <dialog id="pasteDialog">
+  <dialog id="pasteDialog" aria-labelledby="pasteDialogTitle">
     <form method="dialog">
-      <h2>Create or import a project</h2>
+      <h2 id="pasteDialogTitle">Create or import a project</h2>
+      <label for="docTitle">Project title</label>
       <input id="docTitle" placeholder="Project title" value="Untitled NeuroCanvas project" />
+      <label for="textInput">Source text or ExiaL pulses</label>
       <textarea id="textInput" placeholder="Paste long-form text, notes, documentation, a conversation, or ExiaL pulses…"></textarea>
       <div class="dialogActions"><button value="cancel">Cancel</button><button id="buildBtn" value="default">Build project</button></div>
     </form>
   </dialog>
 
-  <dialog id="intentDialog">
+  <dialog id="intentDialog" aria-labelledby="intentDialogTitle">
     <form method="dialog">
-      <h2>Exil safe intent preview</h2>
+      <h2 id="intentDialogTitle">Exil safe intent preview</h2>
       <p class="dialogHelp">This declarative subset performs visible graph operations only. It never calls an external service.</p>
+      <label for="intentInput">Declarative intent</label>
       <textarea id="intentInput">MAP current
 FIND topic:"evidence"
 FOCUS top:5
 LINK threshold:0.20
 EXPLAIN evidence:true</textarea>
-      <pre id="intentPreview" class="intentPreview">Preview the intent to validate it.</pre>
+      <pre id="intentPreview" class="intentPreview" aria-live="polite">Preview the intent to validate it.</pre>
       <div class="dialogActions"><button value="cancel">Cancel</button><button type="button" id="previewIntentBtn">Validate preview</button><button type="button" id="applyIntentBtn" disabled>Apply visual focus</button></div>
     </form>
   </dialog>
