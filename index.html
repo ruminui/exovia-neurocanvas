@@ -3,63 +3,69 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Exovia NeuroCanvas — visual memory, ExiaL pulse replay and safe Exil intent preview." />
+  <meta name="description" content="Exovia NeuroCanvas — navigate knowledge, evidence and agent activity as a living neural map." />
+  <meta name="theme-color" content="#070707" />
+  <meta name="color-scheme" content="dark" />
   <title>Exovia NeuroCanvas</title>
+  <link rel="manifest" href="manifest.webmanifest" />
   <link rel="stylesheet" href="src/styles.css" />
 </head>
 <body>
   <header class="topbar">
-    <div class="brand"><span class="mark">∞</span><div><strong>EXOVIA</strong><small>NEUROCANVAS</small></div></div>
-    <div class="toolbar">
-      <button id="demoBtn">Memory demo</button>
-      <button id="pulseDemoBtn">ExiaL demo</button>
+    <div class="brand"><span class="mark" aria-hidden="true">∞</span><div><strong>EXOVIA</strong><small>NEUROCANVAS</small></div></div>
+    <div class="toolbar" aria-label="Project actions">
+      <button id="demoBtn">Load knowledge demo</button>
+      <button id="pulseDemoBtn">Load ExiaL demo</button>
       <label class="fileButton">Open file<input id="fileInput" type="file" accept=".txt,.md,.json,.exial,.log" /></label>
       <button id="pasteBtn">Paste text</button>
       <button id="intentBtn">Exil intent</button>
       <button id="exportBtn">Export</button>
-      <button id="fitBtn">Fit</button>
+      <button id="fitBtn">Fit map</button>
+      <button id="installBtn" class="hidden">Install app</button>
     </div>
   </header>
 
   <main>
-    <section class="leftPanel panel">
-      <div class="panelTitle">Knowledge &amp; activity explorer</div>
+    <section class="leftPanel panel" aria-label="Knowledge explorer">
+      <div class="panelTitle">Knowledge explorer</div>
       <label for="searchInput">Search the map</label>
       <div class="searchRow">
-        <input id="searchInput" placeholder="Ask or search a concept…" />
+        <input id="searchInput" placeholder="Ask or search a concept…" autocomplete="off" />
         <button id="searchBtn">Zoom</button>
       </div>
-      <div class="segmented modes">
+      <div class="segmented viewModes" aria-label="Visualization mode">
         <button id="networkView" class="active">Neural</button>
         <button id="treeView">Tree</button>
         <button id="pulseView">Pulse</button>
         <button id="capabilityView">FAPI</button>
       </div>
       <div id="pulseControls" class="pulseControls hidden">
-        <button id="playPulsesBtn">▶ Replay</button>
-        <button id="stopPulsesBtn">■ Stop</button>
+        <button id="playPulsesBtn">Play pulses</button>
+        <button id="stopPulsesBtn">Stop</button>
         <span id="pulseStatus">0 events</span>
       </div>
-      <div id="stats" class="stats"></div>
-      <div id="results" class="results"></div>
-      <div class="hint">Drag to pan · wheel to zoom · click a node to inspect evidence · pulse replay is local and read-only</div>
+      <div id="stats" class="stats" aria-live="polite"></div>
+      <div id="results" class="results" aria-live="polite"></div>
+      <div class="hint">Drag to pan · wheel to zoom · click a node to inspect evidence · press / to search</div>
+      <div class="panelTitle auditTitle">Audit trail</div>
+      <div id="auditTrail" class="auditTrail"></div>
     </section>
 
     <section class="canvasWrap">
-      <canvas id="canvas"></canvas>
-      <div class="canvasBadge">OFFLINE-FIRST · EXIAL + EXIL PREVIEW · NO API CREDITS REQUIRED</div>
+      <canvas id="canvas" aria-label="Interactive knowledge graph"></canvas>
+      <div class="canvasBadge">OFFLINE-FIRST · EVIDENCE-PRESERVING · NO API KEY REQUIRED</div>
       <div id="emptyState" class="emptyState">
-        <div class="heroMark">∞</div>
-        <h1>Knowledge should be navigated.<br/>Agent activity should be visible.</h1>
-        <p>Explore visual memory, replay compact ExiaL pulses and preview safe Exil graph intents.</p>
-        <div class="heroActions"><button id="emptyDemoBtn">Memory demo</button><button id="emptyPulseBtn">Pulse demo</button></div>
+        <div class="heroMark" aria-hidden="true">∞</div>
+        <h1>Knowledge should be navigated,<br/>not merely scrolled.</h1>
+        <p>Explore documents, exact evidence, compact agent pulses and capability routes in one inspectable visual memory.</p>
+        <div class="emptyActions"><button id="emptyDemoBtn">Explore knowledge</button><button id="emptyPulseBtn">Replay agent pulses</button></div>
       </div>
+      <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
     </section>
 
-    <aside class="rightPanel panel">
-      <div class="panelTitle">Evidence &amp; audit inspector</div>
-      <div id="details" class="details empty">Select a node to inspect its source, semantic path, capability metadata or event audit record.</div>
-      <div id="auditTrail" class="auditTrail"></div>
+    <aside class="rightPanel panel" aria-label="Evidence inspector">
+      <div class="panelTitle">Evidence inspector</div>
+      <div id="details" class="details empty">Select a node to inspect its source text, keywords, semantic path, trace and execution status.</div>
     </aside>
   </main>
 
@@ -67,25 +73,31 @@
     <form method="dialog">
       <h2>Create a knowledge map</h2>
       <input id="docTitle" placeholder="Document title" value="Untitled knowledge map" />
-      <textarea id="textInput" placeholder="Paste text, Markdown, ExiaL pulses or a conversation…"></textarea>
+      <textarea id="textInput" placeholder="Paste long-form text, notes, documentation, a conversation, or ExiaL pulses…"></textarea>
       <div class="dialogActions"><button value="cancel">Cancel</button><button id="buildBtn" value="default">Build map</button></div>
     </form>
   </dialog>
 
   <dialog id="intentDialog">
     <form method="dialog">
-      <h2>Exil intent preview</h2>
-      <p class="dialogNote">This safe subset never executes external tools. It validates the intent and previews the affected graph nodes.</p>
-      <textarea id="intentInput" class="intentInput">MAP current
-FIND topic:"context compression"
+      <h2>Exil safe intent preview</h2>
+      <p class="dialogHelp">This declarative subset performs visible graph operations only. It never calls an external service.</p>
+      <textarea id="intentInput">MAP current
+FIND topic:"evidence"
 FOCUS top:5
-LINK semantic threshold:0.20
+LINK threshold:0.20
 EXPLAIN evidence:true</textarea>
-      <pre id="intentPreview" class="intentPreview">Enter an intent and select Preview.</pre>
-      <div class="dialogActions"><button value="cancel">Close</button><button id="previewIntentBtn" type="button">Preview</button><button id="applyIntentBtn" type="button" disabled>Apply visual focus</button></div>
+      <pre id="intentPreview" class="intentPreview">Preview the intent to validate it.</pre>
+      <div class="dialogActions"><button value="cancel">Cancel</button><button type="button" id="previewIntentBtn">Validate preview</button><button type="button" id="applyIntentBtn" disabled>Apply visual focus</button></div>
     </form>
   </dialog>
 
   <script src="src/app.js"></script>
+  <script src="src/upgrade.js"></script>
+  <script>
+    if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    }
+  </script>
 </body>
 </html>
