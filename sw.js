@@ -1,7 +1,8 @@
-const CACHE = 'exovia-neurocanvas-v8-diagnostics';
+const CACHE = 'exovia-neurocanvas-v9-offline-hardening';
+const APP_SHELL = './index.html';
 const ASSETS = [
   './',
-  './index.html',
+  APP_SHELL,
   './manifest.webmanifest',
   './src/styles.css',
   './src/upgrade.css',
@@ -27,17 +28,43 @@ self.addEventListener('install', event => {
 });
 
 self.addEventListener('activate', event => {
-  event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key !== CACHE).map(key => caches.delete(key)))));
+  event.waitUntil(
+    caches.keys().then(keys => Promise.all(keys.filter(key => key !== CACHE).map(key => caches.delete(key))))
+  );
   self.clients.claim();
 });
 
 self.addEventListener('fetch', event => {
-  if (event.request.method !== 'GET') return;
+  const request = event.request;
+  if (request.method !== 'GET') return;
+
+  const url = new URL(request.url);
+  if (url.origin !== self.location.origin) return;
+
+  if (request.mode === 'navigate') {
+    event.respondWith(
+      fetch(request).catch(async () => (await caches.match(request)) || caches.match(APP_SHELL))
+    );
+    return;
+  }
+
   event.respondWith(
-    caches.match(event.request).then(cached => cached || fetch(event.request).then(response => {
-      const copy = response.clone();
-      caches.open(CACHE).then(cache => cache.put(event.request, copy));
-      return response;
-    }).catch(() => caches.match('./index.html')))
+    caches.match(request).then(async cached => {
+      if (cached) return cached;
+      try {
+        const response = await fetch(request);
+        if (response.ok && response.type === 'basic') {
+          const cache = await caches.open(CACHE);
+          await cache.put(request, response.clone());
+        }
+        return response;
+      } catch (error) {
+        return new Response('Offline asset unavailable.', {
+          status: 503,
+          statusText: 'Service Unavailable',
+          headers: { 'content-type': 'text/plain; charset=utf-8' }
+        });
+      }
+    })
   );
 });
