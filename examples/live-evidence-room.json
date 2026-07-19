@@ -1,0 +1,155 @@
+{
+  "format": "exovia-live-room-v1",
+  "roomId": "room-build-week-demo",
+  "projectId": "project-neurocanvas-demo",
+  "title": "Build Week Evidence Review",
+  "revision": 4,
+  "createdAt": "2026-07-19T22:00:00Z",
+  "updatedAt": "2026-07-19T22:08:30Z",
+  "participants": [
+    {
+      "id": "human-luciano",
+      "kind": "human",
+      "displayName": "Luciano",
+      "role": "room_admin",
+      "capabilities": ["graph.write", "decision.approve", "takeover.accept"],
+      "presence": "online"
+    },
+    {
+      "id": "agent-research",
+      "kind": "agent",
+      "displayName": "Research Agent",
+      "role": "contributor",
+      "capabilities": ["graph.propose", "evidence.read", "browser.request_takeover"],
+      "presence": "online"
+    },
+    {
+      "id": "workflow-publish",
+      "kind": "workflow",
+      "displayName": "Publish Review Workflow",
+      "role": "contributor",
+      "capabilities": ["workflow.prepare", "graph.propose"],
+      "presence": "online"
+    }
+  ],
+  "evidenceAssets": [
+    {
+      "id": "video-review-01",
+      "kind": "video",
+      "title": "Product review recording",
+      "mimeType": "video/webm",
+      "uri": "local://media/video-review-01",
+      "contentHash": "sha256:example-only",
+      "durationMs": 1260000,
+      "transcript": "The team reviews the evidence-linked answer flow and agrees to keep human approval before external publication.",
+      "provenance": "human_sourced",
+      "reviewState": "human_reviewed",
+      "createdBy": "human-luciano",
+      "createdAt": "2026-07-19T22:00:00Z"
+    },
+    {
+      "id": "agent-result-01",
+      "kind": "agent_result",
+      "title": "Research synthesis proposal",
+      "mimeType": "application/json",
+      "uri": "local://agent-results/agent-result-01",
+      "provenance": "ai_proposed",
+      "reviewState": "approved",
+      "createdBy": "agent-research",
+      "createdAt": "2026-07-19T22:05:15Z"
+    }
+  ],
+  "decisions": [
+    {
+      "id": "decision-human-approval",
+      "statement": "All external publication workflows require explicit human approval.",
+      "proposedBy": "agent-research",
+      "approvedBy": "human-luciano",
+      "status": "approved",
+      "confidence": 1,
+      "revision": 4,
+      "evidence": [
+        {
+          "assetId": "video-review-01",
+          "startMs": 1122000,
+          "endMs": 1151000,
+          "quote": "Keep human approval before external publication."
+        }
+      ],
+      "linkedExecutionIds": ["execution-research-01"]
+    }
+  ],
+  "executions": [
+    {
+      "id": "execution-research-01",
+      "actorId": "agent-research",
+      "kind": "agent",
+      "status": "completed",
+      "contract": {
+        "objective": "Review product evidence and propose a safe publication rule.",
+        "inputs": ["video-review-01", "project revision 3"],
+        "allowedTools": ["evidence.search", "graph.propose"],
+        "constraints": ["No external publication", "No secrets", "Human approval required before mutation"],
+        "expectedOutputs": ["A proposed decision node with exact evidence"],
+        "successCriteria": ["Proposal cites an exact evidence segment", "No external action occurs"],
+        "approvalPolicy": "before_mutation",
+        "timeoutMs": 120000
+      },
+      "inputRevision": 3,
+      "outputRevision": 4,
+      "startedAt": "2026-07-19T22:04:00Z",
+      "completedAt": "2026-07-19T22:05:15Z",
+      "evidence": [
+        {
+          "assetId": "video-review-01",
+          "startMs": 1122000,
+          "endMs": 1151000
+        },
+        {
+          "assetId": "agent-result-01"
+        }
+      ],
+      "approvedBy": "human-luciano"
+    }
+  ],
+  "events": [
+    {
+      "id": "event-001",
+      "sequence": 1,
+      "timestamp": "2026-07-19T22:04:00Z",
+      "actorId": "agent-research",
+      "type": "execution_started",
+      "executionId": "execution-research-01",
+      "revision": 3
+    },
+    {
+      "id": "event-002",
+      "sequence": 2,
+      "timestamp": "2026-07-19T22:05:00Z",
+      "actorId": "agent-research",
+      "type": "decision_proposed",
+      "targetId": "decision-human-approval",
+      "executionId": "execution-research-01",
+      "revision": 3
+    },
+    {
+      "id": "event-003",
+      "sequence": 3,
+      "timestamp": "2026-07-19T22:05:10Z",
+      "actorId": "human-luciano",
+      "type": "decision_reviewed",
+      "targetId": "decision-human-approval",
+      "reason": "Approved after reviewing the cited recording segment.",
+      "revision": 4
+    },
+    {
+      "id": "event-004",
+      "sequence": 4,
+      "timestamp": "2026-07-19T22:05:15Z",
+      "actorId": "agent-research",
+      "type": "execution_completed",
+      "executionId": "execution-research-01",
+      "revision": 4
+    }
+  ]
+}
