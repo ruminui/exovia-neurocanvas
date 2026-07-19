@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Exovia NeuroCanvas — navigate knowledge like a living neural map." />
+  <title>Exovia NeuroCanvas</title>
+  <link rel="stylesheet" href="src/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="mark">∞</span><div><strong>EXOVIA</strong><small>NEUROCANVAS</small></div></div>
+    <div class="toolbar">
+      <button id="demoBtn">Load demo</button>
+      <label class="fileButton">Open file<input id="fileInput" type="file" accept=".txt,.md,.json" /></label>
+      <button id="pasteBtn">Paste text</button>
+      <button id="exportBtn">Export</button>
+      <button id="fitBtn">Fit map</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="leftPanel panel">
+      <div class="panelTitle">Knowledge explorer</div>
+      <label for="searchInput">Search the map</label>
+      <div class="searchRow">
+        <input id="searchInput" placeholder="Ask or search a concept…" />
+        <button id="searchBtn">Zoom</button>
+      </div>
+      <div class="segmented">
+        <button id="networkView" class="active">Neural</button>
+        <button id="treeView">Tree</button>
+      </div>
+      <div id="stats" class="stats"></div>
+      <div id="results" class="results"></div>
+      <div class="hint">Drag to pan · wheel to zoom · click a node to inspect evidence</div>
+    </section>
+
+    <section class="canvasWrap">
+      <canvas id="canvas"></canvas>
+      <div class="canvasBadge">OFFLINE-FIRST · NO API CREDITS REQUIRED</div>
+      <div id="emptyState" class="emptyState">
+        <div class="heroMark">∞</div>
+        <h1>Knowledge should be navigated,<br/>not merely scrolled.</h1>
+        <p>Load the demo or paste a document to create a living visual memory.</p>
+        <button id="emptyDemoBtn">Explore the demo</button>
+      </div>
+    </section>
+
+    <aside class="rightPanel panel">
+      <div class="panelTitle">Evidence inspector</div>
+      <div id="details" class="details empty">Select a node to inspect its source text, keywords and semantic path.</div>
+    </aside>
+  </main>
+
+  <dialog id="pasteDialog">
+    <form method="dialog">
+      <h2>Create a knowledge map</h2>
+      <input id="docTitle" placeholder="Document title" value="Untitled knowledge map" />
+      <textarea id="textInput" placeholder="Paste long-form text, notes, documentation or a conversation…"></textarea>
+      <div class="dialogActions"><button value="cancel">Cancel</button><button id="buildBtn" value="default">Build map</button></div>
+    </form>
+  </dialog>
+
+  <script src="src/app.js"></script>
+</body>
+</html>
