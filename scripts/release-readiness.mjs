@@ -13,13 +13,13 @@ const read = file => fs.readFile(path.join(root, file), 'utf8');
 
 const required = [
   'README.md', 'SECURITY.md', 'CONTRIBUTING.md', 'LICENSE',
-  'LEEME_PRIMERO.txt', 'docs/MANUAL_USUARIO.md',
+  'LEEME_PRIMERO.txt', 'VALIDAR_EXOVIA.bat', 'docs/MANUAL_USUARIO.md',
   'docs/GUEST_HELPER_GUIDE.md', 'docs/TESTER_CHECKLIST.md',
   'docs/CAPABILITY_VERIFICATION_MATRIX.md', 'docs/ENTERPRISE_READINESS.md',
-  'docs/OPERATIONS_RUNBOOK.md', 'docs/FIRST_PLACE_FINISHER.md',
-  'index.html', 'manifest.webmanifest', 'sw.js',
+  'docs/FINAL_COMPLETION_AUDIT.md', 'docs/OPERATIONS_RUNBOOK.md',
+  'docs/FIRST_PLACE_FINISHER.md', 'index.html', 'manifest.webmanifest', 'sw.js',
   'src/core.js', 'src/product.js', 'src/intelligence.js', 'src/diagnostics.js',
-  'src/ai-bridge.js', 'server/mcp-server.mjs', 'server/test.mjs',
+  'src/ai-bridge.js', 'server/mcp-server.mjs', 'server/package.json', 'server/test.mjs',
   '.github/workflows/verify.yml'
 ];
 
@@ -30,6 +30,12 @@ add('required_artifacts', missing.length ? 'FAIL' : 'PASS', missing.length ? `Mi
 const pkg = JSON.parse(await read('package.json'));
 add('release_version', /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/.test(pkg.version) ? 'PASS' : 'FAIL', `Package version: ${pkg.version}`, ['package.json']);
 add('node_runtime', String(pkg.engines?.node || '').includes('>=20') ? 'PASS' : 'FAIL', `Node requirement: ${pkg.engines?.node || 'missing'}`, ['package.json']);
+add('pinned_browser_dependency', pkg.devDependencies?.['@playwright/test'] === '1.58.0' ? 'PASS' : 'WARN', `Playwright dependency: ${pkg.devDependencies?.['@playwright/test'] || 'missing'}`, ['package.json']);
+
+const serverPkg = JSON.parse(await read('server/package.json'));
+const serverSource = await read('server/mcp-server.mjs');
+const runtimeVersion = serverSource.match(/const VERSION = ['"]([^'"]+)['"]/i)?.[1] || '';
+add('bridge_version_alignment', runtimeVersion && runtimeVersion === serverPkg.version ? 'PASS' : 'FAIL', `Bridge package ${serverPkg.version}; runtime ${runtimeVersion || 'missing'}.`, ['server/package.json', 'server/mcp-server.mjs']);
 
 const html = await read('index.html');
 const runtime = ['core.js', 'product.js', 'intelligence.js', 'diagnostics.js', 'ai-bridge.js'];
@@ -59,6 +65,10 @@ const matrix = await read('docs/CAPABILITY_VERIFICATION_MATRIX.md');
 const blocked = [...matrix.matchAll(/\bBLOCKED\b/g)].length;
 const partial = [...matrix.matchAll(/\bPARTIAL\b/g)].length;
 add('honest_capability_status', matrix.includes('RUNTIME VERIFIED') && matrix.includes('BLOCKED') ? 'PASS' : 'WARN', `Capability matrix records ${partial} PARTIAL and ${blocked} BLOCKED markers.`, ['docs/CAPABILITY_VERIFICATION_MATRIX.md']);
+
+const completionAudit = await read('docs/FINAL_COMPLETION_AUDIT.md');
+const p0GateCount = [...completionAudit.matchAll(/^### \d+\./gm)].length;
+add('completion_audit', p0GateCount >= 5 && completionAudit.includes('TECHNICALLY PREPARED') ? 'PASS' : 'WARN', `${p0GateCount} P0 completion gates documented.`, ['docs/FINAL_COMPLETION_AUDIT.md']);
 
 const humanEvidence = {
   externalSystemCheck: process.env.EXOVIA_EXTERNAL_SYSTEM_CHECK === 'PASS',
