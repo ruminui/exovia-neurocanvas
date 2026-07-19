@@ -9,6 +9,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: verify-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   backend:
     name: Backend checks
@@ -28,7 +32,7 @@ jobs:
         run: npm run verify
 
   frontend-static:
-    name: Frontend integration checks
+    name: Frontend and readiness checks
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -47,7 +51,16 @@ jobs:
             node --check "$file"
           done
       - name: Verify frontend integration
-        run: node scripts/verify-frontend.mjs
+        run: npm run verify:static
+      - name: Generate release readiness evidence
+        run: npm run readiness
+      - name: Upload readiness evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-readiness
+          path: artifacts/release-readiness.json
+          if-no-files-found: error
+          retention-days: 14
 
   browser-smoke:
     name: Desktop and mobile browser smoke tests
