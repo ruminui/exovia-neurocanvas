@@ -68,4 +68,43 @@ test('duplicates a project as an independent copy', async ({ page }) => {
 
   const titles = await page.locator('.projectRow strong').allTextContents();
   expect(titles.some(title => /copy/i.test(title))).toBe(true);
+
+  const records = await page.evaluate(async () => {
+    const request = indexedDB.open('exovia-neurocanvas');
+    const db = await new Promise((resolve, reject) => { request.onsuccess = () => resolve(request.result); request.onerror = () => reject(request.error); });
+    const tx = db.transaction('projects', 'readonly');
+    const all = tx.objectStore('projects').getAll();
+    return new Promise((resolve, reject) => { all.onsuccess = () => resolve(all.result); all.onerror = () => reject(all.error); });
+  });
+  expect(records).toHaveLength(2);
+  expect(new Set(records.map(record => record.id)).size).toBe(2);
+  expect(records.every(record => record.map.projectId === record.id)).toBeTruthy();
+});
+
+test('deleting a project removes its snapshots and local project record', async ({ page }) => {
+  await createWorkspace(page);
+  await page.locator('#snapshotBtn').click();
+  const projectId = await expect.poll(async () => page.evaluate(() => localStorage.getItem('exovia:lastProjectId'))).toBeTruthy();
+  await page.locator('#workspaceBtn').click();
+  await expect(page.locator('.projectRow')).toHaveCount(1);
+  await expect(page.locator('.snapshotRow')).toHaveCount(1);
+
+  page.once('dialog', dialog => dialog.accept());
+  await page.locator('.projectRow [data-action="delete"]').click();
+  await expect(page.locator('.projectRow')).toHaveCount(0);
+
+  const remaining = await page.evaluate(async id => {
+    const request = indexedDB.open('exovia-neurocanvas');
+    const db = await new Promise((resolve, reject) => { request.onsuccess = () => resolve(request.result); request.onerror = () => reject(request.error); });
+    const readAll = storeName => new Promise((resolve, reject) => {
+      const tx = db.transaction(storeName, 'readonly');
+      const req = tx.objectStore(storeName).getAll();
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+    const [projects, snapshots] = await Promise.all([readAll('projects'), readAll('snapshots')]);
+    return { project: projects.some(item => item.id === id), snapshots: snapshots.filter(item => item.projectId === id).length };
+  }, projectId);
+  expect(remaining.project).toBe(false);
+  expect(remaining.snapshots).toBe(0);
 });
