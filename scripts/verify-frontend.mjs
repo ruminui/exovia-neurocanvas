@@ -3,22 +3,14 @@ import path from 'node:path';
 import process from 'node:process';
 
 const ROOT = process.cwd();
+const RUNTIME_SCRIPTS = ['core.js', 'upgrade.js', 'product.js', 'mobile.js', 'brain.js', 'ai-bridge.js', 'intelligence.js'];
+const STYLESHEETS = ['styles.css', 'upgrade.css', 'product.css', 'mobile.css', 'brain.css', 'ai-bridge.css', 'intelligence.css'];
 const REQUIRED = [
   'index.html',
   'manifest.webmanifest',
   'sw.js',
-  'src/core.js',
-  'src/upgrade.js',
-  'src/product.js',
-  'src/mobile.js',
-  'src/brain.js',
-  'src/ai-bridge.js',
-  'src/styles.css',
-  'src/upgrade.css',
-  'src/product.css',
-  'src/mobile.css',
-  'src/brain.css',
-  'src/ai-bridge.css'
+  ...RUNTIME_SCRIPTS.map(file => `src/${file}`),
+  ...STYLESHEETS.map(file => `src/${file}`)
 ];
 
 const failures = [];
@@ -54,13 +46,13 @@ const duplicateIds = [...new Set(ids.filter((id, index) => ids.indexOf(id) !== i
 if (duplicateIds.length) fail(`duplicate HTML ids: ${duplicateIds.join(', ')}`);
 else pass(`HTML ids are unique (${ids.length})`);
 
-for (const script of ['core.js', 'upgrade.js', 'product.js', 'mobile.js', 'brain.js', 'ai-bridge.js']) {
+for (const script of RUNTIME_SCRIPTS) {
   const token = `src/${script}`;
   if (html.includes(token)) pass(`runtime script wired: ${token}`);
   else fail(`runtime script missing from index.html: ${token}`);
 }
 
-for (const stylesheet of ['styles.css', 'upgrade.css', 'product.css', 'mobile.css', 'brain.css', 'ai-bridge.css']) {
+for (const stylesheet of STYLESHEETS) {
   const token = `src/${stylesheet}`;
   if (html.includes(token)) pass(`stylesheet wired: ${token}`);
   else fail(`stylesheet missing from index.html: ${token}`);
@@ -76,7 +68,8 @@ const cachedAssets = [...serviceWorker.matchAll(/["'](\.\/?[^"']+)["']/g)]
   .map(match => match[1].replace(/^\.\//, ''))
   .filter(item => item && !item.includes('exovia-neurocanvas-'));
 
-for (const asset of ['index.html', 'manifest.webmanifest', ...refs.map(ref => ref.replace(/^\.\//, '').split(/[?#]/)[0])]) {
+const requiredCacheAssets = [...new Set(['index.html', 'manifest.webmanifest', ...refs.map(ref => ref.replace(/^\.\//, '').split(/[?#]/)[0])])];
+for (const asset of requiredCacheAssets) {
   if (cachedAssets.includes(asset) || asset === './') pass(`service worker covers: ${asset}`);
   else fail(`service worker cache omits: ${asset}`);
 }
