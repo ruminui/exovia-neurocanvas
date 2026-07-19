@@ -1,11 +1,14 @@
-const CACHE = 'exovia-neurocanvas-v1';
+const CACHE = 'exovia-neurocanvas-v3';
 const ASSETS = [
   './',
   './index.html',
   './manifest.webmanifest',
   './src/styles.css',
-  './src/app.js',
-  './src/upgrade.js'
+  './src/upgrade.css',
+  './src/product.css',
+  './src/core.js',
+  './src/upgrade.js',
+  './src/product.js'
 ];
 
 self.addEventListener('install', event => {
@@ -14,9 +17,7 @@ self.addEventListener('install', event => {
 });
 
 self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(keys => Promise.all(keys.filter(key => key !== CACHE).map(key => caches.delete(key))))
-  );
+  event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key !== CACHE).map(key => caches.delete(key)))));
   self.clients.claim();
 });
 
