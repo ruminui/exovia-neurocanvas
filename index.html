@@ -16,6 +16,7 @@
   <link rel="stylesheet" href="src/upgrade.css" />
   <link rel="stylesheet" href="src/product.css" />
   <link rel="stylesheet" href="src/mobile.css" />
+  <link rel="stylesheet" href="src/brain.css" />
 </head>
 <body>
   <header class="topbar">
@@ -23,7 +24,8 @@
     <div class="toolbar" aria-label="Project actions">
       <button id="demoBtn">New workspace</button>
       <button id="pulseDemoBtn">New ExiaL map</button>
-      <label class="fileButton">Open file<input id="fileInput" type="file" accept=".txt,.md,.json,.exial,.log" /></label>
+      <button id="brainBtn">Secondary Brain</button>
+      <label class="fileButton">Open file<input id="fileInput" type="file" accept=".txt,.md,.json,.exial,.log,.pdf" /></label>
       <button id="pasteBtn">Import text</button>
       <button id="intentBtn">Exil intent</button>
       <button id="exportBtn">Export</button>
@@ -60,11 +62,11 @@
 
     <section class="canvasWrap">
       <canvas id="canvas" aria-label="Interactive knowledge graph"></canvas>
-      <div class="canvasBadge">LOCAL-FIRST · PERSISTENT · EDITABLE · EVIDENCE-PRESERVING</div>
+      <div class="canvasBadge">LOCAL-FIRST · CONNECTED SECONDARY BRAIN · EVIDENCE-PRESERVING</div>
       <div id="emptyState" class="emptyState">
         <div class="heroMark" aria-hidden="true">∞</div>
         <h1>Your knowledge is a workspace,<br/>not a disposable demo.</h1>
-        <p>Create, edit, save and restore visual knowledge projects, exact evidence, compact agent pulses and capability routes.</p>
+        <p>Create, connect, edit, save and restore visual knowledge from notes, Wikipedia research, Markdown vaults, PDFs, agent pulses and capability routes.</p>
         <div class="emptyActions"><button id="emptyDemoBtn">Create workspace</button><button id="emptyPulseBtn">Create pulse map</button></div>
       </div>
       <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
@@ -99,10 +101,59 @@ EXPLAIN evidence:true</textarea>
     </form>
   </dialog>
 
+  <dialog id="brainDialog" class="brainDialog">
+    <div class="brainHead">
+      <div><small>EXOVIA CONNECTED KNOWLEDGE</small><h2>Secondary Brain</h2><p>Bring research, Markdown vaults and interactive PDF evidence into one navigable system.</p></div>
+      <button id="brainCloseBtn" type="button" aria-label="Close">×</button>
+    </div>
+    <div class="brainGrid">
+      <section class="brainCard">
+        <h3>Wikipedia Research</h3>
+        <p>Search a public encyclopedia, preserve attribution and import the complete article as a connected source node.</p>
+        <div class="brainRow">
+          <select id="wikiLanguage" aria-label="Wikipedia language"><option value="es">Español</option><option value="en">English</option><option value="pt">Português</option><option value="fr">Français</option></select>
+          <input id="wikiQuery" placeholder="Topic or article…" />
+          <button id="wikiSearchBtn" type="button">Search</button>
+        </div>
+        <div id="wikiResults" class="brainList"></div>
+        <div class="brainSourceNote">Network connector. Imported nodes store source URL, language, page ID, retrieval date and attribution metadata.</div>
+      </section>
+
+      <section class="brainCard">
+        <h3>Joplin / Obsidian Vault</h3>
+        <p>Import a Markdown directory, preserve folder paths and tags, and rebuild <code>[[wikilinks]]</code> as graph connections.</p>
+        <div class="brainRow">
+          <label class="fileButton">Choose vault directory<input id="vaultInput" type="file" webkitdirectory directory multiple accept=".md,.markdown,.txt" /></label>
+        </div>
+        <div class="brainMeta"><span>Markdown</span><span>Folders</span><span>Tags</span><span>Wikilinks</span><span>Backlink-ready</span></div>
+        <div class="brainSourceNote">Compatible with Obsidian-style folders and Joplin Markdown directory exports. JEX archives must first be exported from Joplin as Markdown or unpacked by a trusted desktop tool.</div>
+      </section>
+
+      <section class="brainCard" style="grid-column:1/-1">
+        <h3>Interactive PDF Knowledge</h3>
+        <p>Render a PDF, navigate pages and transform every extracted page into an evidence node linked to the original document.</p>
+        <div class="brainRow">
+          <label class="fileButton">Open PDF<input id="pdfInput" type="file" accept="application/pdf,.pdf" /></label>
+          <button id="pdfPrevBtn" type="button">Previous</button>
+          <span id="pdfPageLabel">Page —</span>
+          <button id="pdfNextBtn" type="button">Next</button>
+          <span id="pdfPageCount">No PDF loaded</span>
+          <button id="pdfImportBtn" type="button" disabled>Import pages into graph</button>
+        </div>
+        <div class="pdfWorkspace">
+          <div id="pdfPreview" class="pdfPreview"><p class="productEmpty">Choose a PDF to preview it here.</p></div>
+          <div class="pdfSide"><p class="brainSourceNote">When PDF.js is available, page text is extracted locally in the browser. Every page becomes searchable and remains traceable to its document and page number.</p></div>
+        </div>
+      </section>
+    </div>
+    <div id="brainStatus" class="brainStatus" aria-live="polite">Ready.</div>
+  </dialog>
+
   <script src="src/core.js"></script>
   <script src="src/upgrade.js"></script>
   <script src="src/product.js"></script>
   <script src="src/mobile.js"></script>
+  <script src="src/brain.js"></script>
   <script>
     if ('serviceWorker' in navigator && location.protocol !== 'file:') {
       navigator.serviceWorker.register('./sw.js').catch(() => {});
