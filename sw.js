@@ -1,4 +1,4 @@
-const CACHE = 'exovia-neurocanvas-v3';
+const CACHE = 'exovia-neurocanvas-v4-mobile';
 const ASSETS = [
   './',
   './index.html',
@@ -6,9 +6,11 @@ const ASSETS = [
   './src/styles.css',
   './src/upgrade.css',
   './src/product.css',
+  './src/mobile.css',
   './src/core.js',
   './src/upgrade.js',
-  './src/product.js'
+  './src/product.js',
+  './src/mobile.js'
 ];
 
 self.addEventListener('install', event => {
