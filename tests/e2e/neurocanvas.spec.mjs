@@ -30,6 +30,7 @@ test('loads production shell and creates a persistent workspace', async ({ page 
   await expect(page.locator('#demoBtn')).toBeVisible();
   await expect(page.locator('#intelligenceBtn')).toBeVisible();
   await expect(page.locator('#aiBridgeBtn')).toBeVisible();
+  await expect(page.locator('#diagnosticsBtn')).toBeVisible();
 
   await page.locator('#demoBtn').click();
   await expect(page.locator('#emptyState')).toBeHidden();
@@ -95,9 +96,24 @@ test('import dialog, secondary brain and human-AI bridge open safely', async ({ 
   expect(failures).toEqual([]);
 });
 
+test('runtime diagnostics verify modules assets storage and graph integrity', async ({ page }) => {
+  const failures = collectRuntimeFailures(page);
+  await page.goto('/');
+  await page.locator('#demoBtn').click();
+  await page.locator('#diagnosticsBtn').click();
+  await expect(page.locator('#diagnosticsDialog')).toBeVisible();
+  await expect(page.locator('#diagnosticsSummary')).toContainText(/checks passed/i);
+  expect(await page.locator('#diagnosticsResults .diagnosticRow').count()).toBeGreaterThanOrEqual(20);
+  await expect(page.locator('#diagnosticsResults .diagnosticRow.fail')).toHaveCount(0);
+  const report = await page.evaluate(() => window.ExoviaDiagnostics.run());
+  expect(report.status).toBe('PASS');
+  expect(report.failed).toBe(0);
+  expect(failures).toEqual([]);
+});
+
 test('primary interactive controls have accessible names', async ({ page }) => {
   await page.goto('/');
-  for (const selector of ['#demoBtn', '#pasteBtn', '#searchBtn', '#intelligenceBtn', '#aiBridgeBtn', '#canvas']) {
+  for (const selector of ['#demoBtn', '#pasteBtn', '#searchBtn', '#intelligenceBtn', '#aiBridgeBtn', '#diagnosticsBtn', '#canvas']) {
     const locator = page.locator(selector);
     await expect(locator).toBeVisible();
     const name = await locator.getAttribute('aria-label') || await locator.textContent();
@@ -116,5 +132,6 @@ test('mobile viewport exposes touch navigation without horizontal overflow', asy
 
   await page.locator('#demoBtn').click();
   await expect.poll(async () => page.evaluate(() => window.ExoviaRuntime?.getMap?.()?.nodes?.length || 0)).toBeGreaterThan(0);
+  await expect(page.locator('#diagnosticsBtn')).toBeVisible();
   expect(failures).toEqual([]);
 });
