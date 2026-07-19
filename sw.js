@@ -1,4 +1,4 @@
-const CACHE = 'exovia-neurocanvas-v6-ai-bridge';
+const CACHE = 'exovia-neurocanvas-v7-intelligence';
 const ASSETS = [
   './',
   './index.html',
@@ -9,12 +9,14 @@ const ASSETS = [
   './src/mobile.css',
   './src/brain.css',
   './src/ai-bridge.css',
+  './src/intelligence.css',
   './src/core.js',
   './src/upgrade.js',
   './src/product.js',
   './src/mobile.js',
   './src/brain.js',
-  './src/ai-bridge.js'
+  './src/ai-bridge.js',
+  './src/intelligence.js'
 ];
 
 self.addEventListener('install', event => {
