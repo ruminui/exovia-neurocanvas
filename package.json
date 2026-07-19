@@ -1,0 +1,16 @@
+{
+  "name": "exovia-neurocanvas",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Offline-first visual knowledge explorer for OpenAI Build Week 2026",
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "validate": "node scripts/validate.mjs",
+    "serve": "python -m http.server 8080"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}
