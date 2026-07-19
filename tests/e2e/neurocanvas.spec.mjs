@@ -37,8 +37,9 @@ test('loads production shell and creates a persistent workspace', async ({ page 
   await expect.poll(async () => page.evaluate(() => window.ExoviaRuntime?.getMap?.()?.nodes?.length || 0)).toBeGreaterThan(0);
 
   await page.keyboard.press('Control+S');
-  const projectId = await expect.poll(async () => page.evaluate(() => localStorage.getItem('exovia:lastProjectId'))).not.toBeNull();
-  expect(projectId).not.toBeNull();
+  await expect.poll(async () => page.evaluate(() => localStorage.getItem('exovia:lastProjectId'))).not.toBeNull();
+  const projectId = await page.evaluate(() => localStorage.getItem('exovia:lastProjectId'));
+  expect(projectId).toBeTruthy();
   expect(failures).toEqual([]);
 });
 
@@ -106,8 +107,8 @@ test('runtime diagnostics verify modules assets storage and graph integrity', as
   expect(await page.locator('#diagnosticsResults .diagnosticRow').count()).toBeGreaterThanOrEqual(20);
   await expect(page.locator('#diagnosticsResults .diagnosticRow.fail')).toHaveCount(0);
   const report = await page.evaluate(() => window.ExoviaDiagnostics.run());
-  expect(report.status).toBe('PASS');
-  expect(report.failed).toBe(0);
+  expect(report.status, JSON.stringify(report, null, 2)).toBe('PASS');
+  expect(report.failed, JSON.stringify(report, null, 2)).toBe(0);
   expect(failures).toEqual([]);
 });
 
