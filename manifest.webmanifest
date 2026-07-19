@@ -1,0 +1,13 @@
+{
+  "name": "Exovia NeuroCanvas",
+  "short_name": "NeuroCanvas",
+  "description": "Navigate knowledge, evidence and agent activity as a living neural map.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#070707",
+  "theme_color": "#070707",
+  "orientation": "any",
+  "categories": ["productivity", "developer tools", "education"],
+  "lang": "en"
+}
