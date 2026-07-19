@@ -1,0 +1,25 @@
+# Runtime data and backups
+server/data/
+server/backups/
+server/*.log
+server/*.pid
+
+# Local environment and credentials
+.env
+.env.*
+!.env.example
+server/.env
+server/.env.*
+!server/.env.example
+
+# Node and editor artifacts
+node_modules/
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
