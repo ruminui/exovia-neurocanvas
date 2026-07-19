@@ -1,14 +1,16 @@
 {
   "name": "@exovia/neurocanvas-bridge",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "type": "module",
   "description": "Durable local MCP and hook backend for Exovia NeuroCanvas",
   "scripts": {
     "start": "node mcp-server.mjs",
-    "check": "node --check mcp-server.mjs && node --check lib/store.mjs && node --check lib/validate.mjs",
+    "check": "node --check mcp-server.mjs && node --check lib/store.mjs && node --check lib/validate.mjs && node --check backup.mjs && node --check restore-backup.mjs",
     "test": "node test.mjs",
-    "verify": "npm run check && npm test"
+    "verify": "npm run check && npm test",
+    "backup": "node backup.mjs",
+    "restore": "node restore-backup.mjs"
   },
   "engines": {
     "node": ">=20"
