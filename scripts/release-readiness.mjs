@@ -9,19 +9,16 @@ const exists = async file => { try { await fs.access(path.join(root, file)); ret
 const read = file => fs.readFile(path.join(root, file), 'utf8');
 
 const required = [
-  'README.md', 'SECURITY.md', 'CONTRIBUTING.md', 'LICENSE',
-  'LEEME_PRIMERO.txt', 'VALIDAR_EXOVIA.bat', 'docs/MANUAL_USUARIO.md',
-  'docs/GUEST_HELPER_GUIDE.md', 'docs/TESTER_CHECKLIST.md', 'docs/QA_EXECUTION_EVIDENCE.md',
-  'docs/CAPABILITY_VERIFICATION_MATRIX.md', 'docs/ENTERPRISE_READINESS.md',
-  'docs/FINAL_COMPLETION_AUDIT.md', 'docs/MASTER_GAP_AUDIT.md',
-  'docs/CODEX_COMPLETION_LOOP_MEGAPROMPT.md', 'docs/OPERATIONS_RUNBOOK.md',
+  'README.md', 'SECURITY.md', 'CONTRIBUTING.md', 'LICENSE', 'LEEME_PRIMERO.txt', 'VALIDAR_EXOVIA.bat',
+  'docs/MANUAL_USUARIO.md', 'docs/GUEST_HELPER_GUIDE.md', 'docs/TESTER_CHECKLIST.md', 'docs/QA_EXECUTION_EVIDENCE.md',
+  'docs/CAPABILITY_VERIFICATION_MATRIX.md', 'docs/ENTERPRISE_READINESS.md', 'docs/FINAL_COMPLETION_AUDIT.md',
+  'docs/MASTER_GAP_AUDIT.md', 'docs/CODEX_COMPLETION_LOOP_MEGAPROMPT.md', 'docs/OPERATIONS_RUNBOOK.md',
   'docs/FIRST_PLACE_FINISHER.md', 'docs/LIVE_COLLABORATION_ARCHITECTURE.md',
-  'schemas/live-evidence-room.schema.json', 'index.html', 'manifest.webmanifest', 'sw.js',
-  'src/core.js', 'src/product.js', 'src/intelligence.js', 'src/diagnostics.js',
-  'src/ai-bridge.js', 'server/mcp-server.mjs', 'server/package.json', 'server/test.mjs',
-  'tests/e2e/neurocanvas.spec.mjs', 'tests/e2e/project-lifecycle.spec.mjs',
-  'tests/e2e/import-export.spec.mjs', 'tests/e2e/accessibility.spec.mjs',
-  '.github/workflows/verify.yml'
+  'schemas/live-evidence-room.schema.json', 'examples/live-evidence-room.json', 'index.html', 'manifest.webmanifest', 'sw.js',
+  'src/core.js', 'src/product.js', 'src/intelligence.js', 'src/diagnostics.js', 'src/ai-bridge.js', 'src/live-room.js', 'src/live-room.css',
+  'server/mcp-server.mjs', 'server/package.json', 'server/test.mjs',
+  'tests/e2e/neurocanvas.spec.mjs', 'tests/e2e/project-lifecycle.spec.mjs', 'tests/e2e/import-export.spec.mjs',
+  'tests/e2e/accessibility.spec.mjs', 'tests/e2e/live-room.spec.mjs', '.github/workflows/verify.yml'
 ];
 
 const missing = [];
@@ -42,7 +39,7 @@ add('bridge_version_alignment', runtimeVersion && runtimeVersion === serverPkg.v
 add('bridge_node_runtime', String(serverPkg.engines?.node || '').includes('>=24') ? 'PASS' : 'FAIL', `Bridge Node requirement: ${serverPkg.engines?.node || 'missing'}`, ['server/package.json']);
 
 const html = await read('index.html');
-const runtime = ['core.js', 'product.js', 'intelligence.js', 'diagnostics.js', 'ai-bridge.js'];
+const runtime = ['core.js', 'product.js', 'intelligence.js', 'diagnostics.js', 'ai-bridge.js', 'live-room.js'];
 const unwired = runtime.filter(file => !html.includes(`src/${file}`));
 add('critical_runtime_wiring', unwired.length ? 'FAIL' : 'PASS', unwired.length ? `Critical modules not wired: ${unwired.join(', ')}` : 'Critical runtime modules are wired.', unwired);
 
@@ -55,42 +52,34 @@ const capabilityEntries = ['function answer(', 'function health(', 'function con
 const capabilityCount = capabilityEntries.filter(marker => intelligence.includes(marker)).length;
 add('differentiated_capabilities', capabilityCount === capabilityEntries.length ? 'PASS' : 'FAIL', `${capabilityCount}/${capabilityEntries.length} differentiated intelligence entry points detected.`, ['src/intelligence.js']);
 
-const testFiles = ['tests/e2e/neurocanvas.spec.mjs', 'tests/e2e/project-lifecycle.spec.mjs', 'tests/e2e/import-export.spec.mjs', 'tests/e2e/accessibility.spec.mjs'];
+const testFiles = ['tests/e2e/neurocanvas.spec.mjs', 'tests/e2e/project-lifecycle.spec.mjs', 'tests/e2e/import-export.spec.mjs', 'tests/e2e/accessibility.spec.mjs', 'tests/e2e/live-room.spec.mjs'];
 const allTests = (await Promise.all(testFiles.map(read))).join('\n').toLowerCase();
 const journeys = [
-  'persistent workspace', 'restores the last saved project', 'answer, health and replay',
-  'system check', 'mobile viewport', 'real pasted text', 'malformed project maps',
-  'exil rejects', 'creates edits deletes', 'recovery snapshot', 'duplicates a project',
-  'removes its snapshots', 'imports txt', 'imports valid neurocanvas json',
-  'imports exial', 're-imports it without graph loss', 'reachable by keyboard',
-  'traps tab focus', 'reduced-motion preference'
+  'persistent workspace', 'restores the last saved project', 'answer, health and replay', 'system check', 'mobile viewport',
+  'real pasted text', 'malformed project maps', 'exil rejects', 'creates edits deletes', 'recovery snapshot', 'duplicates a project',
+  'removes its snapshots', 'imports txt', 'imports valid neurocanvas json', 'imports exial', 're-imports it without graph loss',
+  'reachable by keyboard', 'traps tab focus', 'reduced-motion preference', 'opens the governed live room', 'projects a live room'
 ];
 const covered = journeys.filter(marker => allTests.includes(marker));
-add('browser_journey_coverage', covered.length >= 18 ? 'PASS' : 'WARN', `${covered.length}/${journeys.length} essential browser journeys have named coverage.`, testFiles);
+add('browser_journey_coverage', covered.length >= 20 ? 'PASS' : 'WARN', `${covered.length}/${journeys.length} essential browser journeys have named coverage.`, testFiles);
 
 const styles = await read('src/styles.css');
-const accessibilityControls = [
-  html.includes('tabindex="0" aria-label="Interactive knowledge graph"'),
-  html.includes('aria-labelledby="pasteDialogTitle"'),
-  styles.includes(':focus-visible'),
-  styles.includes('prefers-reduced-motion:reduce')
-];
+const accessibilityControls = [html.includes('tabindex="0" aria-label="Interactive knowledge graph"'), html.includes('aria-labelledby="pasteDialogTitle"'), styles.includes(':focus-visible'), styles.includes('prefers-reduced-motion:reduce')];
 add('accessibility_baseline', accessibilityControls.every(Boolean) ? 'PASS' : 'WARN', `${accessibilityControls.filter(Boolean).length}/4 keyboard and motion controls detected.`, ['index.html', 'src/styles.css', 'tests/e2e/accessibility.spec.mjs']);
 
 const serviceWorker = await read('sw.js');
-const offlineControls = [serviceWorker.includes("request.mode === 'navigate'"), serviceWorker.includes('url.origin !== self.location.origin'), serviceWorker.includes("response.type === 'basic'"), serviceWorker.includes('Offline asset unavailable')];
-add('offline_cache_hardening', offlineControls.every(Boolean) ? 'PASS' : 'WARN', `${offlineControls.filter(Boolean).length}/4 offline cache controls detected.`, ['sw.js']);
+const offlineControls = [serviceWorker.includes("request.mode === 'navigate'"), serviceWorker.includes('url.origin !== self.location.origin'), serviceWorker.includes("response.type === 'basic'"), serviceWorker.includes('Offline asset unavailable'), serviceWorker.includes('examples/live-evidence-room.json')];
+add('offline_cache_hardening', offlineControls.every(Boolean) ? 'PASS' : 'WARN', `${offlineControls.filter(Boolean).length}/5 offline cache controls detected.`, ['sw.js']);
 
 const liveArchitecture = await read('docs/LIVE_COLLABORATION_ARCHITECTURE.md');
 const liveSchema = JSON.parse(await read('schemas/live-evidence-room.schema.json'));
+const liveRuntime = await read('src/live-room.js');
 const liveControls = [
-  liveArchitecture.includes('Living Evidence Rooms'),
-  liveArchitecture.includes('Human Takeover protocol'),
-  liveArchitecture.includes('Claims policy'),
-  liveSchema?.properties?.participants && liveSchema?.properties?.evidenceAssets,
-  liveSchema?.$defs?.executionContract && liveSchema?.$defs?.event
+  liveArchitecture.includes('Living Evidence Rooms'), liveArchitecture.includes('Human Takeover protocol'), liveArchitecture.includes('Claims policy'),
+  liveSchema?.properties?.participants && liveSchema?.properties?.evidenceAssets, liveSchema?.$defs?.executionContract && liveSchema?.$defs?.event,
+  liveRuntime.includes('function validateRoom('), liveRuntime.includes('function projectRoom('), liveRuntime.includes('window.ExoviaLiveRoom')
 ];
-add('live_room_architecture', liveControls.every(Boolean) ? 'PASS' : 'WARN', `${liveControls.filter(Boolean).length}/5 governed collaboration architecture controls detected.`, ['docs/LIVE_COLLABORATION_ARCHITECTURE.md', 'schemas/live-evidence-room.schema.json']);
+add('live_room_vertical_slice', liveControls.every(Boolean) ? 'PASS' : 'WARN', `${liveControls.filter(Boolean).length}/8 governed collaboration vertical-slice controls detected.`, ['docs/LIVE_COLLABORATION_ARCHITECTURE.md', 'schemas/live-evidence-room.schema.json', 'src/live-room.js', 'tests/e2e/live-room.spec.mjs']);
 
 const matrix = await read('docs/CAPABILITY_VERIFICATION_MATRIX.md');
 const blocked = [...matrix.matchAll(/\bBLOCKED\b/g)].length;
@@ -100,23 +89,13 @@ add('honest_capability_status', matrix.includes('RUNTIME VERIFIED') && matrix.in
 const masterAudit = await read('docs/MASTER_GAP_AUDIT.md');
 add('master_gap_audit', masterAudit.includes('Definition of Done') && masterAudit.includes('P0 submission blockers') ? 'PASS' : 'WARN', 'Canonical completion audit is present.', ['docs/MASTER_GAP_AUDIT.md']);
 
-const humanEvidence = {
-  externalSystemCheck: process.env.EXOVIA_EXTERNAL_SYSTEM_CHECK === 'PASS',
-  publicDeployment: process.env.EXOVIA_PUBLIC_DEPLOYMENT === 'PASS',
-  finalVideo: process.env.EXOVIA_FINAL_VIDEO === 'PASS',
-  codexFeedbackId: Boolean(process.env.EXOVIA_CODEX_FEEDBACK_ID)
-};
+const humanEvidence = { externalSystemCheck: process.env.EXOVIA_EXTERNAL_SYSTEM_CHECK === 'PASS', publicDeployment: process.env.EXOVIA_PUBLIC_DEPLOYMENT === 'PASS', finalVideo: process.env.EXOVIA_FINAL_VIDEO === 'PASS', codexFeedbackId: Boolean(process.env.EXOVIA_CODEX_FEEDBACK_ID) };
 for (const [key, value] of Object.entries(humanEvidence)) add(`human_${key}`, value ? 'PASS' : 'BLOCKED', value ? 'Evidence declared by release operator.' : 'Human or external evidence has not been supplied.');
 
 const failed = checks.filter(check => check.status === 'FAIL');
 const blockedChecks = checks.filter(check => check.status === 'BLOCKED');
 const warnings = checks.filter(check => check.status === 'WARN');
-const report = {
-  generatedAt: new Date().toISOString(), project: pkg.name, version: pkg.version,
-  verdict: failed.length ? 'FAIL' : blockedChecks.length ? 'TECHNICALLY_READY_HUMAN_GATES_BLOCKED' : warnings.length ? 'READY_WITH_WARNINGS' : 'READY',
-  summary: { pass: checks.filter(c => c.status === 'PASS').length, warn: warnings.length, fail: failed.length, blocked: blockedChecks.length }, checks
-};
-
+const report = { generatedAt: new Date().toISOString(), project: pkg.name, version: pkg.version, verdict: failed.length ? 'FAIL' : blockedChecks.length ? 'TECHNICALLY_READY_HUMAN_GATES_BLOCKED' : warnings.length ? 'READY_WITH_WARNINGS' : 'READY', summary: { pass: checks.filter(c => c.status === 'PASS').length, warn: warnings.length, fail: failed.length, blocked: blockedChecks.length }, checks };
 await fs.mkdir(path.join(root, 'artifacts'), { recursive: true });
 await fs.writeFile(path.join(root, 'artifacts', 'release-readiness.json'), `${JSON.stringify(report, null, 2)}\n`, 'utf8');
 console.log(JSON.stringify(report, null, 2));
