@@ -17,6 +17,21 @@ Exovia NeuroCanvas is an offline-first visual knowledge explorer created by **Lu
 - Built-in demo corpus
 - Black and gold Exovia interface
 
+## Expanded Exovia vision
+
+NeuroCanvas is being extended with concepts recovered from prior Exovia research:
+
+- **FAPI** as an optional capability, routing, health, streaming and budget layer;
+- **ExiaL** as a compact pulse language for observable agent and graph activity;
+- **EXIR** as a canonical validation layer between messages and graph mutations;
+- **Exil** as an experimental zero-token intent language with preview, policy checks and explicit approval before execution.
+
+The goal is a visual system where **memory, communication, intent and execution share one inspectable graph**.
+
+> Knowledge should be navigated. Agent activity should be visible. Execution should be explainable.
+
+The recovered architecture, evidence level, safety model and realistic implementation roadmap are documented in [`docs/FAPI_EXIAL_EXIL_INTEGRATION.md`](docs/FAPI_EXIAL_EXIL_INTEGRATION.md).
+
 ## Run locally
 
 No installation is required.
@@ -45,6 +60,18 @@ Canvas renderer with level of detail
 Search, focus, source inspection and export
 ```
 
+Future event and execution architecture:
+
+```text
+ExiaL pulses / Exil intent / documents / logs
+      ↓
+EXIR-style canonical validation
+      ↓
+NeuroCanvas visual memory and audit graph
+      ↓
+Optional FAPI capability routing
+```
+
 The visualization is not the memory. It is the doorway into a structured, verifiable memory.
 
 ## Optional OpenAI integration
@@ -61,6 +88,7 @@ Never expose an API key in client-side code. Use a server-side environment varia
 - `data/demo.json` — bundled demonstration corpus
 - `docs/PRODUCT.md` — product framing
 - `docs/ARCHITECTURE.md` — technical architecture
+- `docs/FAPI_EXIAL_EXIL_INTEGRATION.md` — expanded Exovia protocol and execution vision
 - `docs/DEMO_SCRIPT.md` — three-minute demo script
 - `docs/SUBMISSION.md` — public submission copy
 
