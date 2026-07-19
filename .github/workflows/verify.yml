@@ -30,7 +30,7 @@ jobs:
         run: npm run verify
 
   frontend-static:
-    name: Frontend static checks
+    name: Frontend integration checks
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -44,24 +44,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for file in src/*.js; do
+          for file in src/*.js scripts/*.mjs sw.js; do
             echo "Checking $file"
             node --check "$file"
           done
-      - name: Validate required production assets
-        shell: bash
-        run: |
-          set -euo pipefail
-          test -f index.html
-          test -f manifest.webmanifest
-          test -f sw.js
-          test -f src/core.js
-          test -f src/product.js
-          test -f src/mobile.js
-          test -f src/brain.js
-          test -f src/ai-bridge.js
-          grep -q 'src/core.js' index.html
-          grep -q 'src/product.js' index.html
-          grep -q 'src/mobile.js' index.html
-          grep -q 'src/brain.js' index.html
-          grep -q 'src/ai-bridge.js' index.html
+      - name: Verify frontend integration
+        run: node scripts/verify-frontend.mjs
