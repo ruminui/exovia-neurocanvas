@@ -1,9 +1,10 @@
-const CACHE = 'exovia-neurocanvas-v9-offline-hardening';
+const CACHE = 'exovia-neurocanvas-v10-live-room';
 const APP_SHELL = './index.html';
 const ASSETS = [
   './',
   APP_SHELL,
   './manifest.webmanifest',
+  './examples/live-evidence-room.json',
   './src/styles.css',
   './src/upgrade.css',
   './src/product.css',
@@ -12,6 +13,7 @@ const ASSETS = [
   './src/ai-bridge.css',
   './src/intelligence.css',
   './src/diagnostics.css',
+  './src/live-room.css',
   './src/core.js',
   './src/upgrade.js',
   './src/product.js',
@@ -19,7 +21,8 @@ const ASSETS = [
   './src/brain.js',
   './src/ai-bridge.js',
   './src/intelligence.js',
-  './src/diagnostics.js'
+  './src/diagnostics.js',
+  './src/live-room.js'
 ];
 
 self.addEventListener('install', event => {
