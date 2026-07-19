@@ -84,7 +84,10 @@ test('duplicates a project as an independent copy', async ({ page }) => {
 test('deleting a project removes its snapshots and local project record', async ({ page }) => {
   await createWorkspace(page);
   await page.locator('#snapshotBtn').click();
-  const projectId = await expect.poll(async () => page.evaluate(() => localStorage.getItem('exovia:lastProjectId'))).toBeTruthy();
+  await expect.poll(async () => page.evaluate(() => localStorage.getItem('exovia:lastProjectId'))).toBeTruthy();
+  const projectId = await page.evaluate(() => localStorage.getItem('exovia:lastProjectId'));
+  expect(projectId).toBeTruthy();
+
   await page.locator('#workspaceBtn').click();
   await expect(page.locator('.projectRow')).toHaveCount(1);
   await expect(page.locator('.snapshotRow')).toHaveCount(1);
