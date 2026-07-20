@@ -1,84 +1,109 @@
-# Plan de ayuda para Marce y Gastón
+# Plan final de ayuda para Marce y Gastón
 
-Este documento explica exactamente dónde necesitamos ayuda externa y cómo colaborar sin tocar partes sensibles del proyecto.
+## Estado actual
 
-## Objetivo
+La imagen principal ya está preparada. La prioridad restante es:
 
-Transformar Exovia NeuroCanvas de un release candidate avanzado en una entrega demostrablemente terminada.
+1. producir un video claro de menos de tres minutos;
+2. confirmar que la aplicación funciona desde una descarga limpia;
+3. conservar evidencia de cualquier error antes de entregar.
 
-La prioridad no es agregar funciones al azar. La prioridad es conseguir evidencia real de que la aplicación:
+## La explicación que ambos deben entender
 
-- abre en otra computadora;
-- funciona para una persona que no la desarrolló;
-- conserva proyectos;
-- importa y exporta correctamente;
-- funciona en celular;
-- comunica su valor en menos de tres minutos;
-- no muestra errores, secretos ni funciones falsas.
+> Exovia NeuroCanvas convierte documentos, notas y actividad de IA dispersa en un espacio visual donde cada respuesta y decisión puede verificarse contra evidencia exacta.
 
-## Roles sugeridos
+### Problema real
 
-### Marce — experiencia, demo y comunicación
+Las personas y equipos usan documentos, notas y respuestas de IA, pero después cuesta saber:
 
-Marce puede concentrarse en:
+- de dónde salió una respuesta;
+- qué evidencia la sostiene;
+- si la información está incompleta o se contradice;
+- qué hizo una persona, workflow o agente;
+- por qué se tomó una decisión.
 
-- probar la aplicación como usuario nuevo;
-- señalar pasos confusos;
-- cronometrar la demostración;
-- grabar o ayudar a editar el video;
-- revisar pronunciación, subtítulos y textos en inglés;
-- elegir las capturas más claras;
-- comprobar que el mensaje se entiende en menos de 30 segundos.
+### Resultado para el usuario
 
-### Gastón — prueba técnica externa y evidencia
+El usuario importa información, hace una pregunta, navega a la respuesta, inspecciona la fuente, revisa la calidad del conocimiento y reproduce cómo se llegó a la decisión.
 
-Gastón puede concentrarse en:
+### Diferencia frente a un chat común
 
-- descargar un ZIP limpio;
-- instalar o confirmar Node.js 24 LTS;
-- ejecutar el iniciador de Windows;
-- ejecutar `VALIDAR_EXOVIA.bat`;
-- probar persistencia, importación, exportación y offline;
-- registrar mensajes de consola;
-- enviar capturas, videos y pasos exactos de cada error.
+Un chat entrega respuestas. NeuroCanvas conserva un proyecto visual persistente con evidencia, relaciones, actores, acciones, calidad y decisiones.
 
-Los roles pueden intercambiarse. Lo importante es que una persona haga la prueba de usuario y otra conserve evidencia técnica.
+## Marce — prioridad absoluta: video
 
-## Tarea 1 — prueba limpia en otra computadora
+Leer primero:
 
-1. Descargar el repositorio como ZIP.
-2. Extraerlo completamente en una carpeta nueva.
-3. Confirmar Node.js 24 o superior:
+- [`VIDEO_SCRIPT_MARCE.md`](VIDEO_SCRIPT_MARCE.md)
+
+Marce no necesita improvisar ni describir todas las funcionalidades. Debe mostrar un solo caso de uso completo:
 
 ```text
-node --version
+Información dispersa
+→ mapa visual
+→ pregunta
+→ respuesta
+→ evidencia exacta
+→ calidad del conocimiento
+→ replay humano/IA
+→ Living Evidence Room
 ```
 
-4. Ejecutar:
+### Pregunta preparada
 
 ```text
-INICIAR_EXOVIA.bat
+How does NeuroCanvas keep AI answers connected to evidence?
 ```
 
-5. Registrar:
+Debe probarse antes de grabar.
 
-- si el navegador se abrió solo;
-- cuánto tardó;
-- dirección mostrada;
-- cualquier mensaje de la ventana negra;
-- cualquier error visual.
+### Qué mostrar
 
-6. Crear `New workspace`.
-7. Abrir `System check`.
-8. Guardar una captura completa del resultado.
+1. Mapa principal.
+2. Un nodo seleccionado y Evidence Inspector.
+3. Answer & Audit.
+4. Navigate to Answer.
+5. Knowledge Health.
+6. Contradiction Radar durante pocos segundos.
+7. Agent Replay.
+8. Live room.
+9. Project room into graph.
+10. Cierre con el mapa proyectado.
 
-Resultado esperado:
+### Qué no mostrar ni explicar
 
-```text
-La aplicación abre sin ayuda manual y System Check no muestra fallos.
-```
+- instalación de Neko o n8n;
+- CRDT, WebRTC o JSON Schema;
+- Node.js o service workers;
+- todos los botones;
+- funciones futuras como si estuvieran operativas;
+- errores, notificaciones, archivos privados o tokens.
 
-## Tarea 2 — validación completa
+### Criterio de aprobación del video
+
+Una persona que nunca vio NeuroCanvas debe poder responder:
+
+1. ¿Qué problema resuelve?
+2. ¿Quién lo usaría?
+3. ¿Qué hace el usuario?
+4. ¿Qué resultado obtiene?
+5. ¿Por qué es diferente de un chat común?
+
+Duración máxima: **2:45 recomendada; nunca superar 3:00**.
+
+## Gastón — prioridad: prueba externa
+
+### Inicio limpio
+
+1. Descargar un ZIP nuevo.
+2. Extraerlo completamente.
+3. Confirmar Node.js 24 LTS o superior.
+4. Ejecutar `INICIAR_EXOVIA.bat`.
+5. Crear `New workspace`.
+6. Ejecutar `System check`.
+7. Guardar captura completa.
+
+### Validación completa
 
 Ejecutar:
 
@@ -86,203 +111,48 @@ Ejecutar:
 VALIDAR_EXOVIA.bat
 ```
 
-No cerrar la ventana hasta que termine.
+Conservar:
 
-Guardar:
-
-- captura del resultado final;
-- texto del primer error, cuando falle;
 - carpeta `artifacts`;
-- carpeta `playwright-report`, cuando exista;
-- versión de Windows;
-- versión de Node;
-- commit o fecha del ZIP probado.
+- captura del resultado final;
+- primer error completo cuando falle;
+- versión de Windows y Node;
+- fecha o commit probado.
 
-No es necesario interpretar el error. Es más útil conservarlo completo.
+### Recorrido mínimo
 
-## Tarea 3 — recorrido principal
-
-Comprobar uno por uno:
-
-- `New workspace`;
-- mover y ampliar el mapa;
-- seleccionar un nodo;
-- leer Evidence Inspector;
-- abrir Answer & Audit;
-- hacer una pregunta;
-- usar Navigate to Answer;
-- abrir Knowledge Health;
-- abrir Contradiction Radar;
-- abrir Agent Replay;
-- abrir Live room;
-- usar `Project room into graph`;
-- exportar el proyecto;
-- recargar la página;
-- confirmar que el proyecto continúa disponible.
-
-Registrar cualquier botón que:
-
-- no haga nada;
-- tarde demasiado;
-- muestre texto cortado;
-- cierre una ventana inesperadamente;
-- resulte difícil de entender.
-
-## Tarea 4 — Live room
-
-La nueva demostración debe mostrar:
-
-- tres participantes;
-- evidencias multimedia;
-- una decisión;
-- una ejecución;
-- una línea temporal;
-- el aviso que aclara que el multiusuario real todavía no está desplegado.
-
-Después pulsar:
-
-```text
-Project room into graph
-```
-
-Confirmar que aparecen nodos de:
-
-- sala;
-- persona;
-- agente;
-- workflow;
-- video;
-- decisión;
-- ejecución.
-
-Confirmar también que se pueden seleccionar y buscar.
-
-## Tarea 5 — importación y exportación
-
-Probar con archivos sin datos privados:
-
-- TXT;
-- Markdown;
-- JSON exportado por NeuroCanvas;
-- texto en español con ñ y tildes;
-- archivo log o ExiaL de ejemplo.
-
-Después:
-
-1. exportar el proyecto;
-2. abrir el JSON exportado;
-3. comprobar que nodos y conexiones siguen presentes;
-4. informar cualquier pérdida de texto o evidencia.
-
-## Tarea 6 — persistencia
-
-1. Crear un proyecto.
-2. Guardarlo.
-3. Recargar la página.
-4. Cerrar completamente el navegador.
-5. Abrir nuevamente la aplicación.
-6. Confirmar que el proyecto sigue disponible.
-7. Duplicar el proyecto.
-8. Modificar solo la copia.
-9. Confirmar que el original no cambió.
-10. Crear y restaurar un snapshot.
-
-## Tarea 7 — prueba móvil
-
-Abrir la versión pública o una URL local accesible desde el celular.
-
-Comprobar:
-
-- botones táctiles;
-- ancho de pantalla;
-- paneles cortados;
-- desplazamiento;
-- canvas;
-- diálogos;
-- Live room;
-- orientación vertical y horizontal.
-
-Grabar un video corto cuando algo no funcione.
-
-## Tarea 8 — prueba offline
-
-Después de una primera carga completa:
-
-1. abrir la aplicación;
-2. abrir `Live room` al menos una vez;
-3. activar modo avión o desconectar la red;
-4. recargar;
-5. abrir New workspace;
-6. abrir Live room nuevamente.
-
-Resultado esperado: los recursos ya almacenados continúan funcionando.
-
-## Tarea 9 — evaluación de la demo
-
-Cronometrar este recorrido:
-
-```text
-Problema
-→ New workspace
-→ evidencia
-→ Answer & Audit
-→ Navigate to Answer
-→ Knowledge Health
-→ Agent Replay
-→ Live room
-→ Project room into graph
-→ cierre
-```
-
-Objetivo: menos de tres minutos sin correr ni ocultar errores.
-
-Responder:
-
-- ¿Se entiende el problema en 15 segundos?
-- ¿Se entiende la diferencia frente a un chat común?
-- ¿La función más impresionante aparece antes del minuto 1:30?
-- ¿Live room suma valor o distrae?
-- ¿Qué parte eliminarían del video?
-
-## Qué capturas necesitamos
-
-- portada del mapa principal;
-- evidencia seleccionada;
-- Answer & Audit con citas;
+- New workspace;
+- seleccionar evidencia;
+- Answer & Audit;
+- Navigate to Answer;
 - Knowledge Health;
-- Contradiction Radar;
 - Agent Replay;
 - Live room;
-- Live room proyectada al grafo;
-- System Check PASS;
-- vista móvil.
+- Project room into graph;
+- Export;
+- recargar y confirmar persistencia.
 
-Formato recomendado:
+### Pruebas adicionales prioritarias
 
-- sin ventanas privadas;
-- sin notificaciones personales;
-- sin correo visible;
-- sin tokens;
-- resolución alta;
-- cursor fuera del texto importante.
+- cerrar por completo y volver a abrir el navegador;
+- exportar y reimportar JSON;
+- probar TXT y Markdown;
+- abrir una vez online, desconectar la red y recargar;
+- probar la interfaz desde celular;
+- registrar botones sin respuesta, texto cortado o demoras.
 
-## Cómo reportar un error
+## Formato de errores
 
 ```text
-TESTER: Marce / Gastón
+TESTER:
 FECHA:
 COMMIT O FECHA DEL ZIP:
 DISPOSITIVO:
 SISTEMA OPERATIVO:
 NODE:
 NAVEGADOR:
-
 FUNCIÓN:
 PASOS:
-1.
-2.
-3.
-
 RESULTADO ESPERADO:
 RESULTADO REAL:
 SE REPITE: Sí / No
@@ -292,52 +162,23 @@ CAPTURA O VIDEO:
 GRAVEDAD: bloqueante / importante / menor / sugerencia
 ```
 
-## Qué no deben hacer
-
-- no usar documentos personales;
-- no compartir claves o tokens;
-- no corregir directamente `main`;
-- no borrar archivos;
-- no instalar integraciones como Neko o n8n en el equipo principal sin coordinación;
-- no afirmar que GPT-5.6, multiusuario, Neko o n8n están funcionando cuando solo existe la arquitectura;
-- no grabar un error y ocultarlo en el video final.
-
-## Entrega de evidencia
-
-Crear una carpeta:
+## Carpeta de entrega
 
 ```text
-QA_MARCE_GASTON_YYYY-MM-DD
+QA_MARCE_GASTON_YYYY-MM-DD/
+├── VIDEO_FINAL/
+├── SYSTEM_CHECK/
+├── VALIDACION/
+├── ERRORES/
+├── MOVIL/
+├── OFFLINE/
+└── REPORTE.txt
 ```
 
-Contenido sugerido:
+## Regla final
 
-```text
-01_INICIO
-02_SYSTEM_CHECK
-03_VALIDACION
-04_RECORRIDO
-05_LIVE_ROOM
-06_IMPORT_EXPORT
-07_PERSISTENCIA
-08_MOVIL
-09_OFFLINE
-10_VIDEO_DEMO
-REPORTE.txt
-```
+No necesitamos que Marce memorice la arquitectura ni que Gastón interprete los errores. Necesitamos:
 
-## Criterio de éxito
-
-La ayuda está completa cuando recibimos:
-
-- una prueba limpia en otra computadora;
-- resultado de `VALIDAR_EXOVIA.bat`;
-- System Check;
-- recorrido principal completo;
-- prueba móvil;
-- prueba offline;
-- errores reproducibles;
-- capturas finales;
-- evaluación del video de menos de tres minutos.
-
-No hace falta que todo pase a la primera. Encontrar y documentar un error antes de la entrega es una contribución valiosa.
+- que Marce comunique una historia simple y creíble;
+- que Gastón conserve evidencia técnica completa;
+- que ninguna afirmación del video sea mayor que lo demostrado en pantalla.
