@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=5" />
-  <meta name="description" content="Exovia NeuroCanvas — persistent visual knowledge and agent observability workspace." />
+  <meta name="description" content="Exovia NeuroCanvas turns scattered information and AI activity into a visual, evidence-linked workspace where every answer and decision can be verified and replayed." />
   <meta name="theme-color" content="#070707" />
   <meta name="color-scheme" content="dark" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="NeuroCanvas" />
-  <title>Exovia NeuroCanvas</title>
+  <title>Exovia NeuroCanvas — Verify every answer</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="stylesheet" href="src/styles.css" />
   <link rel="stylesheet" href="src/upgrade.css" />
@@ -21,6 +21,7 @@
   <link rel="stylesheet" href="src/intelligence.css" />
   <link rel="stylesheet" href="src/diagnostics.css" />
   <link rel="stylesheet" href="src/live-room.css" />
+  <link rel="stylesheet" href="src/clarity.css" />
 </head>
 <body>
   <header class="topbar">
@@ -49,11 +50,16 @@
     </section>
     <section class="canvasWrap">
       <canvas id="canvas" tabindex="0" aria-label="Interactive knowledge graph"></canvas>
-      <div class="canvasBadge">LOCAL-FIRST · PERSISTENT · EDITABLE · EVIDENCE-PRESERVING</div>
-      <div id="emptyState" class="emptyState"><div class="heroMark" aria-hidden="true">∞</div><h1>Your knowledge is a workspace,<br/>not a disposable demo.</h1><p>Create, edit, save and restore visual knowledge projects, exact evidence, compact agent pulses and capability routes.</p><div class="emptyActions"><button id="emptyDemoBtn">Create workspace</button><button id="emptyPulseBtn">Create pulse map</button></div></div>
+      <div class="canvasBadge">ASK · VERIFY · TRACE · REPLAY</div>
+      <div id="emptyState" class="emptyState">
+        <div class="heroMark" aria-hidden="true">∞</div>
+        <h1>Turn scattered information into<br/>answers you can prove.</h1>
+        <p>NeuroCanvas converts documents, notes and AI activity into a visual workspace. Ask a question, navigate to the strongest answer, inspect the exact evidence and replay how the decision was produced.</p>
+        <div class="emptyActions"><button id="emptyDemoBtn">See the core use case</button><button id="emptyPulseBtn">See agent activity</button></div>
+      </div>
       <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
     </section>
-    <aside class="rightPanel panel" aria-label="Evidence inspector"><div class="panelTitle">Evidence inspector</div><div id="details" class="details empty">Select a node to inspect, edit and preserve its exact evidence, semantic path, trace and execution status.</div></aside>
+    <aside class="rightPanel panel" aria-label="Evidence inspector"><div class="panelTitle">Evidence inspector</div><div id="details" class="details empty">Select a node to see the exact source behind an answer or decision.</div></aside>
   </main>
   <dialog id="pasteDialog" aria-labelledby="pasteDialogTitle"><form method="dialog"><h2 id="pasteDialogTitle">Create or import a project</h2><label for="docTitle">Project title</label><input id="docTitle" placeholder="Project title" value="Untitled NeuroCanvas project" /><label for="textInput">Source text or ExiaL pulses</label><textarea id="textInput" placeholder="Paste long-form text, notes, documentation, a conversation, or ExiaL pulses…"></textarea><div class="dialogActions"><button value="cancel">Cancel</button><button id="buildBtn" value="default">Build project</button></div></form></dialog>
   <dialog id="intentDialog" aria-labelledby="intentDialogTitle"><form method="dialog"><h2 id="intentDialogTitle">Exil safe intent preview</h2><p class="dialogHelp">This declarative subset performs visible graph operations only.</p><label for="intentInput">Declarative intent</label><textarea id="intentInput">MAP current
@@ -61,7 +67,7 @@ FIND topic:"evidence"
 FOCUS top:5
 LINK threshold:0.20
 EXPLAIN evidence:true</textarea><pre id="intentPreview" class="intentPreview" aria-live="polite">Preview the intent to validate it.</pre><div class="dialogActions"><button value="cancel">Cancel</button><button type="button" id="previewIntentBtn">Validate preview</button><button type="button" id="applyIntentBtn" disabled>Apply visual focus</button></div></form></dialog>
-  <script src="src/core.js"></script><script src="src/upgrade.js"></script><script src="src/product.js"></script><script src="src/mobile.js"></script><script src="src/brain.js"></script><script src="src/ai-bridge.js"></script><script src="src/intelligence.js"></script><script src="src/diagnostics.js"></script><script src="src/live-room.js"></script>
+  <script src="src/core.js"></script><script src="src/upgrade.js"></script><script src="src/product.js"></script><script src="src/mobile.js"></script><script src="src/brain.js"></script><script src="src/ai-bridge.js"></script><script src="src/intelligence.js"></script><script src="src/diagnostics.js"></script><script src="src/live-room.js"></script><script src="src/clarity.js"></script>
   <script>if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('./sw.js').catch(() => {});</script>
 </body>
 </html>
