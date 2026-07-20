@@ -13,7 +13,7 @@ test('opens the governed live room and renders all evidence layers', async ({ pa
   await expect(page.locator('.liveRoomNotice')).toContainText(/does not claim deployed real-time multiuser synchronization/i);
 });
 
-test('projects a live room into a traceable NeuroCanvas graph', async ({ page }) => {
+test('projects a live room into a traceable normalized NeuroCanvas graph', async ({ page }) => {
   await page.goto('/');
   await page.locator('#liveRoomBtn').click();
   await expect(page.locator('#liveRoomDialog')).toBeVisible();
@@ -24,35 +24,39 @@ test('projects a live room into a traceable NeuroCanvas graph', async ({ page })
     const map = window.ExoviaRuntime?.getMap?.();
     return {
       title: map?.title,
-      nodes: map?.nodes?.map(node => ({ id: node.id, type: node.type })),
-      edges: map?.edges?.map(edge => edge.relation),
+      kind: map?.kind,
+      nodes: map?.nodes?.map(node => ({ id: node.id, type: node.type, parent: node.parent, text: node.text, keywords: node.keywords })),
+      edges: map?.edges,
       audit: map?.audit
     };
   });
 
   expect(projected.title).toMatch(/Live Evidence Projection/i);
-  expect(projected.nodes.some(node => node.type === 'room')).toBe(true);
-  expect(projected.nodes.some(node => node.type === 'decision')).toBe(true);
-  expect(projected.nodes.some(node => node.type === 'evidence:video')).toBe(true);
-  expect(projected.nodes.some(node => node.type === 'execution:agent')).toBe(true);
-  expect(projected.edges).toContain('supports');
-  expect(projected.edges).toContain('approved');
+  expect(projected.kind).toBe('memory');
+  expect(projected.nodes.some(node => node.type === 'corpus' && node.parent === null)).toBe(true);
+  expect(projected.nodes.some(node => node.type === 'topic')).toBe(true);
+  expect(projected.nodes.some(node => node.type === 'chunk')).toBe(true);
+  expect(projected.nodes.some(node => node.type === 'event')).toBe(true);
+  expect(projected.nodes.every(node => typeof node.text === 'string' && Array.isArray(node.keywords))).toBe(true);
+  expect(projected.edges.every(edge => edge.a && edge.b && edge.type)).toBe(true);
+  expect(projected.edges.map(edge => edge.type)).toContain('supports');
+  expect(projected.edges.map(edge => edge.type)).toContain('approved');
   expect(projected.audit.some(item => item.action === 'LIVE_ROOM_PROJECTED')).toBe(true);
 });
 
-test('live room public API rejects duplicate identities', async ({ page }) => {
+test('live room validation rejects duplicate identities and broken references', async ({ page }) => {
   await page.goto('/');
-  const error = await page.evaluate(() => {
-    try {
-      window.ExoviaLiveRoom.validateRoom({
-        format: 'exovia-live-room-v1', roomId: 'duplicate-id', title: 'Invalid room', revision: 0,
-        participants: [{ id: 'duplicate-id', kind: 'human', displayName: 'Duplicate', role: 'observer', capabilities: [] }],
-        evidenceAssets: [], decisions: [], executions: [], events: []
-      });
-      return null;
-    } catch (failure) {
-      return failure.message;
-    }
+  const errors = await page.evaluate(() => {
+    const capture = room => {
+      try { window.ExoviaLiveRoom.validateRoom(room); return null; }
+      catch (failure) { return failure.message; }
+    };
+    const base = { format: 'exovia-live-room-v1', roomId: 'room', title: 'Room', revision: 0, participants: [], evidenceAssets: [], decisions: [], executions: [], events: [] };
+    return {
+      duplicate: capture({ ...base, participants: [{ id: 'room', kind: 'human', displayName: 'Duplicate', role: 'observer', capabilities: [] }] }),
+      actor: capture({ ...base, executions: [{ id: 'execution-1', actorId: 'missing-actor', kind: 'agent', status: 'queued', inputRevision: 0, contract: { objective: 'Test', inputs: [], allowedTools: [], constraints: [], expectedOutputs: [], successCriteria: ['Safe'], approvalPolicy: 'none' } }] })
+    };
   });
-  expect(error).toMatch(/duplicate IDs/i);
+  expect(errors.duplicate).toMatch(/duplicate IDs/i);
+  expect(errors.actor).toMatch(/unknown execution actor/i);
 });
