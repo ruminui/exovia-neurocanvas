@@ -5,28 +5,32 @@ title Exovia NeuroCanvas - Validacion completa
 
 echo ==========================================================
 echo   EXOVIA NEUROCANVAS - VALIDACION COMPLETA
-
 echo ==========================================================
-
 echo.
+
 where node >nul 2>nul
 if errorlevel 1 (
-  echo [ERROR] Node.js 20 o superior no esta instalado.
+  echo [ERROR] Node.js 24 LTS o superior no esta instalado.
   echo Descargalo desde https://nodejs.org y volve a ejecutar este archivo.
   pause
   exit /b 1
 )
 
 for /f "tokens=1 delims=." %%V in ('node -p "process.versions.node"') do set NODE_MAJOR=%%V
-if %NODE_MAJOR% LSS 20 (
-  echo [ERROR] Se requiere Node.js 20 o superior.
+if %NODE_MAJOR% LSS 24 (
+  echo [ERROR] Se requiere Node.js 24 LTS o superior.
   node --version
   pause
   exit /b 1
 )
 
 echo [1/4] Instalando dependencias de prueba...
-call npm install --no-audit --no-fund
+if exist package-lock.json (
+  call npm ci --no-audit --no-fund
+) else (
+  echo [AVISO] package-lock.json no existe. Se usara npm install y el resultado no sera totalmente reproducible.
+  call npm install --no-audit --no-fund
+)
 if errorlevel 1 goto :failed
 
 echo [2/4] Instalando Chromium para Playwright...
@@ -47,7 +51,6 @@ if not "%BACKEND_RESULT%"=="0" goto :failed
 echo.
 echo ==========================================================
 echo   RESULTADO: TODAS LAS VALIDACIONES PASARON
-
 echo ==========================================================
 echo El informe de readiness esta en artifacts\release-readiness.json
 pause
@@ -57,7 +60,6 @@ exit /b 0
 echo.
 echo ==========================================================
 echo   RESULTADO: HAY VALIDACIONES FALLIDAS
-
 echo ==========================================================
 echo Copia o captura el error mostrado arriba y compartilo con el equipo.
 pause
