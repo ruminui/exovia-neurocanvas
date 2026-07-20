@@ -24,7 +24,15 @@ if %NODE_MAJOR% LSS 24 (
   exit /b 1
 )
 
-echo [1/4] Instalando dependencias de prueba...
+echo Node detectado:
+node --version
+echo.
+
+echo [1/5] Generando evidencia del entorno...
+call node scripts\collect-qa-evidence.mjs
+if errorlevel 1 goto :failed
+
+echo [2/5] Instalando dependencias de prueba...
 if exist package-lock.json (
   call npm ci --no-audit --no-fund
 ) else (
@@ -33,15 +41,15 @@ if exist package-lock.json (
 )
 if errorlevel 1 goto :failed
 
-echo [2/4] Instalando Chromium para Playwright...
+echo [3/5] Instalando Chromium para Playwright...
 call npx playwright install chromium
 if errorlevel 1 goto :failed
 
-echo [3/4] Ejecutando validacion completa...
+echo [4/5] Ejecutando validacion completa...
 call npm run verify
 if errorlevel 1 goto :failed
 
-echo [4/4] Validando backend local...
+echo [5/5] Validando backend local...
 pushd server
 call npm run verify
 set BACKEND_RESULT=%ERRORLEVEL%
@@ -52,7 +60,11 @@ echo.
 echo ==========================================================
 echo   RESULTADO: TODAS LAS VALIDACIONES PASARON
 echo ==========================================================
-echo El informe de readiness esta en artifacts\release-readiness.json
+echo Evidencia del entorno:
+echo   artifacts\qa-environment.json
+echo   artifacts\qa-environment.txt
+echo Informe de readiness:
+echo   artifacts\release-readiness.json
 pause
 exit /b 0
 
@@ -61,6 +73,7 @@ echo.
 echo ==========================================================
 echo   RESULTADO: HAY VALIDACIONES FALLIDAS
 echo ==========================================================
-echo Copia o captura el error mostrado arriba y compartilo con el equipo.
+echo Conserva los archivos de artifacts y copia o captura el primer error completo.
+echo Consulta docs\MARCE_GASTON_HELP_PLAN.md para preparar la entrega de evidencia.
 pause
 exit /b 1
