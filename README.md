@@ -34,11 +34,13 @@ npm start
 
 Requirement: **Node.js 24 LTS or newer**.
 
-Beginner instructions:
+Beginner and collaborator instructions:
 
 - [`LEEME_PRIMERO.txt`](LEEME_PRIMERO.txt)
 - [`docs/MANUAL_USUARIO.md`](docs/MANUAL_USUARIO.md)
+- [`docs/GUEST_HELPER_GUIDE.md`](docs/GUEST_HELPER_GUIDE.md)
 - [`docs/TESTER_CHECKLIST.md`](docs/TESTER_CHECKLIST.md)
+- [`docs/MARCE_GASTON_HELP_PLAN.md`](docs/MARCE_GASTON_HELP_PLAN.md) — concrete external QA, demo, mobile and evidence tasks
 
 ## First five-minute tour
 
@@ -88,79 +90,3 @@ Architecture and examples:
 - [`examples/live-evidence-room.json`](examples/live-evidence-room.json)
 
 Real-time multiuser synchronization, shared remote browsers, workflow providers and live media transport remain roadmap integrations until they are deployed and tested.
-
-## Verification
-
-On Windows, run:
-
-```text
-VALIDAR_EXOVIA.bat
-```
-
-Manual verification before the trusted lockfile exists:
-
-```bash
-npm install --no-audit --no-fund
-npx playwright install --with-deps chromium
-npm run verify
-cd server
-npm run verify
-```
-
-After `package-lock.json` is generated and committed in a trusted Node 24 environment, clean installation should use `npm ci`.
-
-## Architecture
-
-```text
-Documents / notes / logs / events
-              ↓
-Local normalization and graph construction
-              ↓
-Evidence-preserving visual workspace
-              ↓
-Answer, health, contradiction and replay layers
-              ↓
-Optional MCP and secure provider bridge
-              ↓
-Governed Living Evidence Rooms
-```
-
-The visualization is not the memory. It is the doorway into structured, inspectable and restorable knowledge.
-
-## Project structure
-
-- `index.html` — application shell
-- `src/core.js` — graph model and canvas runtime
-- `src/product.js` — persistent project workspace
-- `src/brain.js` — secondary-brain connectors
-- `src/ai-bridge.js` — human/AI bridge interface
-- `src/intelligence.js` — answers, health, contradictions and replay
-- `src/live-room.js` — governed room viewer and graph projection
-- `schemas/` — versioned data contracts
-- `examples/` — non-secret example data
-- `server/` — durable local MCP and hook backend
-- `tests/e2e/` — desktop and mobile browser tests
-- `docs/` — architecture, operations and submission documentation
-
-## Safety and claims
-
-- Never place API keys in browser code.
-- Do not use private documents in public demonstrations.
-- Export important projects before clearing browser data.
-- Keep optional services local or behind deliberate authentication and transport security.
-- Do not describe roadmap integrations as deployed features.
-- Do not claim GPT-generated output unless a live provider is connected and identified.
-
-## Help the project
-
-- Guest and tester guide: [`docs/GUEST_HELPER_GUIDE.md`](docs/GUEST_HELPER_GUIDE.md)
-- Contribution workflow: [`CONTRIBUTING.md`](CONTRIBUTING.md)
-- Capability verification matrix: [`docs/CAPABILITY_VERIFICATION_MATRIX.md`](docs/CAPABILITY_VERIFICATION_MATRIX.md)
-
-## Author
-
-**Luciano — Exovia**
-
-## License
-
-MIT
