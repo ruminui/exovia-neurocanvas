@@ -10,6 +10,7 @@
     "validate": "node scripts/validate.mjs",
     "verify:static": "node scripts/verify-frontend.mjs",
     "readiness": "node scripts/release-readiness.mjs",
+    "qa:report": "node scripts/collect-qa-evidence.mjs",
     "test:e2e": "playwright test",
     "verify": "npm run validate && npm run verify:static && npm run readiness && npm run test && npm run test:e2e",
     "serve": "node scripts/serve.mjs"
