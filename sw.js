@@ -1,4 +1,4 @@
-const CACHE = 'exovia-neurocanvas-v10-live-room';
+const CACHE = 'exovia-neurocanvas-v11-judge-clarity';
 const APP_SHELL = './index.html';
 const ASSETS = [
   './',
@@ -14,6 +14,7 @@ const ASSETS = [
   './src/intelligence.css',
   './src/diagnostics.css',
   './src/live-room.css',
+  './src/clarity.css',
   './src/core.js',
   './src/upgrade.js',
   './src/product.js',
@@ -22,7 +23,8 @@ const ASSETS = [
   './src/ai-bridge.js',
   './src/intelligence.js',
   './src/diagnostics.js',
-  './src/live-room.js'
+  './src/live-room.js',
+  './src/clarity.js'
 ];
 
 self.addEventListener('install', event => {
