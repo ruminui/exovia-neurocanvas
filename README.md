@@ -1,8 +1,58 @@
 # Exovia NeuroCanvas
 
-**Navigate knowledge like a living neural map. Verify every answer. Replay every decision.**
+**Ask. Verify. Trace. Replay.**
 
-Exovia NeuroCanvas is an offline-first visual knowledge workspace created by **Luciano / Exovia**. It turns documents, notes, multimedia evidence and agent activity into an inspectable graph where answers and decisions can remain connected to their sources.
+## The problem
+
+Teams increasingly work with documents, notes and AI-generated answers. The information becomes fragmented, and later it is difficult to prove:
+
+- where an answer came from;
+- which evidence supports it;
+- whether the knowledge is incomplete or contradictory;
+- what a human, workflow or AI agent changed;
+- how a decision was reached.
+
+## The solution
+
+**Exovia NeuroCanvas turns scattered information and AI activity into a visual, evidence-linked workspace where every answer and decision can be verified and replayed.**
+
+A user can import information, ask a question, navigate to the strongest answer, inspect the exact source, review knowledge quality and replay human or agent activity.
+
+## Who it is for
+
+- consultants reviewing client or project information;
+- researchers connecting conclusions to source material;
+- teams using AI across documents and workflows;
+- analysts who need an auditable decision trail;
+- students or knowledge workers managing complex notes.
+
+## Why it is different from a normal AI chat
+
+A chat gives an answer and quickly loses the surrounding process. NeuroCanvas keeps the answer inside a persistent visual project, linked to its evidence, quality signals, actors, actions and decisions.
+
+```text
+Scattered documents and AI activity
+               ↓
+       Visual knowledge graph
+               ↓
+ Ask → Navigate → Inspect evidence
+               ↓
+Check quality → Replay decisions
+```
+
+## Three-minute judge flow
+
+1. Press **New workspace**.
+2. Select a node and show its exact source.
+3. Open **Answer & Audit**.
+4. Ask: `How does NeuroCanvas keep AI answers connected to evidence?`
+5. Press **Navigate to Answer**.
+6. Show **Knowledge Health** and one contradiction signal.
+7. Show **Agent Replay**.
+8. Open **Live room** and press **Project room into graph**.
+9. Close with: **Navigate knowledge. Verify every answer. Replay every decision.**
+
+The final narration and recording instructions are in [`docs/VIDEO_SCRIPT_MARCE.md`](docs/VIDEO_SCRIPT_MARCE.md).
 
 ## Start here
 
@@ -26,7 +76,7 @@ chmod +x INICIAR_EXOVIA.sh
 ./INICIAR_EXOVIA.sh
 ```
 
-### Universal command
+Universal command:
 
 ```bash
 npm start
@@ -34,54 +84,27 @@ npm start
 
 Requirement: **Node.js 24 LTS or newer**.
 
-Beginner and collaborator instructions:
+## Key capabilities
 
-- [`LEEME_PRIMERO.txt`](LEEME_PRIMERO.txt)
-- [`docs/MANUAL_USUARIO.md`](docs/MANUAL_USUARIO.md)
-- [`docs/GUEST_HELPER_GUIDE.md`](docs/GUEST_HELPER_GUIDE.md)
-- [`docs/TESTER_CHECKLIST.md`](docs/TESTER_CHECKLIST.md)
-- [`docs/MARCE_GASTON_HELP_PLAN.md`](docs/MARCE_GASTON_HELP_PLAN.md) — concrete external QA, demo, mobile and evidence tasks
-
-## First five-minute tour
-
-1. Press **New workspace**.
-2. Pan and zoom the visual map.
-3. Select a node and inspect its exact evidence.
-4. Open **Answer & Audit** and ask a question.
-5. Inspect **Knowledge health** and **Agent replay**.
-6. Open **Live room** to review participants, multimedia evidence, decisions and executions.
-7. Press **Project room into graph** to navigate the room as a traceable NeuroCanvas map.
-8. Press **Export** to save a portable JSON backup.
-
-## Main capabilities
-
-- Text, Markdown, JSON, ExiaL and log import
-- Persistent local workspaces, snapshots and export
-- Neural, tree, pulse and capability views
-- Search and Zoom to Answer
-- Exact evidence inspector
-- Local evidence answer engine
-- Knowledge Health and Contradiction Radar
-- Human and Agent Replay
-- Governed Living Evidence Room vertical slice
-- Participants, multimedia evidence, decisions and execution contracts
-- Human approval represented in graph and replay
-- Secondary-brain connectors
-- MCP and authenticated hook bridge
-- Mobile/PWA interface and offline application shell
-- Static, backend and browser test suites
+- text, Markdown, JSON, ExiaL and log import;
+- persistent local workspaces, snapshots and export;
+- neural, tree, pulse and capability views;
+- Answer & Audit with navigation back to evidence;
+- Evidence Inspector;
+- Knowledge Health and Contradiction Radar;
+- Human and Agent Replay;
+- governed Living Evidence Room vertical slice;
+- multimedia evidence, decisions and execution contracts;
+- human approval represented in graph and replay;
+- optional MCP and authenticated bridge;
+- mobile/PWA interface and offline application shell;
+- static, backend and browser test suites.
 
 ## Living Evidence Rooms
 
-The current local vertical slice demonstrates a provider-neutral contract for collaborative rooms:
+The current local vertical slice represents humans, agents, workflows, multimedia evidence, decisions, approvals and ordered events, then projects the complete room into the active graph.
 
-- humans, agents, workflows and services as participants;
-- text, image, audio, video, browser events and agent results as evidence;
-- temporal and spatial evidence references;
-- decisions linked to proposers, approvers and executions;
-- scoped execution contracts;
-- ordered replay events;
-- projection of the complete room into the active knowledge graph.
+Real-time multiuser synchronization, shared remote browsers, workflow providers and live media transport remain roadmap integrations until deployed and tested.
 
 Architecture and examples:
 
@@ -89,4 +112,15 @@ Architecture and examples:
 - [`schemas/live-evidence-room.schema.json`](schemas/live-evidence-room.schema.json)
 - [`examples/live-evidence-room.json`](examples/live-evidence-room.json)
 
-Real-time multiuser synchronization, shared remote browsers, workflow providers and live media transport remain roadmap integrations until they are deployed and tested.
+## Help and validation
+
+- [`LEEME_PRIMERO.txt`](LEEME_PRIMERO.txt)
+- [`docs/MANUAL_USUARIO.md`](docs/MANUAL_USUARIO.md)
+- [`docs/GUEST_HELPER_GUIDE.md`](docs/GUEST_HELPER_GUIDE.md)
+- [`docs/TESTER_CHECKLIST.md`](docs/TESTER_CHECKLIST.md)
+- [`docs/MARCE_GASTON_HELP_PLAN.md`](docs/MARCE_GASTON_HELP_PLAN.md)
+- [`docs/VIDEO_SCRIPT_MARCE.md`](docs/VIDEO_SCRIPT_MARCE.md)
+
+## Honest status
+
+The local visual product and governed Live Room vertical slice are implemented. Full automated execution, external System Check, public deployment, final video and authentic Codex feedback evidence still require completion before submission.
