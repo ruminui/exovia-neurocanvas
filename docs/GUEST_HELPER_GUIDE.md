@@ -1,12 +1,18 @@
 # Manual para invitados y personas que quieran ayudar
 
-Este documento está pensado para amigos, familiares, testers, diseñadores, editores de video y desarrolladores que quieran colaborar con Exovia NeuroCanvas.
+Este documento está pensado para Marce, Gastón, amigos, familiares, testers, diseñadores, editores de video y desarrolladores que quieran colaborar con Exovia NeuroCanvas.
 
 No hace falta saber programar.
 
+Plan específico para Marce y Gastón:
+
+- [`MARCE_GASTON_HELP_PLAN.md`](MARCE_GASTON_HELP_PLAN.md)
+
 ## 1. Qué es Exovia NeuroCanvas
 
-Es una aplicación visual que convierte documentos, notas y actividad de agentes en un mapa navegable. Permite buscar información, abrir la evidencia original, revisar la salud del conocimiento y observar acciones humanas y de IA.
+Es una aplicación visual local-first que convierte documentos, notas y actividad de agentes en un mapa navegable. Permite buscar información, abrir la evidencia original, revisar la salud del conocimiento y observar acciones humanas y de IA.
+
+También incluye una vertical llamada **Living Evidence Room**, que representa personas, agentes, workflows, evidencias multimedia, decisiones y aprobaciones dentro de un mismo grafo verificable.
 
 Repositorio oficial:
 
@@ -50,9 +56,9 @@ chmod +x INICIAR_EXOVIA.sh
 ./INICIAR_EXOVIA.sh
 ```
 
-Requisito: Node.js 20 o superior.
+Requisito actual: **Node.js 24 LTS o superior**.
 
-## 3. Prueba rápida de cinco minutos
+## 3. Prueba rápida de siete minutos
 
 1. Pulsar `New workspace`.
 2. Mover el mapa con el mouse.
@@ -64,38 +70,60 @@ Requisito: Node.js 20 o superior.
 8. Pulsar `Navigate to answer`.
 9. Abrir una cita.
 10. Pulsar `Knowledge health`.
-11. Pulsar `Agent replay`.
-12. Abrir `System check`.
-13. Copiar o fotografiar el resultado.
-14. Pulsar `Export` para guardar el proyecto.
-15. Recargar la página y confirmar que el mapa continúa abierto.
+11. Abrir `Contradiction Radar`.
+12. Pulsar `Agent replay`.
+13. Abrir `Live room`.
+14. Pulsar `Project room into graph`.
+15. Abrir `System check`.
+16. Copiar o fotografiar el resultado.
+17. Pulsar `Export`.
+18. Recargar la página y confirmar que el mapa continúa disponible.
 
-## 4. Cómo puede ayudar una persona sin programar
+## 4. Ayuda prioritaria que necesitamos
 
-### Probar la aplicación
+### Prueba en otra computadora
 
-Registrar:
+Necesitamos saber si alguien que no desarrolló la aplicación puede:
 
-- qué botón pulsó;
-- qué esperaba que ocurriera;
-- qué ocurrió realmente;
-- dispositivo y sistema operativo;
-- navegador;
-- captura o video.
+- descargarla;
+- abrirla;
+- entenderla;
+- crear un proyecto;
+- encontrar evidencia;
+- ejecutar System Check;
+- exportar y volver a abrir el proyecto.
 
-### Revisar facilidad de uso
+### Validación completa
 
-Responder:
+En Windows ejecutar:
 
-- ¿Entendió qué hace la aplicación en menos de 30 segundos?
-- ¿Pudo abrirla sin ayuda?
-- ¿Pudo crear un proyecto?
-- ¿Pudo encontrar una respuesta y su evidencia?
-- ¿Qué palabras o botones resultaron confusos?
-- ¿Qué quitaría de la pantalla principal?
-- ¿Qué función mostraría primero?
+```text
+VALIDAR_EXOVIA.bat
+```
 
-### Ayudar con imágenes
+Enviar una captura del resultado final y el primer error completo cuando falle.
+
+### Prueba móvil
+
+Comprobar:
+
+- botones táctiles;
+- paneles cortados;
+- canvas;
+- diálogos;
+- Live room;
+- orientación vertical y horizontal.
+
+### Prueba offline
+
+Después de cargar la aplicación una vez:
+
+1. abrir `Live room`;
+2. desconectar la red;
+3. recargar;
+4. probar nuevamente New workspace y Live room.
+
+### Video y capturas
 
 Se necesitan capturas limpias de:
 
@@ -103,39 +131,38 @@ Se necesitan capturas limpias de:
 - Evidence Inspector;
 - Answer & Audit;
 - Knowledge Health;
+- Contradiction Radar;
 - Agent Replay;
+- Live room;
+- Live room proyectada al grafo;
 - System Check;
 - vista móvil.
 
 No deben aparecer contraseñas, tokens, correos privados ni documentos personales.
 
-### Ayudar con el video
+## 5. Evaluación de facilidad de uso
 
-La grabación debe mostrar una experiencia real y reproducible. No debe afirmar que una función usa GPT-5.6 o Codex cuando la interfaz no lo demuestra.
+Responder:
 
-Registrar el video en 1080p, con cursor visible, voz clara y textos legibles.
+- ¿Entendió qué hace la aplicación en menos de 30 segundos?
+- ¿Pudo abrirla sin ayuda?
+- ¿Pudo crear un proyecto?
+- ¿Pudo encontrar una respuesta y su evidencia?
+- ¿Entendió qué representa Live room?
+- ¿Qué palabras o botones resultaron confusos?
+- ¿Qué quitaría de la pantalla principal?
+- ¿Qué función mostraría primero?
+- ¿Qué parte no debería aparecer en el video?
 
-### Ayudar con textos
-
-Puede señalar:
-
-- errores de ortografía;
-- expresiones difíciles;
-- traducciones poco naturales;
-- afirmaciones que no se puedan demostrar;
-- instrucciones incompletas.
-
-## 5. Cómo informar un error
-
-Copiar esta plantilla:
+## 6. Cómo informar un error
 
 ```text
 TÍTULO:
-
+TESTER:
+COMMIT O FECHA DEL ZIP:
 DISPOSITIVO:
-
 SISTEMA OPERATIVO:
-
+NODE:
 NAVEGADOR Y VERSIÓN:
 
 PASOS PARA REPRODUCIR:
@@ -144,56 +171,48 @@ PASOS PARA REPRODUCIR:
 3.
 
 RESULTADO ESPERADO:
-
 RESULTADO REAL:
-
 ¿OCURRE SIEMPRE?:
-
 RESULTADO DE SYSTEM CHECK:
-
+MENSAJE COMPLETO:
 CAPTURA O VIDEO:
 
 GRAVEDAD:
 [ ] Bloquea completamente
+[ ] Riesgo de pérdida de datos
 [ ] Función importante dañada
 [ ] Problema visual o de comprensión
 [ ] Sugerencia
 ```
 
-Un error útil debe poder repetirse.
+Un error útil debe poder repetirse o incluir suficiente evidencia para investigarlo.
 
-## 6. Cómo sugerir una mejora
-
-Usar esta estructura:
+## 7. Cómo sugerir una mejora
 
 ```text
 PROBLEMA DEL USUARIO:
-
 QUIÉN LO SUFRE:
-
 SOLUCIÓN PROPUESTA:
-
 QUÉ CAMBIARÍA EN LA PANTALLA:
-
 BENEFICIO:
-
 RIESGO O POSIBLE CONFUSIÓN:
+CÓMO COMPROBARÍAMOS QUE MEJORÓ:
 ```
 
 Evitar propuestas genéricas como “hacerlo más moderno”. Explicar qué acción concreta debería resultar más fácil.
 
-## 7. Cómo colaborar con código
+## 8. Cómo colaborar con código
 
 Leer primero `CONTRIBUTING.md`.
-
-Flujo recomendado:
 
 ```bash
 git clone https://github.com/ruminui/exovia-neurocanvas.git
 cd exovia-neurocanvas
-npm install
+npm install --no-audit --no-fund
 npm start
 ```
+
+Cuando exista `package-lock.json`, usar `npm ci` para instalaciones limpias.
 
 Crear una rama independiente:
 
@@ -207,7 +226,7 @@ Después del cambio:
 npm run verify
 ```
 
-Backend, cuando corresponda:
+Backend:
 
 ```bash
 cd server
@@ -216,7 +235,7 @@ npm run verify
 
 Abrir un Pull Request. No modificar `main` directamente sin autorización.
 
-## 8. Reglas para no dañar el proyecto
+## 9. Reglas para no dañar el proyecto
 
 - No borrar archivos sin explicar el motivo.
 - No reemplazar todo el diseño para corregir un botón.
@@ -226,12 +245,11 @@ Abrir un Pull Request. No modificar `main` directamente sin autorización.
 - No usar datos reales de clientes en pruebas.
 - No presentar resultados no ejecutados como verificados.
 - No describir una idea futura como función terminada.
+- No instalar Neko, n8n o infraestructura multiusuario en el equipo principal sin coordinación.
 - Mantener el estilo negro y dorado.
-- Conservar la evidencia y la auditoría.
+- Conservar evidencia, aprobaciones y auditoría.
 
-## 9. Etiquetas de estado
-
-Toda contribución debe distinguir:
+## 10. Etiquetas de estado
 
 - `IMPLEMENTED`: el código existe.
 - `AUTOMATED TESTED`: existe una prueba automática.
@@ -240,7 +258,7 @@ Toda contribución debe distinguir:
 - `EXPERIMENTAL`: no está listo para uso estable.
 - `BLOCKED`: depende de acceso, credenciales o decisiones pendientes.
 
-## 10. Seguridad y privacidad
+## 11. Seguridad y privacidad
 
 Usar archivos sintéticos o públicos.
 
@@ -256,37 +274,40 @@ Nunca compartir:
 
 Si aparece un secreto en una captura, no subirla. Recortarla o repetir la prueba.
 
-## 11. Qué enviar al terminar una prueba
+## 12. Qué enviar al terminar
 
-Enviar una sola carpeta o mensaje con:
+Crear una carpeta o mensaje con:
 
 1. nombre del tester;
-2. dispositivo y navegador;
-3. checklist completado;
-4. reporte de System Check;
-5. errores encontrados;
-6. capturas o videos;
-7. tres cosas fáciles;
-8. tres cosas confusas;
-9. recomendación principal.
+2. commit o fecha del ZIP;
+3. dispositivo y navegador;
+4. versión de Node;
+5. checklist completado;
+6. reporte de System Check;
+7. resultado de `VALIDAR_EXOVIA.bat`;
+8. errores encontrados;
+9. capturas o videos;
+10. tres cosas fáciles;
+11. tres cosas confusas;
+12. recomendación principal.
 
-## 12. Recorrido recomendado para grabar una demo
+## 13. Recorrido recomendado para la demo
 
-1. Abrir la app.
-2. Crear `New workspace`.
-3. Mostrar Neural y Tree.
-4. Seleccionar evidencia.
-5. Hacer una pregunta en Answer & Audit.
-6. Abrir una cita y regresar al mapa.
-7. Mostrar Knowledge Health.
-8. Mostrar Agent Replay.
-9. Mostrar System Check.
-10. Mostrar la vista móvil.
+1. Problema que resuelve.
+2. `New workspace`.
+3. seleccionar evidencia.
+4. Answer & Audit.
+5. Navigate to Answer.
+6. Knowledge Health.
+7. Agent Replay.
+8. Live room.
+9. Project room into graph.
+10. cierre: `Navigate knowledge. Verify every answer. Replay every decision.`
 
 No utilizar funciones inestables en el video principal salvo que estén claramente marcadas como experimentales.
 
-## 13. Contacto y coordinación
+## 14. Contacto y coordinación
 
-Antes de una modificación grande, abrir un issue o hablar con Luciano / Exovia para evitar que dos personas trabajen sobre lo mismo.
+Antes de una modificación grande, abrir un issue o hablar con Luciano / Exovia para evitar trabajo duplicado.
 
 Las contribuciones más valiosas son pequeñas, verificables y fáciles de revisar.
