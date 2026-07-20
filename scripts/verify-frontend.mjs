@@ -3,14 +3,16 @@ import path from 'node:path';
 import process from 'node:process';
 
 const ROOT = process.cwd();
-const RUNTIME_SCRIPTS = ['core.js', 'upgrade.js', 'product.js', 'mobile.js', 'brain.js', 'ai-bridge.js', 'intelligence.js', 'diagnostics.js', 'live-room.js'];
-const STYLESHEETS = ['styles.css', 'upgrade.css', 'product.css', 'mobile.css', 'brain.css', 'ai-bridge.css', 'intelligence.css', 'diagnostics.css', 'live-room.css'];
+const RUNTIME_SCRIPTS = ['core.js', 'upgrade.js', 'product.js', 'mobile.js', 'brain.js', 'ai-bridge.js', 'intelligence.js', 'diagnostics.js', 'live-room.js', 'clarity.js'];
+const STYLESHEETS = ['styles.css', 'upgrade.css', 'product.css', 'mobile.css', 'brain.css', 'ai-bridge.css', 'intelligence.css', 'diagnostics.css', 'live-room.css', 'clarity.css'];
 const REQUIRED = [
   'index.html', 'manifest.webmanifest', 'sw.js', 'README.md', 'SECURITY.md', 'CONTRIBUTING.md',
   'LEEME_PRIMERO.txt', 'INICIAR_EXOVIA.bat', 'INICIAR_EXOVIA.command', 'INICIAR_EXOVIA.sh',
   'docs/MANUAL_USUARIO.md', 'docs/GUEST_HELPER_GUIDE.md', 'docs/TESTER_CHECKLIST.md',
+  'docs/MARCE_GASTON_HELP_PLAN.md', 'docs/VIDEO_SCRIPT_MARCE.md',
   'docs/CAPABILITY_VERIFICATION_MATRIX.md', 'docs/LIVE_COLLABORATION_ARCHITECTURE.md',
   'schemas/live-evidence-room.schema.json', 'examples/live-evidence-room.json',
+  'tests/e2e/judge-clarity.spec.mjs',
   ...RUNTIME_SCRIPTS.map(file => `src/${file}`), ...STYLESHEETS.map(file => `src/${file}`)
 ];
 
@@ -28,7 +30,9 @@ const intelligence = await fs.readFile(path.join(ROOT, 'src/intelligence.js'), '
 const diagnostics = await fs.readFile(path.join(ROOT, 'src/diagnostics.js'), 'utf8');
 const bridge = await fs.readFile(path.join(ROOT, 'src/ai-bridge.js'), 'utf8');
 const liveRoom = await fs.readFile(path.join(ROOT, 'src/live-room.js'), 'utf8');
+const clarity = await fs.readFile(path.join(ROOT, 'src/clarity.js'), 'utf8');
 const security = await fs.readFile(path.join(ROOT, 'SECURITY.md'), 'utf8');
+const videoScript = await fs.readFile(path.join(ROOT, 'docs/VIDEO_SCRIPT_MARCE.md'), 'utf8');
 
 const refs = [...html.matchAll(/(?:src|href)=["']([^"']+)["']/g)].map(match => match[1]).filter(ref => !/^(https?:|data:|#)/.test(ref));
 for (const ref of refs) {
@@ -53,7 +57,9 @@ const capabilityMarkers = [
   ['diagnostics public API', diagnostics.includes('window.ExoviaDiagnostics')],
   ['live room validation', liveRoom.includes('function validateRoom(')],
   ['live room graph projection', liveRoom.includes('function projectRoom(')],
-  ['live room public API', liveRoom.includes('window.ExoviaLiveRoom')]
+  ['live room public API', liveRoom.includes('window.ExoviaLiveRoom')],
+  ['judge clarity public API', clarity.includes('window.ExoviaClarity')],
+  ['judge clarity problem statement', clarity.includes('The problem')]
 ];
 for (const [name, present] of capabilityMarkers) present ? pass(`capability entry point: ${name}`) : fail(`missing capability entry point: ${name}`);
 
@@ -66,6 +72,15 @@ const securityMarkers = [
   ['security policy documents boundaries', /Do not expose the local bridge directly to the public Internet/i.test(security)]
 ];
 for (const [name, present] of securityMarkers) present ? pass(`security invariant: ${name}`) : fail(`missing security invariant: ${name}`);
+
+const clarityMarkers = [
+  ['problem visible on empty state', /answers you can prove/i.test(html)],
+  ['exact evidence visible on empty state', /exact evidence/i.test(html)],
+  ['video contains problem', /Teams now work with documents/i.test(videoScript)],
+  ['video contains difference', /not another chat window/i.test(videoScript)],
+  ['video contains honest live-room boundary', /local vertical slice/i.test(videoScript)]
+];
+for (const [name, present] of clarityMarkers) present ? pass(`judge clarity: ${name}`) : fail(`missing judge clarity marker: ${name}`);
 
 (manifest.name && manifest.short_name && manifest.start_url && manifest.display) ? pass('manifest contains installability metadata') : fail('manifest is missing required installability metadata');
 manifest.display === 'standalone' ? pass('manifest uses standalone display mode') : fail(`unexpected manifest display mode: ${manifest.display}`);
