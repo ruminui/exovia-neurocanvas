@@ -3,15 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=5" />
-  <meta name="description" content="Exovia NeuroCanvas turns scattered information and AI activity into a visual, evidence-linked workspace where every answer and decision can be verified and replayed." />
-  <meta name="theme-color" content="#070707" />
+  <meta name="description" content="Exovia NeuroCanvas is a local-first AI reliability workspace that preserves context, verifies evidence, detects risk and keeps humans in control of AI decisions." />
+  <meta name="theme-color" content="#070706" />
   <meta name="color-scheme" content="dark" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="NeuroCanvas" />
-  <title>Exovia NeuroCanvas — Verify every answer</title>
+  <title>Exovia NeuroCanvas — AI Reliability Workspace</title>
   <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="src/exovia-icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="src/exovia-icon.svg" />
   <link rel="stylesheet" href="src/styles.css" />
   <link rel="stylesheet" href="src/upgrade.css" />
   <link rel="stylesheet" href="src/product.css" />
@@ -28,21 +30,32 @@
   <link rel="stylesheet" href="src/resilience.css" />
   <link rel="stylesheet" href="src/large-input.css" />
   <link rel="stylesheet" href="src/context-help.css" />
+  <link rel="stylesheet" href="src/trust-center.css" />
+  <link rel="stylesheet" href="src/professional.css" />
 </head>
-<body>
+<body class="app-home-open">
   <header class="topbar">
-    <div class="brand"><span class="mark" aria-hidden="true">∞</span><div><strong>EXOVIA</strong><small>NEUROCANVAS</small></div></div>
+    <button id="homeBtn" class="brand brandButton" type="button" aria-label="Open Exovia home">
+      <span class="brandIcon" aria-hidden="true">
+        <svg viewBox="0 0 108 108" role="img"><path d="M20 58c0-18 20-27 33-13l15 17c10 11 24 4 24-9 0-14-16-20-26-10L39 71C26 84 10 75 10 62c0-14 16-21 27-10l15 16"/></svg>
+      </span>
+      <span class="brandCopy"><strong>EXOVIA</strong><small>NEUROCANVAS</small></span>
+    </button>
+    <div class="topbarStatus" aria-label="Privacy status"><span class="statusDot"></span><span data-i18n="localProtected">Local-first · Protected</span></div>
     <div class="toolbar" aria-label="Project actions">
-      <button id="demoBtn">New workspace</button>
+      <button id="demoBtn" class="primaryAction">New workspace</button>
       <button id="pulseDemoBtn">New ExiaL map</button>
       <label class="fileButton">Open file<input id="fileInput" type="file" accept=".txt,.md,.json,.exial,.log" aria-label="Open a NeuroCanvas source or project file" /></label>
       <button id="pasteBtn">Import text</button>
+      <button id="trustCenterBtn" class="trustAction">Verify AI</button>
+      <button id="capsuleBtn">Context capsule</button>
       <button id="intentBtn">Exil intent</button>
       <button id="exportBtn">Export</button>
       <button id="fitBtn">Fit map</button>
       <button id="installBtn" class="hidden">Install app</button>
     </div>
   </header>
+
   <main>
     <section class="leftPanel panel" aria-label="Knowledge explorer">
       <div class="panelTitle">Knowledge explorer</div>
@@ -54,21 +67,70 @@
       <div class="hint">Drag to pan · wheel to zoom · click a node to inspect · Ctrl+S to save · Ctrl+E to edit</div>
       <div class="panelTitle auditTitle">Audit trail</div><div id="auditTrail" class="auditTrail"></div>
     </section>
+
     <section class="canvasWrap">
       <canvas id="canvas" tabindex="0" aria-label="Interactive knowledge graph"></canvas>
-      <div class="canvasBadge">ASK · VERIFY · TRACE · REPLAY</div>
-      <div id="emptyState" class="emptyState"><div class="heroMark" aria-hidden="true">∞</div><h1>Turn scattered information into<br/>answers you can prove.</h1><p>NeuroCanvas converts documents, notes and AI activity into a visual workspace. Ask a question, navigate to the strongest answer, inspect the exact evidence and replay how the decision was produced.</p><div class="emptyActions"><button id="emptyDemoBtn">See the core use case</button><button id="emptyPulseBtn">See agent activity</button></div></div>
+      <div class="canvasBadge">PRIVATE · EVIDENCE-LINKED · HUMAN-CONTROLLED</div>
+
+      <div id="emptyState" class="emptyState appHome">
+        <div class="homeShell">
+          <section class="homeHero">
+            <div class="heroCopyBlock">
+              <div class="homeEyebrow"><span></span><strong data-i18n="homeEyebrow">THE RELIABILITY LAYER FOR AI</strong></div>
+              <h1 data-i18n="homeTitle">Use AI without losing truth, privacy or control.</h1>
+              <p class="homeLead" data-i18n="homeLead">NeuroCanvas turns documents, conversations and agent activity into a verifiable workspace. Preserve context, detect risk, prove every answer and approve every important AI change.</p>
+              <div class="homePrimaryActions">
+                <button id="homeStartBtn" type="button" class="heroPrimary"><span aria-hidden="true">＋</span><span data-i18n="homeStart">Create a trusted workspace</span></button>
+                <button id="homeImportBtn" type="button" class="heroSecondary"><span aria-hidden="true">↗</span><span data-i18n="homeImport">Import an AI answer or document</span></button>
+              </div>
+              <div class="trustStrip" aria-label="Core guarantees">
+                <span><b aria-hidden="true">●</b><span data-i18n="guaranteeLocal">Your data stays local by default</span></span>
+                <span><b aria-hidden="true">✓</b><span data-i18n="guaranteeEvidence">Answers stay linked to evidence</span></span>
+                <span><b aria-hidden="true">◇</b><span data-i18n="guaranteeHuman">Humans approve consequential changes</span></span>
+              </div>
+            </div>
+
+            <aside class="heroCommandCard" aria-label="AI reliability overview">
+              <div class="commandCardHead"><span data-i18n="controlCenter">AI CONTROL CENTER</span><span class="livePill"><i></i><span data-i18n="ready">READY</span></span></div>
+              <div class="heroScore"><div class="miniScoreRing"><strong>4</strong><span data-i18n="layers">layers</span></div><div><strong data-i18n="controlHeadline">One workspace. Four protections.</strong><p data-i18n="controlDescription">Evidence, privacy, context and agent governance work together instead of living in separate tools.</p></div></div>
+              <div class="commandList">
+                <button id="homeVerifyBtn" type="button"><span class="commandIcon">✓</span><span><strong data-i18n="verifyAnswers">Verify AI answers</strong><small data-i18n="verifyAnswersSub">Find unsupported claims, missing sources and contradictions.</small></span><i>›</i></button>
+                <button id="homeCapsuleBtn" type="button"><span class="commandIcon">▣</span><span><strong data-i18n="preserveContext">Preserve reusable context</strong><small data-i18n="preserveContextSub">Create a portable context capsule for any model.</small></span><i>›</i></button>
+                <button id="homeAgentBtn" type="button"><span class="commandIcon">◎</span><span><strong data-i18n="governAgents">Govern AI agents</strong><small data-i18n="governAgentsSub">Replay actions and keep a human approval gate.</small></span><i>›</i></button>
+              </div>
+            </aside>
+          </section>
+
+          <section class="problemSection" aria-labelledby="problemTitle">
+            <div class="sectionHeading"><div><span data-i18n="whyExists">WHY NEUROCANVAS EXISTS</span><h2 id="problemTitle" data-i18n="problemTitle">The biggest AI problems are not model problems.</h2></div><p data-i18n="problemLead">They are failures of memory, evidence, privacy and control. NeuroCanvas treats them as one connected system.</p></div>
+            <div class="problemGrid">
+              <article><span class="problemNumber">01</span><div class="problemGlyph">⌁</div><h3 data-i18n="problemHallucination">Confident answers without proof</h3><p data-i18n="problemHallucinationSub">Trace every conclusion back to exact source material and surface unsupported claims before they become decisions.</p></article>
+              <article><span class="problemNumber">02</span><div class="problemGlyph">◫</div><h3 data-i18n="problemContext">Context disappears between tools</h3><p data-i18n="problemContextSub">Build compact, source-linked context capsules that travel safely between models, agents and conversations.</p></article>
+              <article><span class="problemNumber">03</span><div class="problemGlyph">◇</div><h3 data-i18n="problemPrivacy">Private information leaks silently</h3><p data-i18n="problemPrivacySub">Scan locally for credentials, personal data and prompt-injection patterns before content is shared with an AI provider.</p></article>
+              <article><span class="problemNumber">04</span><div class="problemGlyph">◎</div><h3 data-i18n="problemAgents">Agents act without accountability</h3><p data-i18n="problemAgentsSub">Record actions, replay decisions and require human approval before consequential changes are applied.</p></article>
+            </div>
+          </section>
+
+          <section class="homeFooterBand">
+            <div><span data-i18n="differentiator">THE DIFFERENCE</span><h2 data-i18n="differentiatorTitle">Not another chatbot. A proof system around every AI.</h2></div>
+            <button id="homeGuidedBtn" type="button"><span data-i18n="guided">Start guided experience</span><span aria-hidden="true">→</span></button>
+          </section>
+        </div>
+      </div>
       <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
     </section>
+
     <aside class="rightPanel panel" aria-label="Evidence inspector"><div class="panelTitle">Evidence inspector</div><div id="details" class="details empty">Select a node to see the exact source behind an answer or decision.</div></aside>
   </main>
+
   <dialog id="pasteDialog" aria-labelledby="pasteDialogTitle"><form method="dialog"><h2 id="pasteDialogTitle">Create or import a project</h2><label for="docTitle">Project title</label><input id="docTitle" placeholder="Project title" value="Untitled NeuroCanvas project" /><label for="textInput">Source text or ExiaL pulses</label><textarea id="textInput" placeholder="Paste long-form text, notes, documentation, a conversation, or ExiaL pulses…"></textarea><div class="dialogActions"><button value="cancel">Cancel</button><button id="buildBtn" value="default">Build project</button></div></form></dialog>
   <dialog id="intentDialog" aria-labelledby="intentDialogTitle"><form method="dialog"><h2 id="intentDialogTitle">Exil safe intent preview</h2><p class="dialogHelp">This declarative subset performs visible graph operations only.</p><label for="intentInput">Declarative intent</label><textarea id="intentInput">MAP current
 FIND topic:"evidence"
 FOCUS top:5
 LINK threshold:0.20
 EXPLAIN evidence:true</textarea><pre id="intentPreview" class="intentPreview" aria-live="polite">Preview the intent to validate it.</pre><div class="dialogActions"><button value="cancel">Cancel</button><button type="button" id="previewIntentBtn">Validate preview</button><button type="button" id="applyIntentBtn" disabled>Apply visual focus</button></div></form></dialog>
-  <script src="src/core.js"></script><script src="src/upgrade.js"></script><script src="src/product.js"></script><script src="src/mobile.js"></script><script src="src/brain.js"></script><script src="src/ai-bridge.js"></script><script src="src/intelligence.js"></script><script src="src/diagnostics.js"></script><script src="src/live-room.js"></script><script src="src/clarity.js"></script><script src="src/simple-mode.js"></script><script src="src/use-cases.js"></script><script src="src/safety-net.js"></script><script src="src/language.js"></script><script src="src/resilience.js"></script><script src="src/large-input.js"></script><script src="src/context-help.js"></script>
+
+  <script src="src/core.js"></script><script src="src/upgrade.js"></script><script src="src/product.js"></script><script src="src/mobile.js"></script><script src="src/brain.js"></script><script src="src/ai-bridge.js"></script><script src="src/intelligence.js"></script><script src="src/diagnostics.js"></script><script src="src/live-room.js"></script><script src="src/clarity.js"></script><script src="src/simple-mode.js"></script><script src="src/use-cases.js"></script><script src="src/safety-net.js"></script><script src="src/language.js"></script><script src="src/resilience.js"></script><script src="src/large-input.js"></script><script src="src/context-help.js"></script><script src="src/trust-center.js"></script>
   <script>if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('./sw.js').catch(() => {});</script>
 </body>
 </html>
