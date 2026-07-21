@@ -10,39 +10,47 @@ async function openFresh(page) {
   await page.goto('/');
 }
 
-test('Android first launch uses Spanish, simple mode and purpose chooser', async ({ page }) => {
+test('Android first launch uses Spanish, simple mode and the three-step home', async ({ page }) => {
   await openFresh(page);
   await expect(page.locator('#mobileNav')).toBeVisible();
-  await expect(page.locator('#mobileAsk')).toContainText('Preguntar');
+  await expect(page.locator('#mobileHome')).toContainText('Inicio');
+  await expect(page.locator('#mobileVerify')).toContainText('Verificar');
+  await expect(page.locator('#mobileContext')).toContainText('Contexto');
+  await expect(page.locator('#mobileActions')).toContainText('Más');
   await expect(page.locator('html')).toHaveClass(/simpleMode/);
-  await expect(page.locator('#purposeDialog')).toBeVisible();
+  await expect(page.locator('#emptyState')).toBeVisible();
+  await expect(page.locator('.homeThreeSteps article')).toHaveCount(3);
+  await expect(page.locator('#purposeDialog')).not.toBeVisible();
 });
 
-test('bottom navigation opens explorer, evidence and actions as mobile sheets', async ({ page }) => {
+test('More opens the simple explorer, evidence and action sheets', async ({ page }) => {
   await openFresh(page);
-  await page.keyboard.press('Escape');
+  await page.locator('#mobileActions').click();
+  await expect(page.locator('body')).toHaveClass(/mobile-actions-open/);
   await page.locator('#mobileExplore').click();
   await expect(page.locator('body')).toHaveClass(/mobile-left-open/);
+
+  await page.locator('#mobileActions').click();
   await page.locator('#mobileEvidence').click();
   await expect(page.locator('body')).toHaveClass(/mobile-right-open/);
+
   await page.locator('#mobileActions').click();
   await expect(page.locator('body')).toHaveClass(/mobile-actions-open/);
   await expect(page.locator('.toolbar')).toBeVisible();
 });
 
-test('Ask focuses the search field and Map returns to the canvas', async ({ page }) => {
+test('Verify opens the AI check and Map returns to the canvas', async ({ page }) => {
   await openFresh(page);
-  await page.keyboard.press('Escape');
-  await page.locator('#mobileAsk').click();
-  await expect(page.locator('#searchInput')).toBeFocused();
+  await page.locator('#mobileVerify').click();
+  await expect(page.locator('#trustCenterDialog')).toBeVisible();
+  await page.locator('#trustCenterDialog [data-trust-close]').click();
   await page.locator('#mobileMap').click();
-  await expect(page.locator('body')).not.toHaveClass(/mobile-left-open/);
+  await expect(page.locator('body')).not.toHaveClass(/mobile-left-open|mobile-right-open|mobile-actions-open/);
   await expect(page.locator('#canvas')).toBeVisible();
 });
 
 test('all primary Android controls meet 48px touch target baseline', async ({ page }) => {
   await openFresh(page);
-  await page.keyboard.press('Escape');
   const sizes = await page.locator('#mobileNav button').evaluateAll(buttons => buttons.map(button => button.getBoundingClientRect().height));
   expect(sizes.length).toBe(5);
   for (const height of sizes) expect(height).toBeGreaterThanOrEqual(48);
@@ -50,7 +58,6 @@ test('all primary Android controls meet 48px touch target baseline', async ({ pa
 
 test('portrait and landscape remain usable without horizontal overflow', async ({ page }) => {
   await openFresh(page);
-  await page.keyboard.press('Escape');
   for (const viewport of [{ width: 412, height: 915 }, { width: 915, height: 412 }]) {
     await page.setViewportSize(viewport);
     await page.waitForTimeout(250);
@@ -60,11 +67,11 @@ test('portrait and landscape remain usable without horizontal overflow', async (
   }
 });
 
-test('mobile help enables simple mode and opens the guide', async ({ page }) => {
+test('mobile help keeps simple mode and opens the three-step guide', async ({ page }) => {
   await openFresh(page);
-  await page.keyboard.press('Escape');
   await page.locator('#mobileActions').click();
   await page.locator('#mobileHelp').click();
   await expect(page.locator('html')).toHaveClass(/simpleMode/);
   await expect(page.locator('#simpleGuideDialog')).toBeVisible();
+  await expect(page.locator('#simpleGuideStep')).toHaveText('1 de 3');
 });
