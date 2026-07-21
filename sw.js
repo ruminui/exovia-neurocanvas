@@ -1,4 +1,4 @@
-const CACHE = 'exovia-neurocanvas-v16-resilience-and-accessibility';
+const CACHE = 'exovia-neurocanvas-v17-android-mobile';
 const APP_SHELL = './index.html';
 const ASSETS = [
   './', APP_SHELL, './manifest.webmanifest', './examples/live-evidence-room.json',
