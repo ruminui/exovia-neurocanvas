@@ -1,4 +1,4 @@
-const CACHE = 'exovia-neurocanvas-v19-prooflayer';
+const CACHE = 'exovia-neurocanvas-v20-exo-pack';
 const APP_SHELL = './index.html';
 const ASSETS = [
   './', APP_SHELL, './manifest.webmanifest', './examples/live-evidence-room.json', './src/exovia-icon.svg',
@@ -6,7 +6,7 @@ const ASSETS = [
   './src/ai-bridge.css', './src/intelligence.css', './src/diagnostics.css', './src/live-room.css',
   './src/clarity.css', './src/simple-mode.css', './src/use-cases.css', './src/safety-net.css',
   './src/resilience.css', './src/large-input.css', './src/context-help.css', './src/trust-center.css', './src/professional.css',
-  './src/core.js', './src/upgrade.js', './src/product.js', './src/mobile.js', './src/brain.js',
+  './src/core.js', './src/exo-pack.js', './src/upgrade.js', './src/product.js', './src/mobile.js', './src/brain.js',
   './src/ai-bridge.js', './src/intelligence.js', './src/diagnostics.js', './src/live-room.js',
   './src/clarity.js', './src/simple-mode.js', './src/use-cases.js', './src/safety-net.js', './src/language.js',
   './src/resilience.js', './src/large-input.js', './src/context-help.js', './src/trust-center.js'

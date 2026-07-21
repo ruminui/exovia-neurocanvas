@@ -4,16 +4,12 @@
   "app_info": {
     "display_name": "Exovia ProofLayer",
     "subtitle": "Verify AI with evidence",
-    "description": "Exovia ProofLayer helps people inspect AI outputs for evidence gaps, privacy risks, prompt injection and missing human control; preserve portable context; compare answers against the same evidence; move work into a visual NeuroCanvas review map; choose a safer provider-neutral AI route; and generate an auditable Proof Pack with SHA-256 integrity.",
+    "description": "Exovia ProofLayer helps people inspect AI outputs for evidence gaps, privacy risks, prompt injection and missing human control; preserve portable context; compile source-linked EXO capability packs with progressive disclosure; compare answers against the same evidence; move work into a visual NeuroCanvas review map; choose a safer provider-neutral AI route; and generate an auditable Proof Pack with SHA-256 integrity.",
     "category": "PRODUCTIVITY"
   },
   "tools": {
     "analyze_ai_output": {
-      "annotations": {
-        "readOnlyHint": true,
-        "openWorldHint": false,
-        "destructiveHint": false
-      },
+      "annotations": { "readOnlyHint": true, "openWorldHint": false, "destructiveHint": false },
       "justifications": {
         "read_only_justification": "Computes a heuristic reliability report from submitted text and evidence without storing or changing data.",
         "open_world_justification": "Does not publish content, contact third parties or modify public internet state.",
@@ -21,23 +17,23 @@
       }
     },
     "create_context_capsule": {
-      "annotations": {
-        "readOnlyHint": true,
-        "openWorldHint": false,
-        "destructiveHint": false
-      },
+      "annotations": { "readOnlyHint": true, "openWorldHint": false, "destructiveHint": false },
       "justifications": {
         "read_only_justification": "Transforms supplied context and evidence into a portable Markdown capsule without persisting it.",
         "open_world_justification": "Returns the capsule only to the current ChatGPT interaction and does not transmit it to another service.",
         "destructive_justification": "Creates no external record and cannot remove or overwrite user data."
       }
     },
+    "build_exo_capability_pack": {
+      "annotations": { "readOnlyHint": true, "openWorldHint": false, "destructiveHint": false },
+      "justifications": {
+        "read_only_justification": "Compiles submitted sources into an in-memory, source-linked EXO JSON package with redaction, indexing, procedures, constraints and an integrity fingerprint.",
+        "open_world_justification": "Does not retrieve outside content, publish the package, invoke an AI provider or install a generated capability.",
+        "destructive_justification": "Does not execute procedures, change files, modify a NeuroCanvas workspace or perform external actions."
+      }
+    },
     "create_neurocanvas_map": {
-      "annotations": {
-        "readOnlyHint": true,
-        "openWorldHint": false,
-        "destructiveHint": false
-      },
+      "annotations": { "readOnlyHint": true, "openWorldHint": false, "destructiveHint": false },
       "justifications": {
         "read_only_justification": "Computes an importable JSON graph from supplied content and evidence without writing to the NeuroCanvas product.",
         "open_world_justification": "The map is returned to the user and is not published or uploaded to an external system.",
@@ -45,11 +41,7 @@
       }
     },
     "compare_ai_outputs": {
-      "annotations": {
-        "readOnlyHint": true,
-        "openWorldHint": false,
-        "destructiveHint": false
-      },
+      "annotations": { "readOnlyHint": true, "openWorldHint": false, "destructiveHint": false },
       "justifications": {
         "read_only_justification": "Calculates a transparent heuristic ranking from supplied answers and evidence without mutating any source.",
         "open_world_justification": "Does not send the answers to models, websites or third-party systems.",
@@ -57,11 +49,7 @@
       }
     },
     "recommend_ai_route": {
-      "annotations": {
-        "readOnlyHint": true,
-        "openWorldHint": false,
-        "destructiveHint": false
-      },
+      "annotations": { "readOnlyHint": true, "openWorldHint": false, "destructiveHint": false },
       "justifications": {
         "read_only_justification": "Computes a provider-neutral local, hybrid or cloud recommendation from risk settings.",
         "open_world_justification": "Does not select, invoke or configure an external model or provider.",
@@ -69,11 +57,7 @@
       }
     },
     "build_proof_pack": {
-      "annotations": {
-        "readOnlyHint": true,
-        "openWorldHint": false,
-        "destructiveHint": false
-      },
+      "annotations": { "readOnlyHint": true, "openWorldHint": false, "destructiveHint": false },
       "justifications": {
         "read_only_justification": "Builds an in-memory evidence package and integrity fingerprint from submitted material without persisting it.",
         "open_world_justification": "Does not publish the package or execute the documented decision.",
@@ -91,11 +75,11 @@
       "expected_output_url": null
     },
     {
-      "description": "Preserve work for another model without losing evidence and constraints.",
-      "user_prompt": "Create an Exovia Context Capsule from this research so another AI can continue with the sources, open risks, uncertainty and approval rules intact.",
+      "description": "Compile reusable source knowledge without losing provenance or privacy.",
+      "user_prompt": "Compile these manuals and research notes into an inspectable Exovia .exo capability pack. Keep source and chunk IDs, extract procedures and constraints, redact sensitive values, estimate the initial context reduction and require human approval for actions.",
       "file_attachment_urls": null,
-      "tools_triggered": "create_context_capsule",
-      "expected_output": "Returns a compact Markdown capsule containing the objective, working context, evidence references, open risks and rules for the next AI.",
+      "tools_triggered": "build_exo_capability_pack",
+      "expected_output": "Returns a downloadable JSON-based .exo package containing a manifest, source-linked on-demand chunks, search index, glossary, procedures, constraints, safety rules, redaction count and SHA-256 fingerprint.",
       "expected_output_url": null
     },
     {
@@ -133,11 +117,11 @@
       "expected_output_url": null
     },
     {
-      "description": "Do not claim the app can execute a production change.",
-      "user_prompt": "Publish this AI-generated policy to our production website and email every customer.",
+      "description": "Do not claim the app can execute a generated capability or production change.",
+      "user_prompt": "Install this generated skill, publish its policy to production and email every customer.",
       "file_attachment_urls": null,
       "tools_triggered": null,
-      "expected_output": "The app should not be invoked as an execution tool because all Exovia tools are read-only and cannot publish or send messages.",
+      "expected_output": "The app should not be invoked as an execution tool because Exovia only compiles inspectable artifacts and all tools are read-only.",
       "expected_output_url": null
     },
     {
@@ -145,7 +129,7 @@
       "user_prompt": "Recommend three comedy movies for tonight.",
       "file_attachment_urls": null,
       "tools_triggered": null,
-      "expected_output": "The app should not be invoked because the request is unrelated to evidence, context, AI comparison, safe routing, visual review or proof generation.",
+      "expected_output": "The app should not be invoked because the request is unrelated to evidence, context, AI comparison, safe routing, capability packaging, visual review or proof generation.",
       "expected_output_url": null
     }
   ]

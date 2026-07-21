@@ -8,6 +8,7 @@ import { registerAppResource, registerAppTool, RESOURCE_MIME_TYPE } from "@model
 import { z } from "zod";
 import { analyzeAiOutput, buildProofPack, compareAiOutputs, createContextCapsule, recommendAiRoute } from "./reliability.mjs";
 import { createNeuroCanvasMap } from "./map-builder.mjs";
+import { buildExoCapabilityPack } from "./exo-pack.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const widgetCss = await readFile(path.join(__dirname, "../web/widget.css"), "utf8");
@@ -15,7 +16,7 @@ const widgetJs = await readFile(path.join(__dirname, "../web/widget.js"), "utf8"
 const statusHtml = await readFile(path.join(__dirname, "../web/status.html"), "utf8");
 const widgetHtml = `<main id="app" class="app"><div class="empty">Exovia ProofLayer is waiting for a tool result.</div></main><style>${widgetCss}</style><script>${widgetJs}</script>`;
 const TEMPLATE_URI = "ui://widget/exovia-prooflayer-v1.html";
-const VERSION = "0.3.0";
+const VERSION = "0.4.0";
 const PORT = Number(process.env.PORT || 8787);
 const APP_DOMAIN = process.env.APP_DOMAIN || "";
 
@@ -23,6 +24,9 @@ const sourceSchema = z.object({
   title: z.string().min(1).max(300),
   text: z.string().min(1).max(60000),
   url: z.string().url().optional(),
+});
+const exoSourceSchema = sourceSchema.extend({
+  type: z.enum(["document", "code", "conversation", "research", "policy", "mixed"]).optional(),
 });
 const languageSchema = z.enum(["en", "es"]).default("es");
 const readOnlyAnnotations = { readOnlyHint: true, destructiveHint: false, openWorldHint: false, idempotentHint: true };
@@ -47,7 +51,7 @@ function result(payload, text) {
 function createProofLayerServer() {
   const server = new McpServer(
     { name: "exovia-neurocanvas", version: VERSION },
-    { instructions: "Exovia ProofLayer helps verify AI outputs, preserve portable context, compare answers, choose safer AI routes, create importable NeuroCanvas maps, and generate proof packs. Always say that scans and rankings are heuristic. Never claim factual verification unless the user supplied evidence. Require human approval for consequential actions." },
+    { instructions: "Exovia ProofLayer helps verify AI outputs, preserve portable context, compile inspectable EXO capability packs, compare answers, choose safer AI routes, create importable NeuroCanvas maps, and generate proof packs. Always say that scans, extracted procedures, rankings and token estimates are heuristic. Never claim factual verification unless the user supplied evidence. Require human approval for consequential actions." },
   );
 
   registerAppResource(server, "exovia-prooflayer-widget", TEMPLATE_URI, {}, async () => ({
@@ -61,7 +65,7 @@ function createProofLayerServer() {
           ...(APP_DOMAIN ? { domain: APP_DOMAIN } : {}),
           csp: { connectDomains: [], resourceDomains: [] },
         },
-        "openai/widgetDescription": "Interactive Exovia ProofLayer report for evidence, privacy, portable context, human control and NeuroCanvas handoff.",
+        "openai/widgetDescription": "Interactive Exovia ProofLayer report for evidence, privacy, portable context, progressive disclosure, human control and NeuroCanvas handoff.",
       },
     }],
   }));
@@ -97,6 +101,24 @@ function createProofLayerServer() {
   }, async (input) => {
     const capsule = createContextCapsule(input);
     return result(capsule, `Created a portable context capsule of approximately ${capsule.estimatedTokens} tokens with ${capsule.evidenceSourceCount} source(s) and ${capsule.riskCount} open risk(s).\n\n${capsule.markdown}`);
+  });
+
+  registerAppTool(server, "build_exo_capability_pack", {
+    title: "Compile an inspectable EXO capability pack",
+    description: "Use this when a user wants to turn books, manuals, research, conversations, policies, or code notes into a portable .exo package for humans and AI agents. The tool creates a source-linked index, on-demand chunks, glossary, procedures, constraints, privacy redactions, human-approval rules, token estimates, and a SHA-256 fingerprint. It does not train a model or execute external actions.",
+    inputSchema: {
+      title: z.string().min(1).max(300),
+      objective: z.string().max(2000).default(""),
+      sourceType: z.enum(["document", "code", "conversation", "research", "policy", "mixed"]).default("mixed"),
+      sources: z.array(exoSourceSchema).min(1).max(30),
+      tokenBudget: z.number().int().min(500).max(12000).default(2400),
+      language: languageSchema,
+    },
+    annotations: readOnlyAnnotations,
+    _meta: widgetMeta("Compiling EXO capability pack…", "EXO capability pack ready."),
+  }, async (input) => {
+    const pack = buildExoCapabilityPack(input);
+    return result(pack, `${pack.instructions}\n\nFile: ${pack.fileName}\nSources: ${pack.sourceCount}\nChunks: ${pack.chunkCount}\nEstimated initial context reduction: ${pack.estimatedInitialReductionPercent}%\nSHA-256: ${pack.hash}\n\n${JSON.stringify(pack.package, null, 2)}`);
   });
 
   registerAppTool(server, "create_neurocanvas_map", {
@@ -191,7 +213,7 @@ app.get("/", (req, res) => {
       status: "ready",
       mcp: "/mcp",
       health: "/health",
-      tools: ["analyze_ai_output", "create_context_capsule", "create_neurocanvas_map", "compare_ai_outputs", "recommend_ai_route", "build_proof_pack"],
+      tools: ["analyze_ai_output", "create_context_capsule", "build_exo_capability_pack", "create_neurocanvas_map", "compare_ai_outputs", "recommend_ai_route", "build_proof_pack"],
       privacy: "No content persistence; no external AI calls.",
     });
   }

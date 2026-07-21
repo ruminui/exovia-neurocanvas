@@ -13,6 +13,7 @@ const outputDir = path.join(appRoot, "judge-output");
 const expectedTools = [
   "analyze_ai_output",
   "create_context_capsule",
+  "build_exo_capability_pack",
   "create_neurocanvas_map",
   "compare_ai_outputs",
   "recommend_ai_route",
@@ -95,6 +96,31 @@ try {
   assert(!capsule.markdown.includes("luciano@example.com"), "Context Capsule leaked the demo email");
   assert(!capsule.markdown.includes("demo_secret_123456789"), "Context Capsule leaked the demo credential");
 
+  const exoPack = await callTool(client, "build_exo_capability_pack", {
+    title: `${demo.title} capability pack`,
+    objective: demo.objective,
+    sourceType: "mixed",
+    sources: [
+      ...demo.evidence.map((source) => ({ ...source, type: "research" })),
+      { title: "AI output under review", text: demo.aiOutput, type: "conversation" },
+    ],
+    tokenBudget: 1600,
+    language: "es",
+  });
+  const exoSerialized = JSON.stringify(exoPack.package);
+  assert(exoPack.kind === "exo_capability_pack", "EXO compiler returned the wrong result kind");
+  assert(exoPack.package?.format === "exo-capability-pack-v1", "EXO compiler returned an unsupported format");
+  assert(exoPack.sourceCount >= 3 && exoPack.chunkCount >= 3, "EXO pack did not preserve enough source structure");
+  assert(exoPack.estimatedInitialReductionPercent >= 0, "EXO pack did not report the progressive-disclosure estimate");
+  assert(exoPack.package?.manifest?.humanApprovalRequired === true, "EXO pack lost the human approval requirement");
+  assert(exoPack.package?.manifest?.bundledThirdPartyRuntimeCode === false, "EXO pack bundled third-party runtime code");
+  assert(exoPack.package?.manifest?.adjacentProjectCodeCopied === false, "EXO pack did not record the adjacent-project code boundary");
+  assert(exoPack.package?.manifest?.sourceRightsVerifiedByCompiler === false, "EXO compiler incorrectly claimed to verify source rights");
+  assert(exoPack.redactionCount >= 2, "EXO pack did not redact the demo email and credential");
+  assert(!exoSerialized.includes("luciano@example.com"), "EXO pack leaked the demo email");
+  assert(!exoSerialized.includes("demo_secret_123456789"), "EXO pack leaked the demo credential");
+  assert(/^[a-f0-9]{64}$/.test(exoPack.hash), "EXO pack SHA-256 is invalid");
+
   const comparison = await callTool(client, "compare_ai_outputs", {
     question: demo.question,
     answers: demo.answers,
@@ -157,6 +183,10 @@ try {
       overclaimDetected: true,
       contextCapsuleCreated: true,
       contextCapsuleRedacted: true,
+      exoCapabilityPackCreated: true,
+      exoCapabilityPackRedacted: true,
+      exoProgressiveDisclosureMeasured: true,
+      exoSourceRightsBoundaryRecorded: true,
       answersCompared: true,
       evidenceBoundedAnswerWon: true,
       safeRouteCreated: true,
@@ -169,6 +199,11 @@ try {
       trustGrade: trust.grade,
       findingCount: trust.issues.length,
       capsuleRedactions: capsule.redactionCount,
+      exoPackSources: exoPack.sourceCount,
+      exoPackChunks: exoPack.chunkCount,
+      exoPackRedactions: exoPack.redactionCount,
+      exoInitialContextReductionPercent: exoPack.estimatedInitialReductionPercent,
+      exoSha256: exoPack.hash,
       comparisonWinner: comparison.winner,
       recommendedRoute: route.mode,
       neurocanvasNodes: mapResult.nodeCount,
@@ -182,6 +217,7 @@ try {
     writeFile(path.join(outputDir, "judge-summary.json"), `${JSON.stringify(summary, null, 2)}\n`),
     writeFile(path.join(outputDir, "trust-scan.json"), `${JSON.stringify(trust, null, 2)}\n`),
     writeFile(path.join(outputDir, "context-capsule.md"), `${capsule.markdown.trim()}\n`),
+    writeFile(path.join(outputDir, exoPack.fileName || "judge-capability-pack.exo"), `${JSON.stringify(exoPack.package, null, 2)}\n`),
     writeFile(path.join(outputDir, mapResult.fileName || "judge-neurocanvas-map.json"), `${JSON.stringify(mapResult.map, null, 2)}\n`),
     writeFile(path.join(outputDir, "comparison.json"), `${JSON.stringify(comparison, null, 2)}\n`),
     writeFile(path.join(outputDir, "safe-route.json"), `${JSON.stringify(route, null, 2)}\n`),
@@ -192,10 +228,12 @@ try {
   console.log(`MCP tools discovered: ${toolNames.length}`);
   console.log(`Trust score: ${trust.score}/100 (${trust.grade})`);
   console.log(`Risks detected: ${trust.issues.length}`);
-  console.log(`Privacy redactions: capsule ${capsule.redactionCount} / proof ${proof.redactionCount}`);
+  console.log(`Privacy redactions: capsule ${capsule.redactionCount} / EXO ${exoPack.redactionCount} / proof ${proof.redactionCount}`);
+  console.log(`EXO pack: ${exoPack.sourceCount} sources / ${exoPack.chunkCount} chunks / ${exoPack.estimatedInitialReductionPercent}% estimated initial context reduction`);
   console.log(`Evidence-bounded winner: ${comparison.winner}`);
   console.log(`Recommended route: ${route.mode}`);
   console.log(`NeuroCanvas map: ${mapResult.nodeCount} nodes / ${mapResult.edgeCount} relationships`);
+  console.log(`EXO SHA-256: ${exoPack.hash}`);
   console.log(`Proof Pack SHA-256: ${proof.hash}`);
   console.log(`Artifacts: ${outputDir}`);
 } catch (error) {

@@ -7,6 +7,7 @@ const root = path.resolve(here, "..");
 const expectedTools = [
   "analyze_ai_output",
   "create_context_capsule",
+  "build_exo_capability_pack",
   "create_neurocanvas_map",
   "compare_ai_outputs",
   "recommend_ai_route",
