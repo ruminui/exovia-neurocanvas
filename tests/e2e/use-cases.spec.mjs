@@ -4,7 +4,11 @@ test('purpose chooser offers plain-language starting points', async ({ page }) =
   await page.goto('/');
   await page.locator('#purposeBtn').click();
   await expect(page.locator('#purposeDialog')).toBeVisible();
-  await expect(page.locator('.purposeCard')).toHaveCount(8);
+  await expect(page.locator('.purposeHow span')).toHaveCount(3);
+  await expect(page.locator('.purposeHow')).toContainText(/Add|Paste/i);
+  await expect(page.locator('.purposeHow')).toContainText(/Check|Verify/i);
+  await expect(page.locator('.purposeHow')).toContainText(/Save/i);
+  await expect(page.locator('.purposeCard')).toHaveCount(10);
   await expect(page.locator('#purposeDialog')).toContainText(/There is no wrong choice/i);
   await expect(page.locator('#purposeDialog')).toContainText(/Save family memories/i);
   await expect(page.locator('#purposeDialog')).toContainText(/Study or prepare a class/i);
@@ -39,7 +43,7 @@ test('every non-custom template creates a valid NeuroCanvas map', async ({ page 
       brokenEdges: map.edges.filter(edge => !map.nodes.some(node => node.id === edge.a) || !map.nodes.some(node => node.id === edge.b)).length
     })));
 
-  expect(results).toHaveLength(7);
+  expect(results).toHaveLength(9);
   for (const result of results) {
     expect(result.format).toBe('neurocanvas-v3');
     expect(result.rootCount).toBe(1);
