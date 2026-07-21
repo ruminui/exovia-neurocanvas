@@ -14,7 +14,7 @@
       {
         title: tr('1. Start with your information', '1. Empezá con tu información'),
         body: tr(
-          'Paste the original AI answer, conversation or document. NeuroCanvas keeps the exact source so you can verify it later. Choose the real outcome after the information is visible.',
+          'Paste the original AI answer, conversation or document. NeuroCanvas keeps the exact source so you can verify it later. Choose what you want to organize or verify only after the information is visible.',
           'Pegá la respuesta original de la IA, la conversación o el documento. NeuroCanvas conserva la fuente exacta para que después puedas verificarla.'
         ),
         target: 'pasteBtn',
