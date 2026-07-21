@@ -9,26 +9,26 @@
 
   const steps = [
     {
-      title: '1. Start with your information',
-      body: 'Use a sample workspace, paste text or open a simple file. NeuroCanvas turns the information into a visual map.',
-      target: 'demoBtn',
-      action: 'Create a sample map'
+      title: '1. Choose what you want to organize',
+      body: 'Start with a familiar purpose such as family memories, study, work, recipes or an important decision.',
+      target: 'purposeBtn',
+      action: 'Choose a starting point'
     },
     {
-      title: '2. Select one idea',
-      body: 'Click any circle in the map. The right side shows what that idea means and where it came from.',
+      title: '2. Add or replace the examples',
+      body: 'The starter map is only a guide. Select a circle and replace its example with your own information, or import text.',
       target: 'canvas',
       action: 'Look at the map'
     },
     {
-      title: '3. Ask a question',
-      body: 'Open Answer & Audit, type a normal question and follow the answer back to its evidence.',
+      title: '3. Ask a normal question',
+      body: 'Open Answer & Audit, write the question as you would ask another person and follow the answer back to its source.',
       target: 'answerAuditBtn',
       action: 'Open Answer & Audit'
     },
     {
-      title: '4. Save your work',
-      body: 'Use Save while working and Export when you want a portable backup file.',
+      title: '4. Save your work safely',
+      body: 'Use Save while working. Use Export when you want a separate backup file that you can keep or share.',
       target: 'saveProjectBtn',
       action: 'Save the project'
     }
@@ -77,7 +77,7 @@
     if (!target) return notify('This action is not available yet. Open or create a workspace first.', 'info');
     if (current.target === 'canvas') {
       target.focus();
-      notify('Select any circle in the map to inspect it.', 'info');
+      notify('Select any circle in the map to inspect and edit it.', 'info');
       return;
     }
     target.click();
@@ -143,6 +143,6 @@
     applyMode(enabled);
   }
 
-  window.ExoviaSimpleMode = { enable: () => applyMode(true, true), disable: () => applyMode(false, true), openGuide, isEnabled: () => enabled };
+  window.ExoviaSimpleMode = { enable: () => applyMode(true, true), disable: () => applyMode(false, true), openGuide, isEnabled: () => enabled, steps };
   window.addEventListener('DOMContentLoaded', build);
 })();
