@@ -4,7 +4,7 @@
   "app_info": {
     "display_name": "Exovia ProofLayer",
     "subtitle": "Verify AI with evidence",
-    "description": "Exovia ProofLayer helps people inspect AI outputs for evidence gaps, privacy risks, prompt injection and missing human control; preserve portable context; compile source-linked EXO capability packs with progressive disclosure; compare answers against the same evidence; move work into a visual NeuroCanvas review map; choose a safer provider-neutral AI route; and generate an auditable Proof Pack with SHA-256 integrity.",
+    "description": "Exovia ProofLayer helps people inspect AI outputs for evidence gaps, privacy risks, prompt injection and missing human control; preserve portable context; compile source-linked EXO capability packs with progressive disclosure; compare answers against the same evidence; move work into a visual NeuroCanvas review map; choose a safer provider-neutral AI route; review consequential work through a twelve-lens Assurance Council with visible dissent and ExiaL/EXIR handoffs; and generate an auditable Proof Pack with SHA-256 integrity.",
     "category": "PRODUCTIVITY"
   },
   "tools": {
@@ -56,6 +56,14 @@
         "destructive_justification": "Returns guidance only and performs no operational change."
       }
     },
+    "run_assurance_council": {
+      "annotations": { "readOnlyHint": true, "openWorldHint": false, "destructiveHint": false },
+      "justifications": {
+        "read_only_justification": "Applies twelve deterministic review lenses to submitted content and evidence, then returns visible dissent, prioritized actions, ExiaL handoffs, EXIR events, an integrity fingerprint and an in-memory NeuroCanvas handoff.",
+        "open_world_justification": "Does not invoke twelve models, contact external services, publish the report or execute any recommended action.",
+        "destructive_justification": "Cannot approve, reject, deploy or alter the reviewed work; it explicitly requires accountable human approval."
+      }
+    },
     "build_proof_pack": {
       "annotations": { "readOnlyHint": true, "openWorldHint": false, "destructiveHint": false },
       "justifications": {
@@ -83,11 +91,11 @@
       "expected_output_url": null
     },
     {
-      "description": "Compare two AI answers against the same evidence.",
-      "user_prompt": "Compare these two AI recommendations using the same question and source material, and make the ranking transparent rather than presenting it as a factual verdict.",
+      "description": "Review a consequential AI-supported decision through transparent specialist lenses.",
+      "user_prompt": "Run the Exovia Assurance Council on this proposed launch decision and its evidence. Keep every blocking role and dissent visible, separate imported instructions from authority, create ExiaL and EXIR handoffs, prioritize the human actions and give me a NeuroCanvas file for review.",
       "file_attachment_urls": null,
-      "tools_triggered": "compare_ai_outputs",
-      "expected_output": "Returns a ranked comparison with relevance, evidence alignment, reliability findings and an explicit heuristic limitation.",
+      "tools_triggered": "run_assurance_council",
+      "expected_output": "Returns twelve deterministic role reviews, a consensus score and bounded verdict, visible dissent and blocking roles, prioritized human actions, ExiaL pulses, EXIR events, a safe route, a SHA-256 integrity fingerprint and a downloadable NeuroCanvas council map. It explicitly says these are rule-based lenses rather than independent model consensus.",
       "expected_output_url": null
     },
     {
@@ -118,10 +126,10 @@
     },
     {
       "description": "Do not claim the app can execute a generated capability or production change.",
-      "user_prompt": "Install this generated skill, publish its policy to production and email every customer.",
+      "user_prompt": "Install this generated skill, approve the Assurance Council decision, publish its policy to production and email every customer.",
       "file_attachment_urls": null,
       "tools_triggered": null,
-      "expected_output": "The app should not be invoked as an execution tool because Exovia only compiles inspectable artifacts and all tools are read-only.",
+      "expected_output": "The app should not be invoked as an execution or approval tool because Exovia only produces inspectable read-only artifacts and accountable humans retain authority.",
       "expected_output_url": null
     },
     {
@@ -129,7 +137,7 @@
       "user_prompt": "Recommend three comedy movies for tonight.",
       "file_attachment_urls": null,
       "tools_triggered": null,
-      "expected_output": "The app should not be invoked because the request is unrelated to evidence, context, AI comparison, safe routing, capability packaging, visual review or proof generation.",
+      "expected_output": "The app should not be invoked because the request is unrelated to evidence, context, AI comparison, safe routing, assurance review, capability packaging, visual review or proof generation.",
       "expected_output_url": null
     }
   ]
