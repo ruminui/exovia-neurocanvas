@@ -15,22 +15,40 @@ An MCP-backed ChatGPT App that turns Exovia ProofLayer into tools usable by both
 
 - `analyze_ai_output` — evidence, privacy, prompt-injection, context and control scan;
 - `create_context_capsule` — portable context for another chat, model, agent or teammate;
+- `build_exo_capability_pack` — compiles books, manuals, research, conversations, policies or code notes into an inspectable `.exo` package with source-linked chunks, progressive disclosure, procedures, constraints, privacy redaction and SHA-256 integrity;
 - `create_neurocanvas_map` — converts a conversation, plan or research result into an importable `neurocanvas-v3` visual map for the Android/web app;
 - `compare_ai_outputs` — transparent comparison against the same evidence;
 - `recommend_ai_route` — provider-neutral local, hybrid or cloud recommendation;
 - `build_proof_pack` — evidence manifest, trust report, governance and SHA-256 fingerprint.
 
-The inline black-and-gold widget renders results for the human. ChatGPT receives compact structured data, while the NeuroCanvas map tool provides a JSON download that preserves source text and explicitly requires human review.
+The inline black-and-gold widget renders results for the human. ChatGPT receives compact structured data. The EXO pack and NeuroCanvas map tools provide downloadable files that retain provenance and explicitly require human review.
 
-All tools are read-only, idempotent and provider-neutral. The server does not persist submitted content or call an external AI service.
+All tools are read-only, idempotent and provider-neutral. The server does not persist submitted content, call an external AI service, install generated capabilities or execute their procedures.
 
 ## Human–AI loop
 
 1. ChatGPT analyzes, compares or structures the work.
-2. `create_neurocanvas_map` creates a downloadable visual graph.
-3. The person opens that JSON in Exovia NeuroCanvas on Android or the web.
-4. The person explores, corrects relationships, attaches evidence and approves decisions.
-5. A Context Capsule or Proof Pack returns the reviewed work to ChatGPT when it must continue.
+2. `build_exo_capability_pack` creates a reusable source-linked capability package that an agent can inspect progressively.
+3. The person opens the `.exo` package or a generated map in Exovia NeuroCanvas on Android or the web.
+4. NeuroCanvas converts the package into an inspectable evidence graph.
+5. The person explores, corrects relationships, attaches evidence and approves decisions.
+6. A Context Capsule or Proof Pack returns the reviewed work to ChatGPT when it must continue.
+
+## The `.exo` principle
+
+An EXO pack is **not** a trained model and **not** an executable plugin. It is transparent JSON containing:
+
+- manifest and safety contract;
+- source identities and hashes;
+- on-demand evidence chunks;
+- keyword index and glossary;
+- extracted procedures and constraints;
+- evidence and citation rules;
+- privacy redaction report;
+- human-approval requirement;
+- SHA-256 integrity fingerprint.
+
+The format is documented in [`../docs/EXO_CAPABILITY_PACK.md`](../docs/EXO_CAPABILITY_PACK.md).
 
 ## Run locally
 
@@ -87,4 +105,4 @@ Deploy the MCP server on a stable public HTTPS domain, set `APP_DOMAIN`, keep CS
 
 ## Important limitation
 
-The reliability scan, answer ranking and automatic graph structure are deterministic heuristics. They expose missing evidence, sensitive data and control risks, but do not replace live source verification, professional advice or human approval. Production authentication and multiuser synchronization must not be claimed unless separately deployed and tested.
+The reliability scan, answer ranking, procedure extraction, token estimate and automatic graph structure are deterministic heuristics. They expose missing evidence, sensitive data and control risks, but do not replace live source verification, professional advice or human approval. Production authentication, unrestricted Exil execution, a live FAPI service mesh and multiuser synchronization must not be claimed unless separately deployed and tested.
