@@ -1,4 +1,4 @@
-const CACHE = 'exovia-neurocanvas-v14-safety-net';
+const CACHE = 'exovia-neurocanvas-v15-bilingual-plain-language';
 const APP_SHELL = './index.html';
 const ASSETS = [
   './', APP_SHELL, './manifest.webmanifest', './examples/live-evidence-room.json',
@@ -7,7 +7,7 @@ const ASSETS = [
   './src/clarity.css', './src/simple-mode.css', './src/use-cases.css', './src/safety-net.css',
   './src/core.js', './src/upgrade.js', './src/product.js', './src/mobile.js', './src/brain.js',
   './src/ai-bridge.js', './src/intelligence.js', './src/diagnostics.js', './src/live-room.js',
-  './src/clarity.js', './src/simple-mode.js', './src/use-cases.js', './src/safety-net.js'
+  './src/clarity.js', './src/simple-mode.js', './src/use-cases.js', './src/safety-net.js', './src/language.js'
 ];
 
 self.addEventListener('install', event => {
