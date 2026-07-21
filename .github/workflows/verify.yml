@@ -70,9 +70,17 @@ jobs:
           retention-days: 14
 
   browser-smoke:
-    name: Desktop and mobile browser smoke tests
+    name: Browser smoke — ${{ matrix.label }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - project: desktop-chromium
+            label: desktop
+          - project: mobile-chromium
+            label: mobile
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -84,13 +92,13 @@ jobs:
         run: npm install --no-audit --no-fund
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
-      - name: Run browser tests
-        run: npm run test:e2e
-      - name: Upload browser diagnostics
+      - name: Run ${{ matrix.label }} browser tests
+        run: npm run test:e2e -- --project=${{ matrix.project }}
+      - name: Upload ${{ matrix.label }} browser diagnostics
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-diagnostics
+          name: playwright-diagnostics-${{ matrix.label }}
           path: |
             playwright-report
             test-results
