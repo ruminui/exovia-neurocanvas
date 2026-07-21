@@ -59,8 +59,14 @@ if (!appPackage.scripts?.judge || !appPackage.scripts?.verify) {
 if (!judgeGuide.includes('EXOVIA HACKATHON JUDGE CHECK: PASS')) {
   fail('Judge guide does not state the deterministic success marker.');
 }
-if (!userGuide.includes('Five-minute first run') || !userGuide.includes('Primer recorrido de cinco minutos')) {
-  fail('The bilingual user quickstart is incomplete.');
+const userJourneyMarkers = [
+  'Understand it in 60 seconds','Entendelo en 60 segundos',
+  '1. Add','2. Check','3. Save',
+  '1. Agregá','2. Revisá','3. Guardá',
+  'Simple View','Vista simple'
+];
+for (const marker of userJourneyMarkers) {
+  if (!userGuide.includes(marker)) fail(`The bilingual user quickstart is missing: ${marker}`);
 }
 if (android.verified !== true) fail('Android release metadata is not marked verified.');
 if (android.tag !== 'android-latest') fail('Android release tag is unexpected.');
@@ -83,7 +89,7 @@ console.log('============================================================');
 console.log('EXOVIA JUDGE PREFLIGHT: PASS');
 console.log(`Node.js: ${process.versions.node} (${mainUiReady ? 'main UI ready' : 'judge flow ready; Node 24+ needed for the main UI'})`);
 console.log(`ChatGPT App tools: judge command available (${appPackage.version})`);
-console.log(`Public license: MIT`);
+console.log('Public license: MIT');
 console.log(`Android APK: verified, ${android.sizeBytes} bytes`);
 console.log(`Android SHA-256: ${android.sha256}`);
 console.log(`Android source commit: ${android.sourceCommit}`);
