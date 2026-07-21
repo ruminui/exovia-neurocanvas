@@ -1,15 +1,15 @@
-const CACHE = 'exovia-neurocanvas-v17-android-mobile';
+const CACHE = 'exovia-neurocanvas-v18-context-help';
 const APP_SHELL = './index.html';
 const ASSETS = [
   './', APP_SHELL, './manifest.webmanifest', './examples/live-evidence-room.json',
   './src/styles.css', './src/upgrade.css', './src/product.css', './src/mobile.css', './src/brain.css',
   './src/ai-bridge.css', './src/intelligence.css', './src/diagnostics.css', './src/live-room.css',
   './src/clarity.css', './src/simple-mode.css', './src/use-cases.css', './src/safety-net.css',
-  './src/resilience.css', './src/large-input.css',
+  './src/resilience.css', './src/large-input.css', './src/context-help.css',
   './src/core.js', './src/upgrade.js', './src/product.js', './src/mobile.js', './src/brain.js',
   './src/ai-bridge.js', './src/intelligence.js', './src/diagnostics.js', './src/live-room.js',
   './src/clarity.js', './src/simple-mode.js', './src/use-cases.js', './src/safety-net.js', './src/language.js',
-  './src/resilience.js', './src/large-input.js'
+  './src/resilience.js', './src/large-input.js', './src/context-help.js'
 ];
 
 self.addEventListener('install', event => {
