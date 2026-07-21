@@ -7,6 +7,7 @@ import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/
 import { registerAppResource, registerAppTool, RESOURCE_MIME_TYPE } from "@modelcontextprotocol/ext-apps/server";
 import { z } from "zod";
 import { analyzeAiOutput, buildProofPack, compareAiOutputs, createContextCapsule, recommendAiRoute } from "./reliability.mjs";
+import { createNeuroCanvasMap } from "./map-builder.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const widgetCss = await readFile(path.join(__dirname, "../web/widget.css"), "utf8");
@@ -37,8 +38,8 @@ function result(payload, text) {
 }
 
 const server = new McpServer(
-  { name: "exovia-neurocanvas", version: "0.1.0" },
-  { instructions: "Exovia ProofLayer helps verify AI outputs, preserve portable context, compare answers, choose safer AI routes, and create proof packs. Always say that scans and rankings are heuristic. Never claim factual verification unless the user supplied evidence. Require human approval for consequential actions." },
+  { name: "exovia-neurocanvas", version: "0.2.0" },
+  { instructions: "Exovia ProofLayer helps verify AI outputs, preserve portable context, compare answers, choose safer AI routes, create importable NeuroCanvas maps, and generate proof packs. Always say that scans and rankings are heuristic. Never claim factual verification unless the user supplied evidence. Require human approval for consequential actions." },
 );
 
 registerAppResource(server, "exovia-prooflayer-widget", TEMPLATE_URI, {}, async () => ({
@@ -52,7 +53,7 @@ registerAppResource(server, "exovia-prooflayer-widget", TEMPLATE_URI, {}, async 
         ...(APP_DOMAIN ? { domain: APP_DOMAIN } : {}),
         csp: { connectDomains: [], resourceDomains: [] },
       },
-      "openai/widgetDescription": "Interactive Exovia ProofLayer report for evidence, privacy, context and human-control risks.",
+      "openai/widgetDescription": "Interactive Exovia ProofLayer report for evidence, privacy, portable context, human control and NeuroCanvas handoff.",
     },
   }],
 }));
@@ -88,6 +89,23 @@ registerAppTool(server, "create_context_capsule", {
 }, async (input) => {
   const capsule = createContextCapsule(input);
   return result(capsule, `Created a portable context capsule of approximately ${capsule.estimatedTokens} tokens with ${capsule.evidenceSourceCount} source(s) and ${capsule.riskCount} open risk(s).\n\n${capsule.markdown}`);
+});
+
+registerAppTool(server, "create_neurocanvas_map", {
+  title: "Create an importable NeuroCanvas map",
+  description: "Use this when a user wants to move a ChatGPT conversation, research result, plan, or decision into the Exovia NeuroCanvas human workspace. Produces a neurocanvas-v3 JSON graph that the Android or web app can import for visual review, correction, evidence linking, and preservation.",
+  inputSchema: {
+    title: z.string().min(1).max(300),
+    objective: z.string().max(1000).default(""),
+    content: z.string().min(1).max(60000),
+    evidence: z.array(sourceSchema).max(20).default([]),
+    language: languageSchema,
+  },
+  annotations: readOnlyAnnotations,
+  _meta: widgetMeta("Structuring a NeuroCanvas map…", "NeuroCanvas map ready."),
+}, async (input) => {
+  const mapResult = createNeuroCanvasMap(input);
+  return result(mapResult, `${mapResult.instructions}\n\nFile: ${mapResult.fileName}\nNodes: ${mapResult.nodeCount}\nRelationships: ${mapResult.edgeCount}\n\n${JSON.stringify(mapResult.map, null, 2)}`);
 });
 
 registerAppTool(server, "compare_ai_outputs", {
@@ -144,7 +162,7 @@ registerAppTool(server, "build_proof_pack", {
 const app = express();
 app.disable("x-powered-by");
 app.use(express.json({ limit: "2mb" }));
-app.get("/", (_req, res) => res.json({ name: "Exovia NeuroCanvas ChatGPT App", version: "0.1.0", mcp: "/mcp", privacy: "No content persistence; no external AI calls." }));
+app.get("/", (_req, res) => res.json({ name: "Exovia NeuroCanvas ChatGPT App", version: "0.2.0", mcp: "/mcp", privacy: "No content persistence; no external AI calls." }));
 app.get("/health", (_req, res) => res.json({ ok: true, service: "exovia-neurocanvas-mcp" }));
 
 const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined, enableJsonResponse: true });
