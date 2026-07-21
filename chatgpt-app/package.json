@@ -1,14 +1,16 @@
 {
   "name": "@exovia/neurocanvas-chatgpt-app",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "description": "Exovia ProofLayer for ChatGPT: evidence, portable context, privacy, human control and NeuroCanvas handoff.",
   "scripts": {
     "start": "node src/server.mjs",
-    "check": "node --check src/server.mjs && node --check src/reliability.mjs && node --check src/map-builder.mjs && node --check web/widget.js",
+    "check": "node --check src/server.mjs && node --check src/reliability.mjs && node --check src/map-builder.mjs && node --check web/widget.js && node --check scripts/judge-smoke.mjs",
     "test": "node --test",
-    "verify": "npm run check && npm test"
+    "verify": "npm run check && npm test",
+    "judge": "node scripts/judge-smoke.mjs",
+    "judge:clean": "node -e \"require('node:fs').rmSync('judge-output',{recursive:true,force:true})\""
   },
   "dependencies": {
     "@modelcontextprotocol/ext-apps": "1.7.4",
