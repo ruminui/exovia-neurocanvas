@@ -4,62 +4,43 @@
   const STORAGE_KEY = 'exovia:language';
   const $ = id => document.getElementById(id);
   const supported = ['en', 'es'];
-  let language = supported.includes(localStorage.getItem(STORAGE_KEY)) ? localStorage.getItem(STORAGE_KEY) : 'en';
+  const stored = localStorage.getItem(STORAGE_KEY);
+  let language = supported.includes(stored) ? stored : (/^es\b/i.test(navigator.language || '') ? 'es' : 'en');
 
   const copy = {
     en: {
-      toggle: 'Español',
-      title: 'Exovia NeuroCanvas — Verify every answer',
-      searchLabel: 'Search the active project',
-      searchPlaceholder: 'Ask or search a concept…',
-      zoom: 'Zoom',
-      workspace: 'New workspace',
-      pulse: 'See agent activity',
-      open: 'Open file',
-      import: 'Import text',
-      export: 'Export backup',
-      fit: 'Fit map',
-      simple: 'Simple view',
-      guide: 'Guide me',
-      purpose: 'What do you want to do?',
-      save: 'Save',
-      snapshot: 'Recovery copy',
-      library: 'My projects',
-      undo: '↶ Undo',
-      redo: '↷ Redo',
-      explorer: 'Knowledge explorer',
-      inspector: 'Evidence inspector',
-      hint: 'Drag to move · wheel to zoom · click a circle to inspect it',
-      details: 'Select a circle to see the exact source behind an answer or decision.',
-      saved: 'All changes saved',
-      saving: 'Saving automatically…'
+      toggle: 'Español', title: 'Exovia NeuroCanvas — AI Reliability Workspace', searchLabel: 'Search the active project', searchPlaceholder: 'Ask or search a concept…', zoom: 'Zoom',
+      workspace: 'New workspace', pulse: 'Agent activity', open: 'Open file', import: 'Import text', trust: 'Verify AI', capsule: 'Context capsule', export: 'Export backup', fit: 'Fit map',
+      simple: 'Simple view', guide: 'Guide me', purpose: 'What do you want to do?', save: 'Save', snapshot: 'Recovery copy', library: 'My projects', undo: '↶ Undo', redo: '↷ Redo',
+      explorer: 'Knowledge explorer', inspector: 'Evidence inspector', hint: 'Drag to move · wheel to zoom · click a circle to inspect it', details: 'Select a circle to see the exact source behind an answer or decision.',
+      saved: 'All changes saved', saving: 'Saving automatically…', localProtected: 'Local-first · Protected', homeEyebrow: 'THE RELIABILITY LAYER FOR AI',
+      homeTitle: 'Use AI without losing truth, privacy or control.', homeLead: 'NeuroCanvas turns documents, conversations and agent activity into a verifiable workspace. Preserve context, detect risk, prove every answer and approve every important AI change.',
+      homeStart: 'Create a trusted workspace', homeImport: 'Import an AI answer or document', guaranteeLocal: 'Your data stays local by default', guaranteeEvidence: 'Answers stay linked to evidence', guaranteeHuman: 'Humans approve consequential changes',
+      controlCenter: 'AI CONTROL CENTER', ready: 'READY', layers: 'layers', controlHeadline: 'One workspace. Four protections.', controlDescription: 'Evidence, privacy, context and agent governance work together instead of living in separate tools.',
+      verifyAnswers: 'Verify AI answers', verifyAnswersSub: 'Find unsupported claims, missing sources and contradictions.', preserveContext: 'Preserve reusable context', preserveContextSub: 'Create a portable context capsule for any model.', governAgents: 'Govern AI agents', governAgentsSub: 'Replay actions and keep a human approval gate.',
+      whyExists: 'WHY NEUROCANVAS EXISTS', problemTitle: 'The biggest AI problems are not model problems.', problemLead: 'They are failures of memory, evidence, privacy and control. NeuroCanvas treats them as one connected system.',
+      problemHallucination: 'Confident answers without proof', problemHallucinationSub: 'Trace every conclusion back to exact source material and surface unsupported claims before they become decisions.',
+      problemContext: 'Context disappears between tools', problemContextSub: 'Build compact, source-linked context capsules that travel safely between models, agents and conversations.',
+      problemPrivacy: 'Private information leaks silently', problemPrivacySub: 'Scan locally for credentials, personal data and prompt-injection patterns before content is shared with an AI provider.',
+      problemAgents: 'Agents act without accountability', problemAgentsSub: 'Record actions, replay decisions and require human approval before consequential changes are applied.',
+      differentiator: 'THE DIFFERENCE', differentiatorTitle: 'Not another chatbot. A proof system around every AI.', guided: 'Start guided experience'
     },
     es: {
-      toggle: 'English',
-      title: 'Exovia NeuroCanvas — Verificá cada respuesta',
-      searchLabel: 'Buscar dentro del proyecto',
-      searchPlaceholder: 'Escribí una pregunta o concepto…',
-      zoom: 'Buscar',
-      workspace: 'Nuevo ejemplo',
-      pulse: 'Ver actividad de IA',
-      open: 'Abrir archivo',
-      import: 'Pegar información',
-      export: 'Exportar copia',
-      fit: 'Ver mapa completo',
-      simple: 'Vista simple',
-      guide: 'Guiame',
-      purpose: '¿Qué querés organizar?',
-      save: 'Guardar',
-      snapshot: 'Copia de recuperación',
-      library: 'Mis proyectos',
-      undo: '↶ Deshacer',
-      redo: '↷ Rehacer',
-      explorer: 'Explorador de información',
-      inspector: 'Fuente y evidencia',
-      hint: 'Arrastrá para mover · usá la rueda para acercar · tocá un círculo para verlo',
-      details: 'Seleccioná un círculo para ver la fuente exacta de una respuesta o decisión.',
-      saved: 'Todos los cambios están guardados',
-      saving: 'Guardando automáticamente…'
+      toggle: 'English', title: 'Exovia NeuroCanvas — Espacio de Confiabilidad de IA', searchLabel: 'Buscar dentro del proyecto', searchPlaceholder: 'Escribí una pregunta o concepto…', zoom: 'Buscar',
+      workspace: 'Nuevo espacio', pulse: 'Actividad de agentes', open: 'Abrir archivo', import: 'Importar texto', trust: 'Verificar IA', capsule: 'Cápsula de contexto', export: 'Exportar copia', fit: 'Ver mapa completo',
+      simple: 'Vista simple', guide: 'Guiame', purpose: '¿Qué querés hacer?', save: 'Guardar', snapshot: 'Copia de recuperación', library: 'Mis proyectos', undo: '↶ Deshacer', redo: '↷ Rehacer',
+      explorer: 'Explorador de información', inspector: 'Fuente y evidencia', hint: 'Arrastrá para mover · acercá con dos dedos · tocá una idea para inspeccionarla', details: 'Seleccioná una idea para ver la fuente exacta detrás de una respuesta o decisión.',
+      saved: 'Todos los cambios están guardados', saving: 'Guardando automáticamente…', localProtected: 'Local primero · Protegido', homeEyebrow: 'LA CAPA DE CONFIABILIDAD PARA IA',
+      homeTitle: 'Usá IA sin perder verdad, privacidad ni control.', homeLead: 'NeuroCanvas convierte documentos, conversaciones y actividad de agentes en un espacio verificable. Conservá contexto, detectá riesgos, demostrá las respuestas y aprobá cada cambio importante de IA.',
+      homeStart: 'Crear un espacio confiable', homeImport: 'Importar una respuesta de IA o documento', guaranteeLocal: 'Tus datos quedan locales por defecto', guaranteeEvidence: 'Las respuestas siguen conectadas a evidencia', guaranteeHuman: 'Las personas aprueban cambios importantes',
+      controlCenter: 'CENTRO DE CONTROL DE IA', ready: 'LISTO', layers: 'capas', controlHeadline: 'Un espacio. Cuatro protecciones.', controlDescription: 'Evidencia, privacidad, contexto y control de agentes trabajan juntos en lugar de quedar separados.',
+      verifyAnswers: 'Verificar respuestas de IA', verifyAnswersSub: 'Encontrá afirmaciones sin respaldo, fuentes faltantes y contradicciones.', preserveContext: 'Conservar contexto reutilizable', preserveContextSub: 'Creá una cápsula portátil para cualquier modelo.', governAgents: 'Controlar agentes de IA', governAgentsSub: 'Reconstruí acciones y mantené una aprobación humana.',
+      whyExists: 'POR QUÉ EXISTE NEUROCANVAS', problemTitle: 'Los mayores problemas de la IA no son problemas del modelo.', problemLead: 'Son fallas de memoria, evidencia, privacidad y control. NeuroCanvas las trata como un único sistema conectado.',
+      problemHallucination: 'Respuestas seguras pero sin prueba', problemHallucinationSub: 'Rastreá cada conclusión hasta la fuente exacta y detectá afirmaciones sin respaldo antes de convertirlas en decisiones.',
+      problemContext: 'El contexto desaparece entre herramientas', problemContextSub: 'Creá cápsulas compactas con fuentes que viajan de forma segura entre modelos, agentes y conversaciones.',
+      problemPrivacy: 'La información privada se filtra en silencio', problemPrivacySub: 'Detectá localmente credenciales, datos personales e inyecciones de prompt antes de compartir con un proveedor.',
+      problemAgents: 'Los agentes actúan sin rendir cuentas', problemAgentsSub: 'Registrá acciones, reconstruí decisiones y exigí aprobación humana antes de cambios importantes.',
+      differentiator: 'LA DIFERENCIA', differentiatorTitle: 'No es otro chatbot. Es un sistema de prueba alrededor de cualquier IA.', guided: 'Comenzar experiencia guiada'
     }
   };
 
@@ -81,38 +62,21 @@
       button.setAttribute('aria-label', language === 'en' ? 'Cambiar la interfaz a español' : 'Change interface to English');
     }
 
-    setText('label[for="searchInput"]', t.searchLabel);
-    const search = $('searchInput');
-    if (search) search.placeholder = t.searchPlaceholder;
-    setText('#searchBtn', t.zoom);
-    setText('#demoBtn', t.workspace);
-    setText('#pulseDemoBtn', t.pulse);
-    const fileLabel = document.querySelector('.fileButton');
-    if (fileLabel?.firstChild) fileLabel.firstChild.textContent = t.open;
-    setText('#pasteBtn', t.import);
-    setText('#exportBtn', t.export);
-    setText('#fitBtn', t.fit);
-    setText('#simpleModeBtn', window.ExoviaSimpleMode?.isEnabled?.() ? (language === 'es' ? 'Vista completa' : 'Standard view') : t.simple);
-    setText('#simpleGuideBtn', t.guide);
-    setText('#useCaseBtn', t.purpose);
-    setText('#saveProjectBtn', t.save);
-    setText('#snapshotBtn', t.snapshot);
-    setText('#workspaceBtn', t.library);
-    setText('#safeUndoBtn', t.undo);
-    setText('#safeRedoBtn', t.redo);
-    setText('.leftPanel .panelTitle', t.explorer);
-    setText('.rightPanel .panelTitle', t.inspector);
-    setText('.hint', t.hint);
-    const details = $('details');
-    if (details?.classList.contains('empty')) details.textContent = t.details;
+    document.querySelectorAll('[data-i18n]').forEach(element => {
+      const key = element.dataset.i18n;
+      if (t[key]) element.textContent = t[key];
+    });
 
-    const saveStatus = $('safeSaveStatus');
-    if (saveStatus) {
-      const state = saveStatus.dataset.state;
-      const strong = saveStatus.querySelector('strong');
-      if (state === 'saved' && strong) strong.textContent = t.saved;
-      if (state === 'saving' && strong) strong.textContent = t.saving;
-    }
+    setText('label[for="searchInput"]', t.searchLabel);
+    const search = $('searchInput'); if (search) search.placeholder = t.searchPlaceholder;
+    setText('#searchBtn', t.zoom); setText('#demoBtn', t.workspace); setText('#pulseDemoBtn', t.pulse);
+    const fileLabel = document.querySelector('.fileButton'); if (fileLabel?.firstChild) fileLabel.firstChild.textContent = t.open;
+    setText('#pasteBtn', t.import); setText('#trustCenterBtn', t.trust); setText('#capsuleBtn', t.capsule); setText('#exportBtn', t.export); setText('#fitBtn', t.fit);
+    setText('#simpleModeBtn', window.ExoviaSimpleMode?.isEnabled?.() ? (language === 'es' ? 'Vista completa' : 'Standard view') : t.simple);
+    setText('#simpleGuideBtn', t.guide); setText('#purposeBtn', t.purpose); setText('#saveProjectBtn', t.save); setText('#snapshotBtn', t.snapshot); setText('#workspaceBtn', t.library);
+    setText('#safeUndoBtn', t.undo); setText('#safeRedoBtn', t.redo); setText('.leftPanel .panelTitle', t.explorer); setText('.rightPanel .panelTitle', t.inspector); setText('.leftPanel .hint', t.hint);
+    const details = $('details'); if (details?.classList.contains('empty')) details.textContent = t.details;
+    const saveStatus = $('safeSaveStatus'); if (saveStatus) { const state = saveStatus.dataset.state; const strong = saveStatus.querySelector('strong'); if (state === 'saved' && strong) strong.textContent = t.saved; if (state === 'saving' && strong) strong.textContent = t.saving; }
 
     window.dispatchEvent(new CustomEvent('exovia:language-changed', { detail: { language } }));
     if (announce) window.ExoviaNotify?.(language === 'es' ? 'Interfaz en español.' : 'Interface in English.', 'success');
@@ -120,16 +84,12 @@
 
   function build() {
     if ($('languageBtn')) return;
-    const button = document.createElement('button');
-    button.id = 'languageBtn';
-    button.type = 'button';
-    button.className = 'languageButton';
-    button.addEventListener('click', () => apply(language === 'en' ? 'es' : 'en', true));
+    const button = document.createElement('button'); button.id = 'languageBtn'; button.type = 'button'; button.className = 'languageButton'; button.addEventListener('click', () => apply(language === 'en' ? 'es' : 'en', true));
     document.querySelector('.toolbar')?.prepend(button);
-    setTimeout(() => apply(language), 150);
+    apply(language);
   }
 
-  window.ExoviaLanguage = { set: apply, get: () => language, supported: [...supported] };
+  window.ExoviaLanguage = { set: apply, get: () => language, supported: [...supported], copy };
   window.addEventListener('DOMContentLoaded', build);
   window.addEventListener('exovia:map-changed', () => setTimeout(() => apply(language), 0));
 })();
