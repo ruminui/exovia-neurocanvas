@@ -6,18 +6,27 @@
   const fitButton = document.getElementById('fitBtn');
   const searchInput = document.getElementById('searchInput');
   const mq = window.matchMedia('(max-width: 760px)');
+  const MOBILE_PREF = 'exovia:mobileReady';
   let pointers = new Map();
   let lastPinchDistance = 0;
   let lastTapAt = 0;
+  let deferredInstallPrompt = null;
+
+  function isMobile() { return mq.matches; }
 
   function setAppHeight() {
-    const height = window.visualViewport?.height || window.innerHeight;
+    const viewport = window.visualViewport;
+    const height = viewport?.height || window.innerHeight;
+    const offsetTop = viewport?.offsetTop || 0;
     document.documentElement.style.setProperty('--app-height', `${Math.round(height)}px`);
+    document.documentElement.style.setProperty('--viewport-offset-top', `${Math.round(offsetTop)}px`);
+    body.classList.toggle('mobile-keyboard-open', isMobile() && height < window.innerHeight * 0.76);
   }
 
-  function closeSheets() {
-    body.classList.remove('mobile-left-open', 'mobile-right-open', 'mobile-actions-open');
+  function closeSheets({ restoreFocus = false } = {}) {
+    body.classList.remove('mobile-left-open', 'mobile-right-open', 'mobile-actions-open', 'mobile-help-open');
     updatePressed();
+    if (restoreFocus) document.getElementById('mobileMap')?.focus();
   }
 
   function toggleSheet(name) {
@@ -35,6 +44,36 @@
     });
   }
 
+  function mobileText(en, es) {
+    return window.ExoviaLanguage?.get?.() === 'es' ? es : en;
+  }
+
+  function updateMobileLabels() {
+    const labels = {
+      mobileExplore: mobileText('Explore', 'Explorar'),
+      mobileMap: mobileText('Map', 'Mapa'),
+      mobileAsk: mobileText('Ask', 'Preguntar'),
+      mobileEvidence: mobileText('Evidence', 'Fuente'),
+      mobileActions: mobileText('More', 'Más'),
+      mobileInstall: mobileText('Install app', 'Instalar app'),
+      mobileHelp: mobileText('How to use', 'Cómo usar'),
+      mobileClose: mobileText('Close panel', 'Cerrar panel')
+    };
+    Object.entries(labels).forEach(([id, label]) => {
+      const button = document.getElementById(id);
+      const text = button?.querySelector('[data-mobile-label]');
+      if (text) text.textContent = label;
+      if (button) button.setAttribute('aria-label', label);
+    });
+    const backdrop = document.querySelector('.mobileSheetBackdrop');
+    if (backdrop) backdrop.setAttribute('aria-label', labels.mobileClose);
+    const hint = document.querySelector('.leftPanel .hint');
+    if (hint && isMobile()) hint.textContent = mobileText(
+      'Drag with one finger · pinch to zoom · tap an idea to inspect · double tap to fit',
+      'Arrastrá con un dedo · juntá o separá dos dedos para zoom · tocá una idea · doble toque para encuadrar'
+    );
+  }
+
   function buildMobileUi() {
     if (document.getElementById('mobileNav')) return;
 
@@ -42,7 +81,7 @@
     backdrop.type = 'button';
     backdrop.className = 'mobileSheetBackdrop';
     backdrop.setAttribute('aria-label', 'Close mobile panel');
-    backdrop.addEventListener('click', closeSheets);
+    backdrop.addEventListener('click', () => closeSheets({ restoreFocus: true }));
     body.appendChild(backdrop);
 
     const nav = document.createElement('nav');
@@ -50,58 +89,77 @@
     nav.className = 'mobileNav';
     nav.setAttribute('aria-label', 'Mobile navigation');
     nav.innerHTML = `
-      <button type="button" data-mobile-sheet="left" aria-pressed="false"><span>⌕</span><span>Explore</span></button>
-      <button type="button" id="mobileFit"><span>◎</span><span>Fit</span></button>
-      <button type="button" id="mobileSearch"><span>↗</span><span>Answer</span></button>
-      <button type="button" data-mobile-sheet="right" aria-pressed="false"><span>≡</span><span>Evidence</span></button>
-      <button type="button" data-mobile-sheet="actions" aria-pressed="false"><span>＋</span><span>Actions</span></button>`;
+      <button type="button" id="mobileExplore" data-mobile-sheet="left" aria-pressed="false"><span aria-hidden="true">⌕</span><span data-mobile-label>Explore</span></button>
+      <button type="button" id="mobileMap"><span aria-hidden="true">◎</span><span data-mobile-label>Map</span></button>
+      <button type="button" id="mobileAsk"><span aria-hidden="true">?</span><span data-mobile-label>Ask</span></button>
+      <button type="button" id="mobileEvidence" data-mobile-sheet="right" aria-pressed="false"><span aria-hidden="true">≡</span><span data-mobile-label>Evidence</span></button>
+      <button type="button" id="mobileActions" data-mobile-sheet="actions" aria-pressed="false"><span aria-hidden="true">＋</span><span data-mobile-label>More</span></button>`;
     body.appendChild(nav);
 
-    nav.querySelectorAll('[data-mobile-sheet]').forEach(button => {
-      button.addEventListener('click', () => toggleSheet(button.dataset.mobileSheet));
-    });
-    nav.querySelector('#mobileFit').addEventListener('click', () => {
-      fitButton?.click();
-      closeSheets();
-    });
-    nav.querySelector('#mobileSearch').addEventListener('click', () => {
+    const quick = document.createElement('div');
+    quick.id = 'mobileQuickActions';
+    quick.className = 'mobileQuickActions';
+    quick.innerHTML = `
+      <button id="mobileHelp" type="button"><span aria-hidden="true">ⓘ</span><span data-mobile-label>How to use</span></button>
+      <button id="mobileInstall" type="button" hidden><span aria-hidden="true">⇩</span><span data-mobile-label>Install app</span></button>`;
+    document.querySelector('.toolbar')?.prepend(quick);
+
+    nav.querySelectorAll('[data-mobile-sheet]').forEach(button => button.addEventListener('click', () => toggleSheet(button.dataset.mobileSheet)));
+    document.getElementById('mobileMap').addEventListener('click', () => { fitButton?.click(); closeSheets(); });
+    document.getElementById('mobileAsk').addEventListener('click', () => {
       toggleSheet('left');
-      setTimeout(() => searchInput?.focus(), 240);
+      setTimeout(() => { searchInput?.focus(); searchInput?.scrollIntoView({ block: 'center' }); }, 260);
+    });
+    document.getElementById('mobileHelp').addEventListener('click', () => {
+      closeSheets();
+      const simple = document.getElementById('simpleModeBtn');
+      if (simple && !window.ExoviaSimpleMode?.isEnabled?.()) simple.click();
+      document.getElementById('simpleGuideBtn')?.click();
+    });
+    document.getElementById('mobileInstall').addEventListener('click', async () => {
+      if (!deferredInstallPrompt) return;
+      deferredInstallPrompt.prompt();
+      await deferredInstallPrompt.userChoice.catch(() => null);
+      deferredInstallPrompt = null;
+      document.getElementById('mobileInstall').hidden = true;
+    });
+
+    document.querySelector('.leftPanel')?.addEventListener('click', event => {
+      if (!isMobile()) return;
+      if (event.target.closest('.result,[data-node-id]')) setTimeout(() => closeSheets(), 100);
+    });
+
+    window.addEventListener('beforeinstallprompt', event => {
+      event.preventDefault();
+      deferredInstallPrompt = event;
+      const install = document.getElementById('mobileInstall');
+      if (install) install.hidden = false;
+    });
+    window.addEventListener('appinstalled', () => {
+      deferredInstallPrompt = null;
+      const install = document.getElementById('mobileInstall');
+      if (install) install.hidden = true;
     });
   }
 
   function dispatchMouse(type, point) {
-    canvas.dispatchEvent(new MouseEvent(type, {
-      bubbles: true,
-      cancelable: true,
-      clientX: point.clientX,
-      clientY: point.clientY,
-      button: 0,
-      buttons: type === 'mouseup' ? 0 : 1
-    }));
+    canvas?.dispatchEvent(new MouseEvent(type, { bubbles: true, cancelable: true, clientX: point.clientX, clientY: point.clientY, button: 0, buttons: type === 'mouseup' ? 0 : 1 }));
   }
 
-  function distance(a, b) {
-    return Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
-  }
-
-  function midpoint(a, b) {
-    return { clientX: (a.clientX + b.clientX) / 2, clientY: (a.clientY + b.clientY) / 2 };
-  }
+  const distance = (a, b) => Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+  const midpoint = (a, b) => ({ clientX: (a.clientX + b.clientX) / 2, clientY: (a.clientY + b.clientY) / 2 });
 
   function enableTouchCanvas() {
     if (!canvas || canvas.dataset.mobileTouchReady) return;
     canvas.dataset.mobileTouchReady = 'true';
 
     canvas.addEventListener('pointerdown', event => {
-      if (!mq.matches || event.pointerType === 'mouse') return;
+      if (!isMobile() || event.pointerType === 'mouse') return;
       event.preventDefault();
       canvas.setPointerCapture?.(event.pointerId);
       pointers.set(event.pointerId, { clientX: event.clientX, clientY: event.clientY });
-
-      if (pointers.size === 1) {
-        dispatchMouse('mousedown', event);
-      } else if (pointers.size === 2) {
+      if (pointers.size === 1) dispatchMouse('mousedown', event);
+      else if (pointers.size === 2) {
         dispatchMouse('mouseup', event);
         const [a, b] = [...pointers.values()];
         lastPinchDistance = distance(a, b);
@@ -109,33 +167,24 @@
     }, { passive: false });
 
     canvas.addEventListener('pointermove', event => {
-      if (!mq.matches || event.pointerType === 'mouse' || !pointers.has(event.pointerId)) return;
+      if (!isMobile() || event.pointerType === 'mouse' || !pointers.has(event.pointerId)) return;
       event.preventDefault();
       pointers.set(event.pointerId, { clientX: event.clientX, clientY: event.clientY });
-
-      if (pointers.size === 1) {
-        dispatchMouse('mousemove', event);
-      } else if (pointers.size === 2) {
+      if (pointers.size === 1) dispatchMouse('mousemove', event);
+      else if (pointers.size === 2) {
         const [a, b] = [...pointers.values()];
         const currentDistance = distance(a, b);
         if (lastPinchDistance > 0) {
           const center = midpoint(a, b);
           const delta = Math.max(-120, Math.min(120, (lastPinchDistance - currentDistance) * 2.4));
-          canvas.dispatchEvent(new WheelEvent('wheel', {
-            bubbles: true,
-            cancelable: true,
-            clientX: center.clientX,
-            clientY: center.clientY,
-            deltaY: delta,
-            deltaMode: 0
-          }));
+          canvas.dispatchEvent(new WheelEvent('wheel', { bubbles: true, cancelable: true, clientX: center.clientX, clientY: center.clientY, deltaY: delta, deltaMode: 0 }));
         }
         lastPinchDistance = currentDistance;
       }
     }, { passive: false });
 
     function finishPointer(event) {
-      if (!mq.matches || event.pointerType === 'mouse') return;
+      if (!isMobile() || event.pointerType === 'mouse') return;
       event.preventDefault();
       const wasSingle = pointers.size === 1;
       pointers.delete(event.pointerId);
@@ -146,40 +195,41 @@
         lastTapAt = now;
       }
       if (pointers.size < 2) lastPinchDistance = 0;
-      if (pointers.size === 1) {
-        const remaining = [...pointers.values()][0];
-        dispatchMouse('mousedown', remaining);
-      }
+      if (pointers.size === 1) dispatchMouse('mousedown', [...pointers.values()][0]);
     }
-
     canvas.addEventListener('pointerup', finishPointer, { passive: false });
     canvas.addEventListener('pointercancel', finishPointer, { passive: false });
   }
 
-  function adaptLabels() {
-    const hint = document.querySelector('.leftPanel .hint');
-    if (!hint) return;
-    hint.textContent = mq.matches
-      ? 'Drag with one finger · pinch to zoom · tap a node to inspect · double tap to fit'
-      : 'Drag to pan · wheel to zoom · click a node to inspect · Ctrl+S to save · Ctrl+E to edit';
+  function prepareMobileDefaults() {
+    if (!isMobile() || localStorage.getItem(MOBILE_PREF)) return;
+    localStorage.setItem(MOBILE_PREF, '1');
+    if (!localStorage.getItem('exovia:language') && /^es\b/i.test(navigator.language || '')) window.ExoviaLanguage?.set?.('es');
+    setTimeout(() => {
+      if (!window.ExoviaSimpleMode?.isEnabled?.()) document.getElementById('simpleModeBtn')?.click();
+      document.getElementById('useCaseBtn')?.click();
+    }, 700);
   }
 
   function onModeChange() {
     setAppHeight();
-    adaptLabels();
-    if (!mq.matches) closeSheets();
+    updateMobileLabels();
+    if (!isMobile()) closeSheets();
   }
 
   buildMobileUi();
   enableTouchCanvas();
   setAppHeight();
-  adaptLabels();
+  updateMobileLabels();
+  prepareMobileDefaults();
 
   mq.addEventListener?.('change', onModeChange);
   window.addEventListener('resize', setAppHeight);
-  window.addEventListener('orientationchange', () => setTimeout(setAppHeight, 120));
+  window.addEventListener('orientationchange', () => setTimeout(() => { setAppHeight(); fitButton?.click(); }, 180));
   window.visualViewport?.addEventListener('resize', setAppHeight);
-  document.addEventListener('keydown', event => {
-    if (event.key === 'Escape') closeSheets();
-  });
+  window.visualViewport?.addEventListener('scroll', setAppHeight);
+  window.addEventListener('exovia:language-changed', updateMobileLabels);
+  document.addEventListener('keydown', event => { if (event.key === 'Escape') closeSheets({ restoreFocus: true }); });
+
+  window.ExoviaMobile = { closeSheets, toggleSheet, setAppHeight, isMobile };
 })();
