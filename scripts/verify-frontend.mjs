@@ -58,7 +58,7 @@ const capabilities=[
  ['bilingual API',language.includes('window.ExoviaLanguage')],['Spanish plain language',language.includes('Pegar información')],
  ['resilience API',resilience.includes('window.ExoviaResilience')],['emergency recovery',resilience.includes('EMERGENCY_RECOVERY_RESTORED')],
  ['multi-tab warning',resilience.includes('BroadcastChannel')],['accessible list',resilience.includes('accessibleGraphList')],
- ['privacy-safe support report',resilience.includes('intentionally excludes project text')],['large-input API',largeInput.includes('window.ExoviaLargeInput')],
+ ['privacy-safe support report',resilience.includes('intentionally excludes project titles, text')],['large-input API',largeInput.includes('window.ExoviaLargeInput')],
  ['large-input hard limit',largeInput.includes('HARD_BYTES')]
 ];
 for(const [name,present] of capabilities)present?pass(`capability entry point: ${name}`):fail(`missing capability entry point: ${name}`);
@@ -67,7 +67,7 @@ const securityMarkers=[
  ['bridge token is session-only',bridge.includes("sessionStorage.getItem('exovia:bridgeToken')")&&!bridge.includes("localStorage.setItem('exovia:bridgeToken'")],
  ['remote bridge requires HTTPS',bridge.includes('Remote bridge URLs must use HTTPS')],['human review before AI load',bridge.includes('AI_CHANGES_REVIEWED_AND_LOADED')],
  ['security policy documents boundaries',/Do not expose the local bridge directly to the public Internet/i.test(security)],
- ['support report excludes content',resilience.includes('excludes project text, node contents, tokens, local paths and personal identifiers')]
+ ['support report excludes content',resilience.includes('excludes project titles, text, node contents, tokens, local paths and personal identifiers')]
 ];
 for(const [name,present] of securityMarkers)present?pass(`security invariant: ${name}`):fail(`missing security invariant: ${name}`);
 
