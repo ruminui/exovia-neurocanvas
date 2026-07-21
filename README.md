@@ -29,6 +29,7 @@ This path requires no API key, database or external AI service. It generates ins
 - **Official website:** https://exovia.wixsite.com/exovia-neurocanvas-1
 - **Public build conversation:** https://chatgpt.com/share/6a5cddb2-6080-83e9-82b7-b4b5940dc1a8
 - **Build journey and provenance:** [`docs/BUILD_JOURNEY_AND_PROVENANCE.md`](docs/BUILD_JOURNEY_AND_PROVENANCE.md)
+- **Originality and adjacent-project review:** [`docs/ORIGINALITY_AND_DIFFERENTIATION.md`](docs/ORIGINALITY_AND_DIFFERENTIATION.md)
 - **Android test APK:** https://github.com/ruminui/exovia-neurocanvas/releases/download/android-latest/Exovia-NeuroCanvas-Android.apk
 - **Source repository:** https://github.com/ruminui/exovia-neurocanvas
 
@@ -51,6 +52,33 @@ Teams increasingly work with documents, notes and AI-generated answers. The info
 A user can import information, ask a question, navigate to the strongest answer, inspect the exact source, review knowledge quality and replay human or agent activity.
 
 The ChatGPT App adds Exovia ProofLayer directly to a conversation. ChatGPT can scan an answer, preserve portable context, compare outputs, recommend a safer AI route, create a visual NeuroCanvas handoff and generate a verifiable Proof Pack.
+
+## The Exovia innovation stack
+
+Exovia is not differentiated by a generic graph alone. Its distinctive contribution is the combination of visual memory, compact activity, validated intent, capability routing and human-verifiable proof:
+
+- **NeuroCanvas** — visual memory, exact evidence navigation, quality signals and replay;
+- **ProofLayer** — AI-output reliability, portable context, privacy protection, comparison and SHA-256 proof artifacts;
+- **ExiaL** — compact semantic pulses for observable agent and graph activity;
+- **EXIR** — canonical validation between raw messages or intent and accepted graph events or mutations;
+- **Exil** — constrained intent preview with policy checks and explicit human control;
+- **FAPI** — capability discovery, routing, health, streaming and budget concepts behind controlled actions.
+
+```text
+Evidence and AI activity
+          ↓
+ ProofLayer + EXIR validation
+          ↓
+  NeuroCanvas visual memory
+          ↓
+ ExiaL replay + Exil preview
+          ↓
+ optional controlled FAPI route
+          ↓
+ evidence, approval and Proof Pack
+```
+
+The public architecture, implementation boundary and comparison with adjacent projects are documented in [`docs/FAPI_EXIAL_EXIL_INTEGRATION.md`](docs/FAPI_EXIAL_EXIL_INTEGRATION.md) and [`docs/ORIGINALITY_AND_DIFFERENTIATION.md`](docs/ORIGINALITY_AND_DIFFERENTIATION.md). No source code from the adjacent projects reviewed there is included in this repository.
 
 ## Who it is for
 
