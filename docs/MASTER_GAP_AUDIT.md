@@ -12,12 +12,13 @@ Principle: **Do not declare complete what has not been executed and evidenced.**
 
 ```text
 IMPLEMENTATION: ADVANCED RELEASE CANDIDATE
+INTERNALLY SOLVABLE UX/RESILIENCE GAPS: SUBSTANTIALLY REDUCED
 RUNTIME EVIDENCE: INCOMPLETE
-SUBMISSION READINESS: HUMAN AND EXTERNAL GATES PENDING
+SUBMISSION READINESS: EXTERNAL GATES PENDING
 ENTERPRISE CERTIFICATION: NOT CLAIMED
 ```
 
-The largest remaining risk is the distance between code presence and executed evidence.
+The largest remaining risk is no longer missing interface functionality. It is the distance between code/test presence and executed evidence.
 
 ## Protected stable base
 
@@ -34,7 +35,28 @@ Do not replace wholesale:
 - `scripts/release-readiness.mjs`
 - `tests/e2e/neurocanvas.spec.mjs`
 
-Changes must be incremental, reversible and tested.
+Changes must remain incremental, reversible and tested.
+
+## Internally implemented completion work
+
+The repository now includes:
+
+- problem-first and judge-first explanation;
+- Simple view with larger controls;
+- purpose-based starter templates;
+- Spanish/English primary labels;
+- visible autosave status;
+- session Undo/Redo;
+- emergency local recovery copy;
+- multi-tab conflict warning;
+- keyboard and screen-reader-friendly graph list;
+- privacy-safe support report;
+- large-input warning and maximum-size guard;
+- offline cache coverage for the new runtime modules;
+- automated browser test definitions for these behaviors;
+- professional completion mega-prompt and evidence rules.
+
+These items remain **AUTOMATED TESTED** or **IMPLEMENTED**, not `RUNTIME VERIFIED`, until the suites run successfully.
 
 ## P0 submission blockers
 
@@ -46,89 +68,89 @@ Evidence: clean ZIP, launcher startup, expected local URL, no blocking console e
 
 ### Reproducible dependencies
 
-Status: `PARTIAL`
+Status: `BLOCKED`
 
-Playwright is pinned, but `package-lock.json` is missing. Generate it with Node 20 in a trusted environment, commit it and use `npm ci`. Never hand-author a lockfile.
+The project baseline is **Node.js 24**. Generate an authentic root `package-lock.json` using Node 24 and npm in a trusted environment, commit it and switch CI/install instructions to `npm ci`. Never hand-author a lockfile.
 
 ### Automated verification
 
 Status: `EXECUTION EVIDENCE REQUIRED`
 
 ```bash
-npm ci
+npm install
 npx playwright install --with-deps chromium
 npm run verify
 cd server
 npm run verify
 ```
 
+After the authentic lockfile exists, use `npm ci` instead of `npm install`.
+
 Preserve exit codes, console output, `artifacts/release-readiness.json`, Playwright reports and backend output.
 
-### Real ingestion
+### Real ingestion and persistence
 
-Required executed matrix:
+Required executed proof:
 
-- pasted text;
-- TXT and Markdown;
-- valid project JSON;
-- malformed and incompatible JSON;
-- ExiaL and log files;
-- large text;
-- Unicode and Spanish content.
+- pasted text, TXT, Markdown, JSON, ExiaL, logs, Unicode and malformed files;
+- save/reload and browser restart;
+- edit/delete/duplicate/snapshot lifecycle;
+- export and fresh import round trip;
+- autosave, Undo/Redo and emergency recovery;
+- large-input warning behavior.
 
-### Persistence lifecycle
+### Accessibility and resilience
 
-Required proof:
+Required executed proof:
 
-- save and reload;
-- browser restart persistence;
-- create, edit and delete node;
-- autosave;
-- snapshot creation and restore;
-- project duplication isolation;
-- deletion cleanup;
-- export and fresh import round trip.
+- complete keyboard path;
+- accessible list usable without the canvas;
+- 200% and 400% browser zoom;
+- screen-reader smoke test;
+- multi-tab warning;
+- support report download contains no project text or secrets;
+- storage failure behavior.
 
-### Offline and service worker
+### Offline and public deployment
 
 Required proof:
 
 - offline reload after first load;
 - current assets cached;
 - service-worker upgrade avoids stale assets;
-- PWA installation from HTTPS.
-
-### Judge flow
-
-Required proof:
-
-- product understood in under 30 seconds;
-- guided flow under three minutes;
-- no dead controls;
-- citations return to evidence;
-- health and replay use the same project;
-- no unsupported claims.
-
-### Public deployment
-
-Required proof: GitHub Pages enabled, deployment succeeds, desktop and mobile load correctly, repository subpath and service-worker scope work, and the latest commit is served.
+- PWA installation from HTTPS;
+- GitHub Pages or another public deployment loads on desktop and mobile;
+- repository subpath and service-worker scope are correct.
 
 ### Codex requirement
 
-Required proof: meaningful core work in Codex, authentic `/feedback` Session ID, and documentation of what Codex changed. Never invent or substitute an identifier.
+Required proof: meaningful core work in Codex, authentic `/feedback` Session ID and documentation of what Codex changed. Never invent or substitute an identifier.
 
-### Submission media and legal actions
+### Submission actions other than video
 
-Required proof: public video under three minutes, English narration or subtitles, final cover and screenshots, accepted team invitations, and Devpost attestations completed by Luciano.
+Required proof:
 
-## P1 professional gaps
+- image uploaded;
+- project story and build details complete;
+- repository and public app links correct;
+- team invitations accepted;
+- country and attestations complete;
+- final Devpost submission reviewed and submitted.
 
-- formal JSON Schema and migrations;
-- transaction-based undo/redo;
-- indexed search and progressive rendering for large graphs;
-- dedicated PDF, Obsidian and Joplin parsers;
-- full keyboard, focus, contrast and screen-reader audit;
-- structured logs, trace IDs, audit export and support bundles.
+The video is intentionally tracked separately at the user's request.
+
+## P1 remaining engineering work
+
+These are not honestly solvable without running or profiling the application:
+
+- storage quota and IndexedDB failure tests;
+- physical mobile and assistive-technology validation;
+- large-graph profiling at 1,000–10,000 nodes;
+- progressive rendering/Web Worker decision based on measurements;
+- full Spanish dynamic-string audit;
+- transactional/persistent Undo history;
+- soft-delete project paper bin integrated into IndexedDB;
+- formal support bundle ZIP with logs after browser support is verified.
 
 ## P2 enterprise roadmap
 
@@ -151,7 +173,7 @@ Compare every cycle:
 - `docs/FINAL_COMPLETION_AUDIT.md`;
 - `docs/ENTERPRISE_READINESS.md`;
 - Devpost text;
-- video narration.
+- public narration and screenshots.
 
 No document may claim more than the verification matrix.
 
@@ -160,14 +182,14 @@ No document may claim more than the verification matrix.
 A submission candidate exists only when:
 
 - clean external startup is evidenced;
-- lockfile exists and clean install is reproducible;
+- authentic Node 24 lockfile exists and clean install is reproducible;
 - frontend, backend and browser suites pass;
-- persistence lifecycle and import/export round trip pass;
+- persistence, resilience and import/export workflows pass;
+- keyboard/list accessibility and zoom checks pass;
 - offline reload passes;
 - public deployment passes desktop and mobile checks;
-- guided demo completes under three minutes;
-- final video and images are reviewed;
 - authentic Codex Session ID is recorded;
+- Devpost fields and attestations are complete;
 - all claims match runtime evidence;
 - no P0 item remains unverified.
 
