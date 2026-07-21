@@ -1,4 +1,4 @@
-const CACHE = 'exovia-neurocanvas-v12-simple-mode';
+const CACHE = 'exovia-neurocanvas-v13-purpose-chooser';
 const APP_SHELL = './index.html';
 const ASSETS = [
   './',
@@ -16,6 +16,7 @@ const ASSETS = [
   './src/live-room.css',
   './src/clarity.css',
   './src/simple-mode.css',
+  './src/use-cases.css',
   './src/core.js',
   './src/upgrade.js',
   './src/product.js',
@@ -26,7 +27,8 @@ const ASSETS = [
   './src/diagnostics.js',
   './src/live-room.js',
   './src/clarity.js',
-  './src/simple-mode.js'
+  './src/simple-mode.js',
+  './src/use-cases.js'
 ];
 
 self.addEventListener('install', event => {
@@ -35,43 +37,36 @@ self.addEventListener('install', event => {
 });
 
 self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(keys => Promise.all(keys.filter(key => key !== CACHE).map(key => caches.delete(key))))
-  );
+  event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key !== CACHE).map(key => caches.delete(key)))));
   self.clients.claim();
 });
 
 self.addEventListener('fetch', event => {
   const request = event.request;
   if (request.method !== 'GET') return;
-
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
   if (request.mode === 'navigate') {
-    event.respondWith(
-      fetch(request).catch(async () => (await caches.match(request)) || caches.match(APP_SHELL))
-    );
+    event.respondWith(fetch(request).catch(async () => (await caches.match(request)) || caches.match(APP_SHELL)));
     return;
   }
 
-  event.respondWith(
-    caches.match(request).then(async cached => {
-      if (cached) return cached;
-      try {
-        const response = await fetch(request);
-        if (response.ok && response.type === 'basic') {
-          const cache = await caches.open(CACHE);
-          await cache.put(request, response.clone());
-        }
-        return response;
-      } catch (error) {
-        return new Response('Offline asset unavailable.', {
-          status: 503,
-          statusText: 'Service Unavailable',
-          headers: { 'content-type': 'text/plain; charset=utf-8' }
-        });
+  event.respondWith(caches.match(request).then(async cached => {
+    if (cached) return cached;
+    try {
+      const response = await fetch(request);
+      if (response.ok && response.type === 'basic') {
+        const cache = await caches.open(CACHE);
+        await cache.put(request, response.clone());
       }
-    })
-  );
+      return response;
+    } catch {
+      return new Response('Offline asset unavailable.', {
+        status: 503,
+        statusText: 'Service Unavailable',
+        headers: { 'content-type': 'text/plain; charset=utf-8' }
+      });
+    }
+  }));
 });
