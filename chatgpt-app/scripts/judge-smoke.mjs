@@ -17,6 +17,7 @@ const expectedTools = [
   "create_neurocanvas_map",
   "compare_ai_outputs",
   "recommend_ai_route",
+  "run_assurance_council",
   "build_proof_pack",
 ];
 
@@ -141,6 +142,31 @@ try {
   assert(route.kind === "safe_route", "Safe Router returned the wrong result kind");
   assert(route.mode === "hybrid_verified", `Unexpected route for the judge scenario: ${route.mode}`);
 
+  const council = await callTool(client, "run_assurance_council", {
+    title: demo.title,
+    objective: demo.objective,
+    content: demo.aiOutput,
+    evidence: demo.evidence,
+    taskType: "decision",
+    consequence: "high",
+    language: "es",
+  });
+  const councilSerialized = JSON.stringify(council);
+  assert(council.kind === "assurance_council", "Assurance Council returned the wrong result kind");
+  assert(council.roles?.length === 12, "Assurance Council did not expose twelve review lenses");
+  assert(council.verdict === "blocked", `Unsafe judge scenario was not blocked: ${council.verdict}`);
+  assert(council.blockingRoles?.length >= 3, "Assurance Council did not preserve blocking dissent");
+  assert(council.roles.some((role) => role.id === "security" && role.status === "block"), "Security lens did not block prompt injection");
+  assert(council.roles.some((role) => role.id === "privacy" && role.status === "block"), "Privacy lens did not block the credential");
+  assert(council.handoffs?.length === 11 && council.exialPulses?.length === 11 && council.exirEvents?.length === 11, "Assurance Council handoff chain is incomplete");
+  assert(council.governance?.simulatedIndependentModels === false, "Assurance Council incorrectly claims independent model consensus");
+  assert(council.governance?.externalActionsExecuted === false, "Assurance Council recorded an external action");
+  assert(council.neurocanvasHandoff?.map?.format === "neurocanvas-v3", "Assurance Council did not create a NeuroCanvas handoff");
+  assert(/^[a-f0-9]{64}$/.test(council.integrity?.hash || ""), "Assurance Council SHA-256 is invalid");
+  assert(council.redactionCount >= 2, "Assurance Council did not redact the demo email and credential");
+  assert(!councilSerialized.includes("luciano@example.com"), "Assurance Council leaked the demo email");
+  assert(!councilSerialized.includes("demo_secret_123456789"), "Assurance Council leaked the demo credential");
+
   const mapResult = await callTool(client, "create_neurocanvas_map", {
     title: demo.title,
     objective: demo.objective,
@@ -190,6 +216,11 @@ try {
       answersCompared: true,
       evidenceBoundedAnswerWon: true,
       safeRouteCreated: true,
+      assuranceCouncilCreated: true,
+      assuranceCouncilDissentVisible: true,
+      assuranceCouncilBlockedUnsafeScenario: true,
+      assuranceCouncilExiaLExirHandoffCreated: true,
+      assuranceCouncilNeuroCanvasHandoffCreated: true,
       neurocanvasMapCreated: true,
       proofPackCreated: true,
       proofPackRedacted: true,
@@ -206,6 +237,13 @@ try {
       exoSha256: exoPack.hash,
       comparisonWinner: comparison.winner,
       recommendedRoute: route.mode,
+      councilVerdict: council.verdict,
+      councilConsensusScore: council.consensusScore,
+      councilBlockingRoles: council.blockingRoles.length,
+      councilRoleCount: council.roles.length,
+      councilHandoffCount: council.handoffs.length,
+      councilRedactions: council.redactionCount,
+      councilSha256: council.integrity.hash,
       neurocanvasNodes: mapResult.nodeCount,
       neurocanvasEdges: mapResult.edgeCount,
       proofRedactions: proof.redactionCount,
@@ -218,6 +256,8 @@ try {
     writeFile(path.join(outputDir, "trust-scan.json"), `${JSON.stringify(trust, null, 2)}\n`),
     writeFile(path.join(outputDir, "context-capsule.md"), `${capsule.markdown.trim()}\n`),
     writeFile(path.join(outputDir, exoPack.fileName || "judge-capability-pack.exo"), `${JSON.stringify(exoPack.package, null, 2)}\n`),
+    writeFile(path.join(outputDir, "assurance-council.json"), `${JSON.stringify(council, null, 2)}\n`),
+    writeFile(path.join(outputDir, council.neurocanvasHandoff.fileName || "assurance-council-map.json"), `${JSON.stringify(council.neurocanvasHandoff.map, null, 2)}\n`),
     writeFile(path.join(outputDir, mapResult.fileName || "judge-neurocanvas-map.json"), `${JSON.stringify(mapResult.map, null, 2)}\n`),
     writeFile(path.join(outputDir, "comparison.json"), `${JSON.stringify(comparison, null, 2)}\n`),
     writeFile(path.join(outputDir, "safe-route.json"), `${JSON.stringify(route, null, 2)}\n`),
@@ -228,12 +268,14 @@ try {
   console.log(`MCP tools discovered: ${toolNames.length}`);
   console.log(`Trust score: ${trust.score}/100 (${trust.grade})`);
   console.log(`Risks detected: ${trust.issues.length}`);
-  console.log(`Privacy redactions: capsule ${capsule.redactionCount} / EXO ${exoPack.redactionCount} / proof ${proof.redactionCount}`);
+  console.log(`Privacy redactions: capsule ${capsule.redactionCount} / EXO ${exoPack.redactionCount} / council ${council.redactionCount} / proof ${proof.redactionCount}`);
   console.log(`EXO pack: ${exoPack.sourceCount} sources / ${exoPack.chunkCount} chunks / ${exoPack.estimatedInitialReductionPercent}% estimated initial context reduction`);
   console.log(`Evidence-bounded winner: ${comparison.winner}`);
   console.log(`Recommended route: ${route.mode}`);
+  console.log(`Assurance Council: ${council.verdict} / ${council.consensusScore} consensus / ${council.blockingRoles.length} blocking roles / ${council.handoffs.length} handoffs`);
   console.log(`NeuroCanvas map: ${mapResult.nodeCount} nodes / ${mapResult.edgeCount} relationships`);
   console.log(`EXO SHA-256: ${exoPack.hash}`);
+  console.log(`Council SHA-256: ${council.integrity.hash}`);
   console.log(`Proof Pack SHA-256: ${proof.hash}`);
   console.log(`Artifacts: ${outputDir}`);
 } catch (error) {
