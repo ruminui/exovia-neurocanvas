@@ -11,6 +11,7 @@ const expectedTools = [
   "create_neurocanvas_map",
   "compare_ai_outputs",
   "recommend_ai_route",
+  "run_assurance_council",
   "build_proof_pack",
 ];
 
