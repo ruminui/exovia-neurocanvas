@@ -34,20 +34,30 @@ function parseRpcPayload(text, contentType) {
   return JSON.parse(text);
 }
 
-async function rpc(method, params, id) {
+async function postRpc(payload) {
   const response = await fetch(`${baseUrl}/mcp`, {
     method: "POST",
     headers: {
       "content-type": "application/json",
       accept: "application/json, text/event-stream",
     },
-    body: JSON.stringify({ jsonrpc: "2.0", id, method, params }),
+    body: JSON.stringify(payload),
   });
   const text = await response.text();
-  assert(response.ok, `${method} failed with HTTP ${response.status}: ${text}`);
-  const payload = parseRpcPayload(text, response.headers.get("content-type") || "");
-  assert(!payload.error, `${method} returned an MCP error: ${JSON.stringify(payload.error)}`);
-  return payload.result;
+  assert(response.ok, `${payload.method} failed with HTTP ${response.status}: ${text}`);
+  if (!text.trim()) return null;
+  const parsed = parseRpcPayload(text, response.headers.get("content-type") || "");
+  assert(!parsed.error, `${payload.method} returned an MCP error: ${JSON.stringify(parsed.error)}`);
+  return parsed;
+}
+
+async function rpc(method, params, id) {
+  const payload = await postRpc({ jsonrpc: "2.0", id, method, params });
+  return payload?.result;
+}
+
+async function notify(method, params = {}) {
+  await postRpc({ jsonrpc: "2.0", method, params });
 }
 
 async function callTool(name, args, id) {
@@ -93,6 +103,7 @@ try {
     clientInfo: { name: "exovia-hackathon-judge", version: "1.0.0" },
   }, 1);
   assert(initialized?.serverInfo?.name === "exovia-neurocanvas", "Unexpected MCP server identity");
+  await notify("notifications/initialized");
 
   const listed = await rpc("tools/list", {}, 2);
   const toolNames = (listed?.tools || []).map((tool) => tool.name);
@@ -163,6 +174,7 @@ try {
     checks: {
       health: true,
       mcpInitialize: true,
+      initializedNotification: true,
       toolDiscovery: true,
       privacyRiskDetected: true,
       promptInjectionDetected: true,
@@ -203,9 +215,13 @@ try {
   console.log(`Proof Pack SHA-256: ${proof.hash}`);
   console.log(`Artifacts: ${outputDir}`);
 } catch (error) {
-  await writeFile(path.join(outputDir, "server.log"), logs.join(""));
+  const failure = error instanceof Error ? error.stack || error.message : String(error);
+  await Promise.all([
+    writeFile(path.join(outputDir, "server.log"), logs.join("")),
+    writeFile(path.join(outputDir, "judge-failure.txt"), `${failure}\n`),
+  ]);
   console.error("\nEXOVIA HACKATHON JUDGE CHECK: FAIL");
-  console.error(error instanceof Error ? error.stack : error);
+  console.error(failure);
   process.exitCode = 1;
 } finally {
   server.kill("SIGTERM");
