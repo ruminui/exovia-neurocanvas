@@ -4,9 +4,9 @@ Reviewed on **2026-07-21** for OpenAI Build Week.
 
 ## Purpose
 
-An `.exo` file is a transparent, source-linked capability package for humans and AI agents. It is designed to preserve reusable knowledge without turning a document into an opaque prompt, trained model or automatically executable plugin.
+An `.exo` file is a transparent, source-linked capability package for humans and AI agents. It preserves reusable knowledge without turning a document into an opaque prompt, trained model or automatically executable plugin.
 
-The format learns from broad industry patterns such as progressive context loading, MCP tools and structured knowledge packaging, but its implementation and schema are original to Exovia NeuroCanvas. No third-party source code is included.
+The format learns from broad industry patterns such as progressive context loading, MCP tools and structured knowledge packaging, but its implementation and schema are original to Exovia NeuroCanvas. No code from the adjacent projects reviewed by this submission is copied into the compiler.
 
 ## Core design goals
 
@@ -17,6 +17,7 @@ The format learns from broad industry patterns such as progressive context loadi
 5. **No hidden execution** — extracted procedures are information, not permission to perform actions.
 6. **Human control** — consequential actions always require explicit approval.
 7. **Integrity** — the package receives a SHA-256 fingerprint covering every field except the integrity block itself.
+8. **Honest source-rights boundary** — the compiler does not claim to verify whether a user is authorized to package supplied material.
 
 ## File extension and encoding
 
@@ -38,7 +39,7 @@ MIME type for downloads:
 application/json
 ```
 
-The custom extension exists to communicate purpose, not to hide the content.
+The custom extension communicates purpose; it does not hide or encrypt the content.
 
 ## Top-level structure
 
@@ -68,7 +69,7 @@ The custom extension exists to communicate purpose, not to hide the content.
 
 ## Manifest
 
-The manifest declares the safety and provenance boundary:
+The manifest declares the safety, execution and intellectual-property boundary:
 
 ```json
 {
@@ -78,11 +79,19 @@ The manifest declares the safety and provenance boundary:
   "externalActionsExecuted": false,
   "generatedLocally": true,
   "persistedByServer": false,
-  "thirdPartyCodeIncluded": false
+  "bundledThirdPartyRuntimeCode": false,
+  "adjacentProjectCodeCopied": false,
+  "sourceRightsVerifiedByCompiler": false
 }
 ```
 
-`thirdPartyCodeIncluded` describes the generated package produced by the deterministic compiler. It does not waive normal license obligations when a user intentionally supplies third-party material as a source. Users remain responsible for having permission to use their inputs.
+The fields mean:
+
+- `bundledThirdPartyRuntimeCode:false` — the generated data package does not add executable third-party runtime code;
+- `adjacentProjectCodeCopied:false` — the Exovia compiler does not copy code from the adjacent projects reviewed in this repository;
+- `sourceRightsVerifiedByCompiler:false` — the compiler cannot determine whether the user owns or is authorized to use supplied source material.
+
+Source content and executable runtime code are different things. A user may intentionally provide licensed third-party text or code as inspectable source data. The user remains responsible for authorization, attribution, license notices and any restrictions that apply.
 
 ## Source records
 
@@ -141,7 +150,7 @@ The compiler reports:
 - requested token budget;
 - an explicit `index-first-on-demand` loading strategy.
 
-The estimate uses a transparent character-based heuristic. It is useful for comparison and planning, but it is not a tokenizer benchmark and must not be described as exact provider billing.
+The estimate uses a transparent character-based heuristic. It is useful for comparison and planning, but it is not a tokenizer benchmark and must not be described as exact provider billing or guaranteed savings.
 
 Recommended agent behavior:
 
@@ -174,7 +183,7 @@ Examples:
 ]
 ```
 
-These lists are heuristic navigation aids. They do not replace the original source and do not authorize execution.
+These lists are heuristic navigation aids. They do not replace the original source, prove that a procedure is correct or authorize execution.
 
 ## Capability contract
 
@@ -202,7 +211,7 @@ Before export, the compiler replaces recognized patterns such as:
 - email addresses;
 - common Argentine telephone or identifier patterns.
 
-The package records the total redaction count. Pattern-based redaction cannot guarantee detection of every sensitive value, so a human review remains necessary.
+The package records the total redaction count. Pattern-based redaction cannot guarantee detection of every sensitive value, so human review remains necessary.
 
 ## Integrity verification
 
@@ -216,7 +225,7 @@ The compiler sorts object keys recursively and hashes the package without its `i
 }
 ```
 
-The hash detects modifications. It does not prove that a source was truthful or that the creator was authorized to use it.
+The hash detects modifications. It does not prove that a source was truthful, complete, licensed or supplied by an authorized person.
 
 ## NeuroCanvas import
 
@@ -249,7 +258,7 @@ NeuroCanvas visual inspection
 
 The feature was implemented during the submission period as an original extension of Exovia NeuroCanvas. It does not import code from the adjacent public repositories reviewed in [`ORIGINALITY_AND_DIFFERENTIATION.md`](ORIGINALITY_AND_DIFFERENTIATION.md).
 
-If users later package third-party documents, code or data, they must have authorization and comply with the relevant license or terms. Generated EXO packs should retain source attribution and must not be used to conceal or relicense third-party material.
+When a user packages third-party documents, code or data, that user must have authorization and comply with relevant licenses or terms. Generated EXO packs should retain source attribution and must not be used to conceal, relicense or redistribute protected material unlawfully.
 
 ## Current limitations
 
