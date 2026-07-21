@@ -1,6 +1,6 @@
 {
   "name": "exovia-neurocanvas",
-  "version": "1.0.0-rc.5",
+  "version": "1.0.0-rc.6",
   "private": true,
   "description": "Offline-first visual knowledge explorer and auditable human-AI secondary brain.",
   "type": "module",
