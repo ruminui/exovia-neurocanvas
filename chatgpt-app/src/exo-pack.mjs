@@ -225,7 +225,9 @@ export function buildExoCapabilityPack({
       externalActionsExecuted: false,
       generatedLocally: true,
       persistedByServer: false,
-      thirdPartyCodeIncluded: false,
+      bundledThirdPartyRuntimeCode: false,
+      adjacentProjectCodeCopied: false,
+      sourceRightsVerifiedByCompiler: false,
     },
     progressiveDisclosure: {
       strategy: "index-first-on-demand",
@@ -292,8 +294,8 @@ export function buildExoCapabilityPack({
     package: pack,
     instructions: tr(
       language,
-      "Save the package as the suggested .exo file. It is JSON and can be inspected without proprietary software. Load the index first and retrieve source chunks on demand.",
-      "Guardá el paquete con la extensión .exo sugerida. Es JSON y puede inspeccionarse sin software propietario. Cargá primero el índice y recuperá los fragmentos de fuente bajo demanda.",
+      "Save the package as the suggested .exo file. It is JSON and can be inspected without proprietary software. Load the index first and retrieve source chunks on demand. The compiler does not verify rights to user-supplied sources.",
+      "Guardá el paquete con la extensión .exo sugerida. Es JSON y puede inspeccionarse sin software propietario. Cargá primero el índice y recuperá los fragmentos de fuente bajo demanda. El compilador no verifica los derechos sobre las fuentes aportadas por el usuario.",
     ),
   };
 }
