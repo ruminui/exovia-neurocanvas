@@ -2,6 +2,8 @@ import { spawn } from "node:child_process";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const appRoot = path.resolve(here, "..");
@@ -21,51 +23,6 @@ function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
 
-function parseRpcPayload(text, contentType) {
-  if (contentType.includes("text/event-stream")) {
-    const candidates = text
-      .split(/\r?\n/)
-      .filter((line) => line.startsWith("data:"))
-      .map((line) => line.slice(5).trim())
-      .filter(Boolean);
-    assert(candidates.length, `MCP returned an empty event stream: ${text}`);
-    return JSON.parse(candidates.at(-1));
-  }
-  return JSON.parse(text);
-}
-
-async function postRpc(payload) {
-  const response = await fetch(`${baseUrl}/mcp`, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      accept: "application/json, text/event-stream",
-    },
-    body: JSON.stringify(payload),
-  });
-  const text = await response.text();
-  assert(response.ok, `${payload.method} failed with HTTP ${response.status}: ${text}`);
-  if (!text.trim()) return null;
-  const parsed = parseRpcPayload(text, response.headers.get("content-type") || "");
-  assert(!parsed.error, `${payload.method} returned an MCP error: ${JSON.stringify(parsed.error)}`);
-  return parsed;
-}
-
-async function rpc(method, params, id) {
-  const payload = await postRpc({ jsonrpc: "2.0", id, method, params });
-  return payload?.result;
-}
-
-async function notify(method, params = {}) {
-  await postRpc({ jsonrpc: "2.0", method, params });
-}
-
-async function callTool(name, args, id) {
-  const result = await rpc("tools/call", { name, arguments: args }, id);
-  assert(result?.structuredContent, `${name} did not return structuredContent`);
-  return result.structuredContent;
-}
-
 async function waitForHealth(timeoutMs = 20_000) {
   const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
@@ -78,6 +35,13 @@ async function waitForHealth(timeoutMs = 20_000) {
     await new Promise((resolve) => setTimeout(resolve, 250));
   }
   throw new Error(`Server did not become healthy within ${timeoutMs} ms`);
+}
+
+async function callTool(client, name, args) {
+  const result = await client.callTool({ name, arguments: args });
+  assert(!result?.isError, `${name} returned an MCP tool error`);
+  assert(result?.structuredContent, `${name} did not return structuredContent`);
+  return result.structuredContent;
 }
 
 const demo = JSON.parse(await readFile(path.join(appRoot, "examples/judge-demo.json"), "utf8"));
@@ -93,88 +57,85 @@ const server = spawn(process.execPath, ["src/server.mjs"], {
 server.stdout.on("data", (chunk) => logs.push(chunk.toString()));
 server.stderr.on("data", (chunk) => logs.push(chunk.toString()));
 
+let client;
 try {
   const health = await waitForHealth();
   assert(health.ok === true, "Health endpoint did not report ok=true");
 
-  const initialized = await rpc("initialize", {
-    protocolVersion: "2025-06-18",
-    capabilities: {},
-    clientInfo: { name: "exovia-hackathon-judge", version: "1.0.0" },
-  }, 1);
-  assert(initialized?.serverInfo?.name === "exovia-neurocanvas", "Unexpected MCP server identity");
-  await notify("notifications/initialized");
+  client = new Client({ name: "exovia-hackathon-judge", version: "1.0.0" });
+  const transport = new StreamableHTTPClientTransport(new URL(`${baseUrl}/mcp`));
+  await client.connect(transport);
 
-  const listed = await rpc("tools/list", {}, 2);
+  const listed = await client.listTools();
   const toolNames = (listed?.tools || []).map((tool) => tool.name);
   for (const name of expectedTools) assert(toolNames.includes(name), `Missing MCP tool: ${name}`);
 
-  const trust = await callTool("analyze_ai_output", {
+  const trust = await callTool(client, "analyze_ai_output", {
     title: demo.title,
     aiOutput: demo.aiOutput,
     evidence: demo.evidence,
     language: "es",
-  }, 3);
+  });
   assert(trust.kind === "trust_scan", "Trust Scan returned the wrong result kind");
   assert(trust.issues.some((item) => item.category === "privacy"), "Trust Scan did not detect the demo privacy risk");
   assert(trust.issues.some((item) => item.category === "control"), "Trust Scan did not detect the demo prompt-injection/control risk");
 
-  const capsule = await callTool("create_context_capsule", {
+  const capsule = await callTool(client, "create_context_capsule", {
     objective: demo.objective,
     content: demo.aiOutput,
     evidence: demo.evidence,
     tokenBudget: 1800,
     language: "es",
-  }, 4);
+  });
   assert(capsule.kind === "context_capsule", "Context Capsule returned the wrong result kind");
   assert(capsule.markdown.includes("Exovia Context Capsule"), "Context Capsule Markdown is incomplete");
 
-  const comparison = await callTool("compare_ai_outputs", {
+  const comparison = await callTool(client, "compare_ai_outputs", {
     question: demo.question,
     answers: demo.answers,
     evidence: demo.evidence,
     language: "es",
-  }, 5);
+  });
   assert(comparison.kind === "comparison", "Comparison returned the wrong result kind");
   assert(comparison.ranking?.length === 2, "Comparison did not rank both answers");
 
-  const route = await callTool("recommend_ai_route", {
+  const route = await callTool(client, "recommend_ai_route", {
     ...demo.route,
     language: "es",
-  }, 6);
+  });
   assert(route.kind === "safe_route", "Safe Router returned the wrong result kind");
   assert(route.mode === "hybrid_verified", `Unexpected route for the judge scenario: ${route.mode}`);
 
-  const mapResult = await callTool("create_neurocanvas_map", {
+  const mapResult = await callTool(client, "create_neurocanvas_map", {
     title: demo.title,
     objective: demo.objective,
     content: `${demo.question}\n\n${demo.answers.map((answer) => `${answer.label}: ${answer.text}`).join("\n\n")}`,
     evidence: demo.evidence,
     language: "es",
-  }, 7);
+  });
   assert(mapResult.kind === "neurocanvas_map", "Map Builder returned the wrong result kind");
   assert(mapResult.map?.format === "neurocanvas-v3", "Map Builder did not produce neurocanvas-v3");
   assert(mapResult.nodeCount > 3 && mapResult.edgeCount > 2, "Map Builder produced an unexpectedly small graph");
 
-  const proof = await callTool("build_proof_pack", {
+  const proof = await callTool(client, "build_proof_pack", {
     title: demo.title,
     claimOrDecision: demo.answers[1].text,
     evidence: demo.evidence,
     notes: "Hackathon judge demonstration. No external action was executed.",
     language: "es",
-  }, 8);
+  });
   assert(proof.kind === "proof_pack", "Proof Pack returned the wrong result kind");
   assert(/^[a-f0-9]{64}$/.test(proof.hash), "Proof Pack SHA-256 is invalid");
   assert(proof.proofPack?.governance?.humanApprovalRequired === true, "Proof Pack lost the human approval requirement");
 
   const summary = {
     verifiedAt: new Date().toISOString(),
-    server: initialized.serverInfo,
+    server: { name: "exovia-neurocanvas", version: health.version || "unknown" },
+    client: "@modelcontextprotocol/sdk StreamableHTTPClientTransport",
     tools: toolNames,
     checks: {
       health: true,
-      mcpInitialize: true,
-      initializedNotification: true,
+      officialMcpClientConnected: true,
       toolDiscovery: true,
       privacyRiskDetected: true,
       promptInjectionDetected: true,
@@ -224,6 +185,11 @@ try {
   console.error(failure);
   process.exitCode = 1;
 } finally {
+  try {
+    await client?.close();
+  } catch {
+    // The server is being terminated immediately after the test.
+  }
   server.kill("SIGTERM");
   await new Promise((resolve) => {
     const timeout = setTimeout(resolve, 2_000);
