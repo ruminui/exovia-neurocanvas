@@ -56,7 +56,13 @@ if (!Array.isArray(manifest.shortcuts) || manifest.shortcuts.length < 2) throw n
 
 if (!rootPackage.scripts?.doctor || !rootPackage.scripts?.judge || !rootPackage.scripts?.start) throw new Error('Judge, doctor or start command is missing');
 if (rootPackage.engines?.node !== '>=24') throw new Error('Main product Node.js requirement must remain explicit');
-if (!userGuide.includes('Five-minute first run') || !userGuide.includes('Primer recorrido de cinco minutos')) throw new Error('Bilingual first-run guide is incomplete');
+const firstRunGuideMarkers = [
+  'Understand it in 60 seconds','Entendelo en 60 segundos',
+  '1. Add','2. Check','3. Save',
+  '1. Agregá','2. Revisá','3. Guardá',
+  'Simple View','Vista simple'
+];
+for (const marker of firstRunGuideMarkers) if (!userGuide.includes(marker)) throw new Error(`Bilingual first-run guide is missing: ${marker}`);
 if (!judgeGuide.includes('EXOVIA JUDGE PREFLIGHT: PASS') || !judgeGuide.includes('EXOVIA HACKATHON JUDGE CHECK: PASS')) throw new Error('Judge guide success markers are incomplete');
 for (const criterion of ['Technological implementation','Design and complete product experience','Potential impact','Quality and originality of the idea']) if (!scorecard.includes(criterion)) throw new Error(`Judge scorecard is missing: ${criterion}`);
 if (!manual.includes('Node.js 24 LTS') || !manual.includes('`.exo`')) throw new Error('Spanish user manual is stale');
