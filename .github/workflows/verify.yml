@@ -50,6 +50,10 @@ jobs:
             echo "Checking $file"
             node --check "$file"
           done
+      - name: Run judge and user preflight
+        run: npm run doctor
+      - name: Validate product structure
+        run: npm run validate
       - name: Run root tests
         run: npm test
       - name: Verify frontend integration

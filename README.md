@@ -2,67 +2,95 @@
 
 **Ask. Verify. Trace. Replay.**
 
-## Judges: start here
+Exovia NeuroCanvas is a local-first visual workspace that keeps AI answers, evidence, uncertainty, activity and human approval connected in one inspectable project.
 
-The fastest reproducible evaluation is documented in [`JUDGE_START_HERE.md`](JUDGE_START_HERE.md).
+## Start in the right place
 
-ChatGPT App end-to-end check:
+| You are… | Fastest path |
+|---|---|
+| A judge | [`JUDGE_START_HERE.md`](JUDGE_START_HERE.md) and `npm run judge` |
+| A first-time user | [`USER_START_HERE.md`](USER_START_HERE.md) |
+| An Android tester | Download the verified [`Exovia-NeuroCanvas-Android.apk`](https://github.com/ruminui/exovia-neurocanvas/releases/download/android-latest/Exovia-NeuroCanvas-Android.apk) |
+| A developer | Run `npm run doctor`, then `npm install && npm start` |
+
+## One-command judge verification
+
+From the repository root:
 
 ```bash
-cd chatgpt-app
-npm install
 npm run judge
 ```
 
-Expected final line:
+The command checks prerequisites and release metadata, installs the ChatGPT App dependencies, starts the MCP server, connects with the official MCP client, discovers all seven tools, executes the deterministic scenario and audits every generated artifact.
+
+Expected result:
 
 ```text
+EXOVIA JUDGE PREFLIGHT: PASS
 EXOVIA HACKATHON JUDGE CHECK: PASS
+Judge artifact audit passed: ...
 ```
 
-This path requires no API key, database or external AI service. It generates inspectable evidence, a portable Context Capsule, a source-linked `.exo` capability pack, an importable NeuroCanvas map and a SHA-256 Proof Pack.
+No OpenAI API key, account, database or external AI service is required. Generated evidence is written to `chatgpt-app/judge-output/`.
 
-## Official links
+## Run the human product
 
-- **Judge guide:** [`JUDGE_START_HERE.md`](JUDGE_START_HERE.md)
-- **ChatGPT App quickstart:** [`chatgpt-app/JUDGE_QUICKSTART.md`](chatgpt-app/JUDGE_QUICKSTART.md)
-- **EXO capability format:** [`docs/EXO_CAPABILITY_PACK.md`](docs/EXO_CAPABILITY_PACK.md)
-- **Official website:** https://exovia.wixsite.com/exovia-neurocanvas-1
-- **Public build conversation:** https://chatgpt.com/share/6a5cddb2-6080-83e9-82b7-b4b5940dc1a8
-- **Build journey and provenance:** [`docs/BUILD_JOURNEY_AND_PROVENANCE.md`](docs/BUILD_JOURNEY_AND_PROVENANCE.md)
-- **Originality and adjacent-project review:** [`docs/ORIGINALITY_AND_DIFFERENTIATION.md`](docs/ORIGINALITY_AND_DIFFERENTIATION.md)
-- **Android test APK:** https://github.com/ruminui/exovia-neurocanvas/releases/download/android-latest/Exovia-NeuroCanvas-Android.apk
-- **Source repository:** https://github.com/ruminui/exovia-neurocanvas
+Requirement: **Node.js 24 LTS or newer**.
+
+```bash
+npm install
+npm start
+```
+
+The launcher opens `http://127.0.0.1:8080`.
+
+Windows users may instead download the repository as ZIP, extract it completely and double-click `INICIAR_EXOVIA.bat`. macOS and Linux launchers are also included.
+
+## Android test build
+
+- APK: `https://github.com/ruminui/exovia-neurocanvas/releases/download/android-latest/Exovia-NeuroCanvas-Android.apk`
+- SHA-256: `https://github.com/ruminui/exovia-neurocanvas/releases/download/android-latest/Exovia-NeuroCanvas-Android.apk.sha256`
+- Verification record: [`release-metadata/android-latest.json`](release-metadata/android-latest.json)
+
+The release workflow downloads the published assets again, byte-compares them and verifies their SHA-256 before recording the release as verified.
+
+## Three-minute product flow
+
+1. Select **New workspace**.
+2. Select a node and inspect its exact source.
+3. Open **Answer & Audit**.
+4. Ask: `How does NeuroCanvas keep AI answers connected to evidence?`
+5. Select **Navigate to answer** and follow a citation back to its node.
+6. Open **Knowledge health** and **Agent replay**.
+7. Import a generated `.exo` package.
+8. Inspect one source, one constraint and one prohibited action.
+9. Export the project.
 
 ## The problem
 
-Teams increasingly work with documents, notes and AI-generated answers. The information becomes fragmented, and later it is difficult to prove:
+Teams increasingly work across chats, documents, notes, agents and workflows. Later, it becomes difficult to prove:
 
 - where an answer came from;
 - which evidence supports it;
-- whether the knowledge is incomplete or contradictory;
-- what a human, workflow or AI agent changed;
-- how a decision was reached;
-- what context was lost between models and conversations;
-- whether private data or malicious instructions entered an AI workflow.
+- what remains unknown or contradictory;
+- what a person, workflow or agent changed;
+- what context was lost between systems;
+- whether private data or malicious instructions entered the process;
+- whether a consequential action was approved.
 
 ## The solution
 
-**Exovia NeuroCanvas turns scattered information and AI activity into a visual, evidence-linked workspace where every answer and decision can be verified and replayed.**
+**Exovia turns scattered information and AI activity into a visual, evidence-linked workspace where answers and decisions can be inspected and replayed.**
 
-A user can import information, ask a question, navigate to the strongest answer, inspect the exact source, review knowledge quality and replay human or agent activity.
+The local product lets a user import information, navigate the graph, ask a question, return to exact evidence, inspect knowledge quality, replay activity and export the project. The ChatGPT App adds a deterministic reliability layer that can analyze an AI output, preserve portable context, build an inspectable `.exo` package, compare answers, recommend a safer route, create a NeuroCanvas map and generate a SHA-256 Proof Pack.
 
-The ChatGPT App adds Exovia ProofLayer directly to a conversation. ChatGPT can scan an answer, preserve portable context, compile source material into an inspectable `.exo` capability pack, compare outputs, recommend a safer AI route, create a visual NeuroCanvas handoff and generate a verifiable Proof Pack.
+## Innovation stack
 
-## The Exovia innovation stack
-
-Exovia is not differentiated by a generic graph alone. Its distinctive contribution is the combination of visual memory, compact activity, validated intent, capability routing and human-verifiable proof:
-
-- **NeuroCanvas** — visual memory, exact evidence navigation, quality signals and replay;
-- **ProofLayer** — AI-output reliability, portable context, privacy protection, comparison and SHA-256 proof artifacts;
-- **EXO packs** — transparent source-linked capability packages with progressive disclosure, procedures, constraints and integrity;
+- **NeuroCanvas** — visual memory, evidence navigation, quality signals and replay;
+- **ProofLayer** — AI-output reliability, portable context, privacy protection, comparison and integrity artifacts;
+- **EXO packs** — transparent source-linked capability packages with progressive disclosure, procedures, constraints and safety rules;
 - **ExiaL** — compact semantic pulses for observable agent and graph activity;
-- **EXIR** — canonical validation between raw messages or intent and accepted graph events or mutations;
+- **EXIR** — canonical validation between raw messages or intent and accepted events or mutations;
 - **Exil** — constrained intent preview with policy checks and explicit human control;
 - **FAPI** — capability discovery, routing, health, streaming and budget concepts behind controlled actions.
 
@@ -80,112 +108,19 @@ Evidence and AI activity
  evidence, approval and Proof Pack
 ```
 
-The public architecture, implementation boundary and comparison with adjacent projects are documented in [`docs/FAPI_EXIAL_EXIL_INTEGRATION.md`](docs/FAPI_EXIAL_EXIL_INTEGRATION.md), [`docs/EXO_CAPABILITY_PACK.md`](docs/EXO_CAPABILITY_PACK.md) and [`docs/ORIGINALITY_AND_DIFFERENTIATION.md`](docs/ORIGINALITY_AND_DIFFERENTIATION.md). No source code from the adjacent projects reviewed there is included in this repository.
-
-## Who it is for
-
-- consultants reviewing client or project information;
-- researchers connecting conclusions to source material;
-- teams using AI across documents and workflows;
-- analysts who need an auditable decision trail;
-- students or knowledge workers managing complex notes;
-- people moving work between several models, agents or conversations.
-
-## Why it is different from a normal AI chat
-
-A chat gives an answer and quickly loses the surrounding process. NeuroCanvas keeps the answer inside a persistent visual project, linked to its evidence, quality signals, actors, actions and decisions.
-
-```text
-Scattered documents and AI activity
-               ↓
-       Exovia ProofLayer in ChatGPT
-               ↓
- Verify → Preserve → Compile EXO → Compare
-               ↓
-       Visual NeuroCanvas handoff
-               ↓
- Inspect evidence → Approve → Export proof
-```
-
-## ChatGPT App capabilities
+## ChatGPT App tools
 
 The MCP server exposes seven read-only and idempotent tools:
 
-- `analyze_ai_output`;
-- `create_context_capsule`;
-- `build_exo_capability_pack`;
-- `create_neurocanvas_map`;
-- `compare_ai_outputs`;
-- `recommend_ai_route`;
-- `build_proof_pack`.
+- `analyze_ai_output`
+- `create_context_capsule`
+- `build_exo_capability_pack`
+- `create_neurocanvas_map`
+- `compare_ai_outputs`
+- `recommend_ai_route`
+- `build_proof_pack`
 
-The server does not persist submitted content, does not call another AI service and requires no OpenAI API key. ChatGPT supplies the conversational intelligence; Exovia supplies the deterministic reliability, progressive context and human-review layer.
-
-## Three-minute product flow
-
-1. Press **New workspace**.
-2. Select a node and show its exact source.
-3. Open **Answer & Audit**.
-4. Ask: `How does NeuroCanvas keep AI answers connected to evidence?`
-5. Press **Navigate to Answer**.
-6. Show **Knowledge Health** and one contradiction signal.
-7. Show **Agent Replay**.
-8. Open **Live room** and press **Project room into graph**.
-9. Close with: **Navigate knowledge. Verify every answer. Replay every decision.**
-
-The final narration and recording instructions are in [`docs/VIDEO_SCRIPT_MARCE.md`](docs/VIDEO_SCRIPT_MARCE.md).
-
-## Start here
-
-### ChatGPT App
-
-```bash
-cd chatgpt-app
-npm install
-npm run judge
-```
-
-Run the server manually with `npm start`, or use:
-
-```bash
-docker compose up --build
-```
-
-### Android
-
-Download the current test build:
-
-https://github.com/ruminui/exovia-neurocanvas/releases/download/android-latest/Exovia-NeuroCanvas-Android.apk
-
-Android may ask permission to install apps from the browser or file manager. This is a test build distributed outside Google Play.
-
-### Windows
-
-1. Download the repository as ZIP.
-2. Extract the complete folder.
-3. Double-click `INICIAR_EXOVIA.bat`.
-
-### macOS
-
-```bash
-chmod +x INICIAR_EXOVIA.command
-./INICIAR_EXOVIA.command
-```
-
-### Linux
-
-```bash
-chmod +x INICIAR_EXOVIA.sh
-./INICIAR_EXOVIA.sh
-```
-
-Universal product command:
-
-```bash
-npm start
-```
-
-Requirement for the main product: **Node.js 24 LTS or newer**. The ChatGPT App requires Node.js 22 or newer.
+The server does not persist submitted content, does not call another AI service and does not execute external actions.
 
 ## Key capabilities
 
@@ -193,65 +128,44 @@ Requirement for the main product: **Node.js 24 LTS or newer**. The ChatGPT App r
 - persistent local workspaces, snapshots and export;
 - neural, tree, pulse and capability views;
 - Answer & Audit with navigation back to evidence;
-- Evidence Inspector;
-- Knowledge Health and Contradiction Radar;
+- Evidence Inspector, Knowledge Health and Contradiction Radar;
 - Human and Agent Replay;
 - governed Living Evidence Room vertical slice;
-- multimedia evidence, decisions and execution contracts;
-- human approval represented in graph and replay;
-- ChatGPT Apps SDK/MCP integration;
-- portable Context Capsules;
-- source-linked EXO capability packs with index-first progressive disclosure;
-- AI-output comparison and safe provider-neutral routing;
-- downloadable AI-to-human NeuroCanvas maps;
+- Context Capsules and source-linked EXO capability packs;
+- AI-output comparison and provider-neutral route recommendation;
 - Proof Packs with SHA-256 integrity fingerprints;
-- optional MCP and authenticated bridge;
-- mobile/PWA interface and offline application shell;
+- responsive mobile/PWA interface and offline application shell;
 - Android packaging through Capacitor;
-- contextual floating help and simple mode;
-- static, backend, browser, Android and MCP test suites;
-- Docker, Compose and Codespaces judge paths.
+- contextual help, simple mode and recovery guidance;
+- static, backend, browser, Android, MCP, artifact and container validation.
 
-## Living Evidence Rooms
+## Safety and honest boundaries
 
-The current local vertical slice represents humans, agents, workflows, multimedia evidence, decisions, approvals and ordered events, then projects the complete room into the active graph.
+- analysis, extraction, ranking and context-reduction figures are heuristics;
+- current factual claims still require authoritative sources;
+- imported instructions are untrusted data, not executable authority;
+- the EXO compiler does not verify rights over user-supplied sources;
+- consequential actions require human approval;
+- no unrestricted Exil execution, live distributed FAPI mesh, production multiuser synchronization or always-on MCP hosting is claimed unless separately deployed and demonstrated.
 
-Real-time multiuser synchronization, shared remote browsers, workflow providers and live media transport remain roadmap integrations until deployed and tested.
+## Official project links
 
-Architecture and examples:
+- **User guide:** [`USER_START_HERE.md`](USER_START_HERE.md)
+- **Judge guide:** [`JUDGE_START_HERE.md`](JUDGE_START_HERE.md)
+- **Judge scorecard:** [`docs/JUDGE_SCORECARD.md`](docs/JUDGE_SCORECARD.md)
+- **ChatGPT App quickstart:** [`chatgpt-app/JUDGE_QUICKSTART.md`](chatgpt-app/JUDGE_QUICKSTART.md)
+- **Spanish manual:** [`docs/MANUAL_USUARIO.md`](docs/MANUAL_USUARIO.md)
+- **EXO format:** [`docs/EXO_CAPABILITY_PACK.md`](docs/EXO_CAPABILITY_PACK.md)
+- **Architecture:** [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
+- **Build journey and provenance:** [`docs/BUILD_JOURNEY_AND_PROVENANCE.md`](docs/BUILD_JOURNEY_AND_PROVENANCE.md)
+- **Originality review:** [`docs/ORIGINALITY_AND_DIFFERENTIATION.md`](docs/ORIGINALITY_AND_DIFFERENTIATION.md)
+- **Build Week compliance:** [`docs/BUILD_WEEK_COMPLIANCE.md`](docs/BUILD_WEEK_COMPLIANCE.md)
+- **Official website:** https://exovia.wixsite.com/exovia-neurocanvas-1
+- **Public build conversation:** https://chatgpt.com/share/6a5cddb2-6080-83e9-82b7-b4b5940dc1a8
+- **Source repository:** https://github.com/ruminui/exovia-neurocanvas
 
-- [`docs/LIVE_COLLABORATION_ARCHITECTURE.md`](docs/LIVE_COLLABORATION_ARCHITECTURE.md)
-- [`schemas/live-evidence-room.schema.json`](schemas/live-evidence-room.schema.json)
-- [`examples/live-evidence-room.json`](examples/live-evidence-room.json)
+## OpenAI Build Week readiness
 
-## OpenAI Build Week submission readiness
+The repository provides a public MIT license, reproducible judge command, verified Android test build, local and Docker execution paths, public provenance, an explicit implemented-versus-roadmap boundary and evidence mapped to the official judging dimensions.
 
-The official submission materials are tracked in [`docs/BUILD_WEEK_COMPLIANCE.md`](docs/BUILD_WEEK_COMPLIANCE.md).
-
-The full human-AI creation path, public conversation and implementation chronology are summarized in [`docs/BUILD_JOURNEY_AND_PROVENANCE.md`](docs/BUILD_JOURNEY_AND_PROVENANCE.md).
-
-Required items include:
-
-- clear project description;
-- demo video;
-- public code repository;
-- authentic Codex `/feedback` Session ID from the primary build thread;
-- selected challenge track;
-- accurate disclosure of implemented versus roadmap capabilities;
-- links that judges can open without requesting access;
-- a reproducible path for judges to run and verify the project.
-
-## Help and validation
-
-- [`JUDGE_START_HERE.md`](JUDGE_START_HERE.md)
-- [`chatgpt-app/JUDGE_QUICKSTART.md`](chatgpt-app/JUDGE_QUICKSTART.md)
-- [`LEEME_PRIMERO.txt`](LEEME_PRIMERO.txt)
-- [`docs/MANUAL_USUARIO.md`](docs/MANUAL_USUARIO.md)
-- [`docs/GUEST_HELPER_GUIDE.md`](docs/GUEST_HELPER_GUIDE.md)
-- [`docs/TESTER_CHECKLIST.md`](docs/TESTER_CHECKLIST.md)
-- [`docs/MARCE_GASTON_HELP_PLAN.md`](docs/MARCE_GASTON_HELP_PLAN.md)
-- [`docs/VIDEO_SCRIPT_MARCE.md`](docs/VIDEO_SCRIPT_MARCE.md)
-
-## Honest status
-
-The local visual product, mobile interface, `.exo` package importer, official website, governed Live Room vertical slice and ChatGPT App/MCP integration are implemented. Android packaging and automated deployment are configured. The ChatGPT App is prepared for local, Docker, Codespaces and public HTTPS deployment, but no always-on hosted MCP endpoint is claimed here. EXO procedure extraction and token estimates are heuristic. Features described as roadmap remain explicitly labeled as such. Final competition fields controlled by the owner should still be reviewed for accuracy, public accessibility and consistency before the editing deadline.
+Submission fields controlled by the project owner—category, public YouTube video, description, testing links and authentic Codex `/feedback` Session ID—must remain accurate and publicly accessible throughout judging.

@@ -1,29 +1,86 @@
 # Judges: Start Here
 
-Exovia NeuroCanvas can be evaluated in three independent ways.
+Exovia NeuroCanvas can be evaluated through three independent paths. The fastest path requires no API key, account, database or external AI service.
 
-## Path A — Automated ChatGPT App verification
+## Path A — One-command automated verification
+
+Requirement: Node.js 22 or newer.
+
+From the repository root:
 
 ```bash
-cd chatgpt-app
-npm install
 npm run judge
 ```
 
-This starts the MCP server, connects with the official MCP client, discovers all seven tools, runs the complete deterministic scenario and creates inspectable artifacts under `chatgpt-app/judge-output/`.
+This command:
 
-Expected result:
+1. checks the public license, required files and judge/user guides;
+2. validates the recorded Android release metadata and SHA-256;
+3. installs the ChatGPT App dependencies;
+4. starts the MCP server on a temporary local port;
+5. connects with the official MCP client;
+6. discovers all seven tools;
+7. executes the deterministic reliability scenario;
+8. audits every generated artifact for privacy, provenance, human control and integrity.
+
+Expected final markers:
 
 ```text
+EXOVIA JUDGE PREFLIGHT: PASS
 EXOVIA HACKATHON JUDGE CHECK: PASS
-Judge artifact audit passed: 9+ files, source-linked EXO pack, evidence-bounded winner and valid SHA-256 fingerprints.
+Judge artifact audit passed: 9+ files, ...
 ```
 
-- Full instructions: [`chatgpt-app/JUDGE_QUICKSTART.md`](chatgpt-app/JUDGE_QUICKSTART.md)
-- EXO format: [`docs/EXO_CAPABILITY_PACK.md`](docs/EXO_CAPABILITY_PACK.md)
-- Acceptance criteria: [`docs/HACKATHON_JUDGE_EVIDENCE.md`](docs/HACKATHON_JUDGE_EVIDENCE.md)
+Generated files are written to `chatgpt-app/judge-output/`.
 
-## Path B — Run with Docker
+- Detailed ChatGPT App guide: [`chatgpt-app/JUDGE_QUICKSTART.md`](chatgpt-app/JUDGE_QUICKSTART.md)
+- Acceptance criteria: [`docs/HACKATHON_JUDGE_EVIDENCE.md`](docs/HACKATHON_JUDGE_EVIDENCE.md)
+- Judging-criteria map: [`docs/JUDGE_SCORECARD.md`](docs/JUDGE_SCORECARD.md)
+
+## Path B — Try the complete human product
+
+Requirement: Node.js 24 LTS or newer.
+
+```bash
+npm install
+npm start
+```
+
+Open `http://127.0.0.1:8080` if the browser does not open automatically.
+
+Recommended sequence:
+
+1. Select **New workspace**.
+2. Select a node and inspect its exact source.
+3. Open **Answer & Audit**.
+4. Ask: `How does NeuroCanvas keep AI answers connected to evidence?`
+5. Select **Navigate to answer**.
+6. Open **Knowledge health** and **Agent replay**.
+7. Run Path A, then import the generated `.exo` file from `chatgpt-app/judge-output/`.
+8. Inspect one source, one constraint and one prohibited action.
+9. Export the workspace.
+
+First-time user guide: [`USER_START_HERE.md`](USER_START_HERE.md)
+
+## Path C — Android test build
+
+Verified APK:
+
+`https://github.com/ruminui/exovia-neurocanvas/releases/download/android-latest/Exovia-NeuroCanvas-Android.apk`
+
+Published SHA-256 file:
+
+`https://github.com/ruminui/exovia-neurocanvas/releases/download/android-latest/Exovia-NeuroCanvas-Android.apk.sha256`
+
+Machine-readable verification record:
+
+[`release-metadata/android-latest.json`](release-metadata/android-latest.json)
+
+The Android workflow builds the APK, publishes it, downloads the published assets again, byte-compares them and verifies SHA-256 before marking the release verified.
+
+Android may ask permission to install a test application from the browser or file manager. No Google Play account is required.
+
+## Optional Docker path
 
 ```bash
 cd chatgpt-app
@@ -38,61 +95,60 @@ Health: http://localhost:8787/health
 MCP:    http://localhost:8787/mcp
 ```
 
-The status page presents the seven tools and their safety boundaries.
+The status page lists the seven tools and their safety boundaries.
 
-## Path C — Try the human NeuroCanvas product
+## What to inspect after Path A
 
-### Web/local
-
-```bash
-npm install
-npm start
-```
-
-Import either generated artifact from `chatgpt-app/judge-output/`:
-
-- the `.exo` capability pack to inspect sources, chunks, procedures, constraints and action policies as a graph;
-- the `neurocanvas-v3` JSON map to inspect the direct AI-to-human handoff.
-
-### Android
-
-The current test build is published in the repository's `android-latest` release.
+- `trust-scan.json` — evidence, privacy, prompt-injection, context and control findings;
+- `context-capsule.md` — portable evidence, uncertainty and approval rules;
+- generated `.exo` — source/chunk IDs, procedures, constraints, untrusted-source policy and SHA-256;
+- `comparison.json` — **Controlled pilot** must rank above **Fast launch**;
+- NeuroCanvas JSON — importable visual AI-to-human handoff;
+- `proof-pack.json` — evidence manifest, governance and integrity fingerprint.
 
 ## Real ChatGPT Developer Mode
 
 To render the black-and-gold widget inside ChatGPT, expose the running MCP server through a public HTTPS URL and connect the URL ending in `/mcp` from ChatGPT Developer Mode.
 
-The server does not call another AI service, install generated capabilities or retain submitted content.
+The server is keyless: it does not call another AI service, install generated capabilities, retain submitted content or execute external actions.
 
-## Suggested evaluation sequence
+## Troubleshooting
 
-1. Run `npm run judge` in `chatgpt-app`.
-2. Inspect `trust-scan.json` for evidence, privacy and control findings.
-3. Inspect `context-capsule.md` for portable context and approval rules.
-4. Inspect the generated `.exo` file for source/chunk IDs, progressive-disclosure metrics, procedures, constraints, safety rules and SHA-256 integrity.
-5. Inspect `comparison.json`: **Controlled pilot** must rank above **Fast launch**.
-6. Open the generated `.exo` or NeuroCanvas JSON in the web or Android application.
-7. Inspect `proof-pack.json` and its integrity fingerprint.
-8. Optionally connect the MCP endpoint to ChatGPT.
+### `npm run judge` reports an old Node version
 
-## What is implemented
+Use Node.js 22 or newer for Path A. Use Node.js 24 LTS or newer for the complete human product.
 
-- ChatGPT Apps SDK/MCP server and inline widget;
-- seven deterministic, read-only tools;
+### Port already in use
+
+```bash
+cd chatgpt-app
+JUDGE_PORT=8791 npm run judge
+```
+
+### Browser does not open
+
+Start the product with `npm start` and open `http://127.0.0.1:8080` manually.
+
+### Android download is blocked by the browser
+
+Open the repository release named `android-latest`, download the APK asset and compare it with the published `.sha256` file.
+
+## Implemented and testable
+
+- local visual evidence workspace and Android package;
+- seven deterministic read-only MCP tools;
 - evidence/privacy/context/control analysis;
 - sensitive-value replacement in exported artifacts;
 - portable Context Capsule;
-- source-linked `.exo` package with index-first progressive disclosure;
+- source-linked `.exo` package with progressive disclosure;
 - EXO import into the human NeuroCanvas graph;
-- evidence-bounded AI-output comparison;
+- evidence-bounded answer comparison;
 - provider-neutral route recommendation;
 - AI-to-human NeuroCanvas map handoff;
 - EXO and Proof Pack SHA-256 fingerprints;
-- local web/PWA and Android product;
-- unit, static, browser, MCP, artifact and container validation;
-- Docker, Codespaces and local execution paths;
-- ChatGPT App submission metadata with five positive and three negative review tests.
+- local, Docker and Codespaces paths;
+- automated unit, static, browser, MCP, artifact, container and Android validation.
 
 ## Honest boundaries
 
-Analysis, extraction, ranking and token estimates are heuristics. An `.exo` package is inspectable data, not a trained model and not authorization to execute procedures. Current sources, specialist review and human approval remain necessary. Production authentication, unrestricted Exil execution, a live FAPI mesh, shared multiuser synchronization and always-on hosting are not claimed unless separately deployed and demonstrated.
+Analysis, extraction, ranking and context-reduction figures are heuristics. Imported source instructions are untrusted data, not executable authority. Current claims still require authoritative sources, source rights are not verified automatically and consequential actions require human approval. Production authentication, unrestricted Exil execution, a live distributed FAPI mesh, production multiuser synchronization and always-on MCP hosting are not claimed unless separately deployed and demonstrated.
