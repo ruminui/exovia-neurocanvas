@@ -24,6 +24,10 @@
     }
   }
 
+  function clearEmergencyRecovery() {
+    try { localStorage.removeItem(RECOVERY_KEY); } catch {}
+  }
+
   function scheduleEmergencyRecovery() {
     clearTimeout(recoveryTimer);
     recoveryTimer = setTimeout(saveEmergencyRecovery, 1200);
@@ -53,7 +57,7 @@
   }
 
   function dismissRecovery() {
-    localStorage.removeItem(RECOVERY_KEY);
+    clearEmergencyRecovery();
     $('recoveryDialog').close();
   }
 
@@ -64,13 +68,14 @@
       host.innerHTML = '<p>No project is open.</p>';
       return;
     }
+    const nodeById = new Map(map.nodes.map(node => [node.id, node]));
     const children = new Map();
     map.nodes.forEach(node => {
       const parent = node.parent || '__root__';
       if (!children.has(parent)) children.set(parent, []);
       children.get(parent).push(node);
     });
-    const roots = map.nodes.filter(node => !node.parent || !map.nodes.some(candidate => candidate.id === node.parent));
+    const roots = map.nodes.filter(node => !node.parent || !nodeById.has(node.parent));
     const seen = new Set();
     const renderNode = (node, depth = 0) => {
       if (seen.has(node.id)) return '';
@@ -79,11 +84,13 @@
       const nested = (children.get(node.id) || []).map(child => renderNode(child, depth + 1)).join('');
       return `<li style="--depth:${Math.min(depth, 8)}"><button type="button" data-node-id="${escapeHtml(node.id)}"><strong>${escapeHtml(node.title || 'Untitled idea')}</strong><span>${escapeHtml(node.summary || node.text || 'No description yet.')}</span><small>${related} relations · ${escapeHtml(node.type || 'idea')}</small></button>${nested ? `<ul>${nested}</ul>` : ''}</li>`;
     };
-    host.innerHTML = `<p class="accessibleListIntro">${map.nodes.length} ideas. Select one to inspect its original information.</p><ul>${roots.map(node => renderNode(node)).join('')}</ul>`;
+    const ordered = roots.map(node => renderNode(node)).join('');
+    const leftovers = map.nodes.filter(node => !seen.has(node.id)).map(node => renderNode(node)).join('');
+    host.innerHTML = `<p class="accessibleListIntro">${map.nodes.length} ideas. Select one to inspect its original information.</p><ul>${ordered}${leftovers}</ul>`;
     host.querySelectorAll('[data-node-id]').forEach(button => button.addEventListener('click', () => {
       const id = button.dataset.nodeId;
       window.ExoviaRuntime?.selectNode?.(id);
-      const node = map.nodes.find(item => item.id === id);
+      const node = nodeById.get(id);
       notify(`Selected ${node?.title || 'idea'}.`, 'success');
     }));
   }
@@ -93,19 +100,26 @@
     $('accessibleListDialog').showModal();
   }
 
+  function showMultiTabWarning() {
+    otherSessionSeenAt = Date.now();
+    const warning = $('multiTabWarning');
+    if (!warning) return;
+    warning.hidden = false;
+    warning.querySelector('strong').textContent = 'This project may be open in another tab.';
+    warning.querySelector('span').textContent = 'Save a separate Export copy before continuing in both places.';
+  }
+
   function setupMultiTab() {
     if (!('BroadcastChannel' in window)) return;
     channel = new BroadcastChannel(CHANNEL_NAME);
     channel.onmessage = event => {
       const message = event.data || {};
       if (message.sessionId === SESSION_ID) return;
-      if (message.type === 'HELLO' || message.type === 'MAP_CHANGED') {
-        otherSessionSeenAt = Date.now();
-        const warning = $('multiTabWarning');
-        warning.hidden = false;
-        warning.querySelector('strong').textContent = 'This project may be open in another tab.';
-        warning.querySelector('span').textContent = 'Save a separate Export copy before continuing in both places.';
+      if (message.type === 'HELLO') {
+        showMultiTabWarning();
+        channel.postMessage({ type: 'HELLO_ACK', sessionId: SESSION_ID, at: Date.now() });
       }
+      if (message.type === 'HELLO_ACK' || message.type === 'MAP_CHANGED') showMultiTabWarning();
     };
     channel.postMessage({ type: 'HELLO', sessionId: SESSION_ID, at: Date.now() });
     window.addEventListener('exovia:map-changed', () => channel?.postMessage({ type: 'MAP_CHANGED', sessionId: SESSION_ID, at: Date.now() }));
@@ -127,7 +141,6 @@
         indexedDbAvailable: 'indexedDB' in window
       },
       project: map ? {
-        title: map.title,
         format: map.format,
         nodeCount: map.nodes?.length || 0,
         edgeCount: map.edges?.length || 0,
@@ -139,7 +152,7 @@
         simpleMode: window.ExoviaSimpleMode?.isEnabled?.() || false,
         safetyNet: window.ExoviaSafetyNet?.getState?.() || null
       },
-      privacy: 'This report intentionally excludes project text, node contents, tokens, local paths and personal identifiers.'
+      privacy: 'This report intentionally excludes project titles, text, node contents, tokens, local paths and personal identifiers.'
     };
     return report;
   }
@@ -178,10 +191,11 @@
     $('discardRecoveryBtn').addEventListener('click', dismissRecovery);
     document.querySelectorAll('[data-close]').forEach(button => button.addEventListener('click', () => $(button.dataset.close)?.close()));
     window.addEventListener('exovia:map-changed', scheduleEmergencyRecovery);
+    window.addEventListener('exovia:safe-saved', clearEmergencyRecovery);
     setTimeout(offerRecovery, 900);
     setupMultiTab();
   }
 
-  window.ExoviaResilience = { saveEmergencyRecovery, restoreRecovery, openAccessibleList, supportReport, downloadSupportReport };
+  window.ExoviaResilience = { saveEmergencyRecovery, clearEmergencyRecovery, restoreRecovery, openAccessibleList, supportReport, downloadSupportReport };
   window.addEventListener('DOMContentLoaded', buildUi, { once: true });
 })();
