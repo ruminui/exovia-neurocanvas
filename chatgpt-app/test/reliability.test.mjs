@@ -67,20 +67,25 @@ test("context capsule preserves rules and redacts sensitive values", () => {
   assert.doesNotMatch(capsule.markdown, /secret123456789/);
 });
 
-test("NeuroCanvas map preserves source text and human governance", () => {
+test("NeuroCanvas map preserves useful source text, governance and privacy", () => {
   const result = createNeuroCanvasMap({
-    title: "Launch decision",
+    title: "Launch decision for luciano@example.com",
     objective: "Choose the safest launch plan",
-    content: "# Decision\nUse a staged launch.\n\n# Risk\nThe evidence is incomplete.\n\n# Next step\nAsk a human reviewer.",
-    evidence: [{ title: "Launch study", text: "A staged launch reduced incidents in the pilot." }],
+    content: "# Decision\nUse a staged launch. api_key=secret123456789\n\n# Risk\nThe evidence is incomplete.\n\n# Next step\nAsk a human reviewer.",
+    evidence: [{ title: "Launch study", text: "A staged launch reduced incidents in the pilot. Contact luciano@example.com." }],
     language: "en",
   });
+  const serialized = JSON.stringify(result.map);
   assert.equal(result.kind, "neurocanvas_map");
   assert.equal(result.map.format, "neurocanvas-v3");
   assert.equal(result.map.governance.humanReviewRequired, true);
   assert.equal(result.map.governance.externalActionsExecuted, false);
+  assert.equal(result.map.governance.sensitiveValuesRedacted, true);
+  assert.ok(result.redactionCount >= 3);
   assert.ok(result.map.nodes.some((node) => node.type === "decision"));
   assert.ok(result.map.nodes.some((node) => node.type === "evidence" && node.text.includes("staged launch")));
+  assert.doesNotMatch(serialized, /luciano@example\.com/);
+  assert.doesNotMatch(serialized, /secret123456789/);
   assert.ok(result.edgeCount > 0);
 });
 
