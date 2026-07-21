@@ -20,12 +20,13 @@ Expected final line:
 EXOVIA HACKATHON JUDGE CHECK: PASS
 ```
 
-This path requires no API key, database or external AI service. It generates inspectable evidence, a portable Context Capsule, an importable NeuroCanvas map and a SHA-256 Proof Pack.
+This path requires no API key, database or external AI service. It generates inspectable evidence, a portable Context Capsule, a source-linked `.exo` capability pack, an importable NeuroCanvas map and a SHA-256 Proof Pack.
 
 ## Official links
 
 - **Judge guide:** [`JUDGE_START_HERE.md`](JUDGE_START_HERE.md)
 - **ChatGPT App quickstart:** [`chatgpt-app/JUDGE_QUICKSTART.md`](chatgpt-app/JUDGE_QUICKSTART.md)
+- **EXO capability format:** [`docs/EXO_CAPABILITY_PACK.md`](docs/EXO_CAPABILITY_PACK.md)
 - **Official website:** https://exovia.wixsite.com/exovia-neurocanvas-1
 - **Public build conversation:** https://chatgpt.com/share/6a5cddb2-6080-83e9-82b7-b4b5940dc1a8
 - **Build journey and provenance:** [`docs/BUILD_JOURNEY_AND_PROVENANCE.md`](docs/BUILD_JOURNEY_AND_PROVENANCE.md)
@@ -51,7 +52,7 @@ Teams increasingly work with documents, notes and AI-generated answers. The info
 
 A user can import information, ask a question, navigate to the strongest answer, inspect the exact source, review knowledge quality and replay human or agent activity.
 
-The ChatGPT App adds Exovia ProofLayer directly to a conversation. ChatGPT can scan an answer, preserve portable context, compare outputs, recommend a safer AI route, create a visual NeuroCanvas handoff and generate a verifiable Proof Pack.
+The ChatGPT App adds Exovia ProofLayer directly to a conversation. ChatGPT can scan an answer, preserve portable context, compile source material into an inspectable `.exo` capability pack, compare outputs, recommend a safer AI route, create a visual NeuroCanvas handoff and generate a verifiable Proof Pack.
 
 ## The Exovia innovation stack
 
@@ -59,6 +60,7 @@ Exovia is not differentiated by a generic graph alone. Its distinctive contribut
 
 - **NeuroCanvas** — visual memory, exact evidence navigation, quality signals and replay;
 - **ProofLayer** — AI-output reliability, portable context, privacy protection, comparison and SHA-256 proof artifacts;
+- **EXO packs** — transparent source-linked capability packages with progressive disclosure, procedures, constraints and integrity;
 - **ExiaL** — compact semantic pulses for observable agent and graph activity;
 - **EXIR** — canonical validation between raw messages or intent and accepted graph events or mutations;
 - **Exil** — constrained intent preview with policy checks and explicit human control;
@@ -69,7 +71,7 @@ Evidence and AI activity
           ↓
  ProofLayer + EXIR validation
           ↓
-  NeuroCanvas visual memory
+ EXO package + NeuroCanvas memory
           ↓
  ExiaL replay + Exil preview
           ↓
@@ -78,7 +80,7 @@ Evidence and AI activity
  evidence, approval and Proof Pack
 ```
 
-The public architecture, implementation boundary and comparison with adjacent projects are documented in [`docs/FAPI_EXIAL_EXIL_INTEGRATION.md`](docs/FAPI_EXIAL_EXIL_INTEGRATION.md) and [`docs/ORIGINALITY_AND_DIFFERENTIATION.md`](docs/ORIGINALITY_AND_DIFFERENTIATION.md). No source code from the adjacent projects reviewed there is included in this repository.
+The public architecture, implementation boundary and comparison with adjacent projects are documented in [`docs/FAPI_EXIAL_EXIL_INTEGRATION.md`](docs/FAPI_EXIAL_EXIL_INTEGRATION.md), [`docs/EXO_CAPABILITY_PACK.md`](docs/EXO_CAPABILITY_PACK.md) and [`docs/ORIGINALITY_AND_DIFFERENTIATION.md`](docs/ORIGINALITY_AND_DIFFERENTIATION.md). No source code from the adjacent projects reviewed there is included in this repository.
 
 ## Who it is for
 
@@ -98,7 +100,7 @@ Scattered documents and AI activity
                ↓
        Exovia ProofLayer in ChatGPT
                ↓
- Verify → Preserve context → Compare
+ Verify → Preserve → Compile EXO → Compare
                ↓
        Visual NeuroCanvas handoff
                ↓
@@ -107,16 +109,17 @@ Scattered documents and AI activity
 
 ## ChatGPT App capabilities
 
-The MCP server exposes six read-only and idempotent tools:
+The MCP server exposes seven read-only and idempotent tools:
 
 - `analyze_ai_output`;
 - `create_context_capsule`;
+- `build_exo_capability_pack`;
 - `create_neurocanvas_map`;
 - `compare_ai_outputs`;
 - `recommend_ai_route`;
 - `build_proof_pack`.
 
-The server does not persist submitted content, does not call another AI service and requires no OpenAI API key. ChatGPT supplies the conversational intelligence; Exovia supplies the deterministic reliability and human-review layer.
+The server does not persist submitted content, does not call another AI service and requires no OpenAI API key. ChatGPT supplies the conversational intelligence; Exovia supplies the deterministic reliability, progressive context and human-review layer.
 
 ## Three-minute product flow
 
@@ -186,7 +189,7 @@ Requirement for the main product: **Node.js 24 LTS or newer**. The ChatGPT App r
 
 ## Key capabilities
 
-- text, Markdown, JSON, ExiaL and log import;
+- text, Markdown, JSON, `.exo`, ExiaL and log import;
 - persistent local workspaces, snapshots and export;
 - neural, tree, pulse and capability views;
 - Answer & Audit with navigation back to evidence;
@@ -198,6 +201,7 @@ Requirement for the main product: **Node.js 24 LTS or newer**. The ChatGPT App r
 - human approval represented in graph and replay;
 - ChatGPT Apps SDK/MCP integration;
 - portable Context Capsules;
+- source-linked EXO capability packs with index-first progressive disclosure;
 - AI-output comparison and safe provider-neutral routing;
 - downloadable AI-to-human NeuroCanvas maps;
 - Proof Packs with SHA-256 integrity fingerprints;
@@ -250,4 +254,4 @@ Required items include:
 
 ## Honest status
 
-The local visual product, mobile interface, official website, governed Live Room vertical slice and ChatGPT App/MCP integration are implemented. Android packaging and automated deployment are configured. The ChatGPT App is prepared for local, Docker, Codespaces and public HTTPS deployment, but no always-on hosted MCP endpoint is claimed here. Features described as roadmap remain explicitly labeled as such. Final competition fields controlled by the owner should still be reviewed for accuracy, public accessibility and consistency before the editing deadline.
+The local visual product, mobile interface, `.exo` package importer, official website, governed Live Room vertical slice and ChatGPT App/MCP integration are implemented. Android packaging and automated deployment are configured. The ChatGPT App is prepared for local, Docker, Codespaces and public HTTPS deployment, but no always-on hosted MCP endpoint is claimed here. EXO procedure extraction and token estimates are heuristic. Features described as roadmap remain explicitly labeled as such. Final competition fields controlled by the owner should still be reviewed for accuracy, public accessibility and consistency before the editing deadline.
