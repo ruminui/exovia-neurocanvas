@@ -2,53 +2,63 @@
   'use strict';
 
   const STORAGE_KEY = 'exovia:simpleMode';
+  const storedMode = localStorage.getItem(STORAGE_KEY);
   const $ = id => document.getElementById(id);
   const isSpanish = () => window.ExoviaLanguage?.get?.() === 'es';
   const tr = (en, es) => isSpanish() ? es : en;
   const notify = (message, kind = 'info') => window.ExoviaNotify ? window.ExoviaNotify(message, kind) : console.log(message);
-  let enabled = localStorage.getItem(STORAGE_KEY) === 'true';
+  let enabled = storedMode == null ? true : storedMode === 'true';
   let step = 0;
 
   function getSteps() {
     return [
       {
-        title: tr('1. Start with your information', '1. Empezá con tu información'),
+        title: tr('1. Add the original information', '1. Agregá la información original'),
         body: tr(
-          'Paste the original AI answer, conversation or document. NeuroCanvas keeps the exact source so you can verify it later. Choose what you want to organize or verify only after the information is visible.',
-          'Pegá la respuesta original de la IA, la conversación o el documento. NeuroCanvas conserva la fuente exacta para que después puedas verificarla.'
+          'Paste the complete AI answer, original question, notes or document. NeuroCanvas keeps the exact source so you can verify it later. Choose what you want to organize or verify after the information is visible.',
+          'Pegá la respuesta completa de la IA, la pregunta original, tus notas o el documento. NeuroCanvas conserva la fuente exacta para que después puedas revisarla.'
         ),
         target: 'pasteBtn',
-        action: tr('Paste information', 'Pegar información')
+        action: tr('Add my information', 'Agregar mi información')
       },
       {
-        title: tr('2. Verify before trusting', '2. Verificá antes de confiar'),
+        title: tr('2. Check before trusting', '2. Revisá antes de confiar'),
         body: tr(
-          'Trust Scan finds missing sources, unsupported claims, contradictions, personal data, credentials and prompt-injection patterns locally on this device.',
-          'El Análisis de confianza busca fuentes faltantes, afirmaciones sin respaldo, contradicciones, datos personales, credenciales e inyecciones de prompt. El análisis se hace en este dispositivo.'
+          'NeuroCanvas checks for missing proof, contradictions, private data, credentials and instructions that may try to manipulate an AI. The check happens on this device.',
+          'NeuroCanvas busca falta de prueba, contradicciones, datos privados, credenciales e instrucciones que podrían intentar manipular una IA. La revisión se hace en este dispositivo.'
         ),
         target: 'trustCenterBtn',
-        action: tr('Run Trust Scan', 'Analizar el proyecto')
+        action: tr('Check this project', 'Revisar este proyecto')
       },
       {
-        title: tr('3. Preserve context for the next AI', '3. Conservá el contexto para la próxima IA'),
+        title: tr('3. Save a clear record', '3. Guardá un registro claro'),
         body: tr(
-          'Create a compact Context Capsule with verified facts, decisions, risks and source references. Reuse it with any AI instead of starting from zero.',
-          'Creá una Cápsula de contexto con hechos verificados, decisiones, riesgos y referencias. Podés usarla con cualquier IA sin volver a empezar desde cero.'
+          'Save the useful facts, decisions, risks and source references so another AI or person can continue without starting again. You can also export a Proof Pack when you need formal evidence.',
+          'Guardá los hechos útiles, decisiones, riesgos y referencias para que otra IA o persona pueda continuar sin empezar de cero. También podés exportar un Paquete de prueba cuando necesites evidencia formal.'
         ),
         target: 'capsuleBtn',
-        action: tr('Create Context Capsule', 'Crear Cápsula de contexto')
-      },
-      {
-        title: tr('4. Export something another person can verify', '4. Exportá algo que otra persona pueda verificar'),
-        body: tr(
-          'Generate a Proof Pack with evidence, risks, decisions, agent activity and a SHA-256 integrity fingerprint. Important actions always remain under human approval.',
-          'Generá un Paquete de prueba con evidencia, riesgos, decisiones, actividad de agentes y una huella SHA-256. Las acciones importantes siempre quedan bajo aprobación humana.'
-        ),
-        target: 'trustCenterBtn',
-        action: tr('Open Proof Pack', 'Abrir Paquete de prueba'),
-        special: 'proof'
+        action: tr('Save the useful context', 'Guardar el contexto útil')
       }
     ];
+  }
+
+  function setButtonText(id, en, es) {
+    const element = $(id);
+    if (element) element.textContent = tr(en, es);
+  }
+
+  function applyPlainLabels() {
+    if (!enabled) return;
+    setButtonText('simpleGuideBtn', 'How it works', 'Cómo funciona');
+    setButtonText('simpleModeBtn', 'More options', 'Más opciones');
+    setButtonText('purposeBtn', 'Choose a goal', 'Elegir objetivo');
+    setButtonText('pasteBtn', 'Add information', 'Agregar información');
+    setButtonText('trustCenterBtn', 'Check AI', 'Revisar IA');
+    setButtonText('capsuleBtn', 'Save context', 'Guardar contexto');
+    setButtonText('exportBtn', 'Save / Share', 'Guardar / compartir');
+    setButtonText('workspaceBtn', 'My work', 'Mis trabajos');
+    const fileLabel = document.querySelector('.fileButton');
+    if (fileLabel?.firstChild) fileLabel.firstChild.textContent = tr('Open', 'Abrir');
   }
 
   function applyMode(value, announce = false) {
@@ -58,10 +68,11 @@
     const button = $('simpleModeBtn');
     if (button) {
       button.setAttribute('aria-pressed', String(enabled));
-      button.textContent = enabled ? tr('Standard view', 'Vista completa') : tr('Simple view', 'Vista simple');
-      button.title = enabled ? tr('Return to the full interface', 'Volver a la interfaz completa') : tr('Use larger text and fewer choices', 'Usar texto más grande y menos opciones');
+      button.textContent = enabled ? tr('More options', 'Más opciones') : tr('Simple view', 'Vista simple');
+      button.title = enabled ? tr('Show advanced tools', 'Mostrar herramientas avanzadas') : tr('Use fewer choices and larger controls', 'Usar menos opciones y controles más grandes');
     }
-    if (announce) notify(enabled ? tr('Simple view enabled.', 'Vista simple activada.') : tr('Standard view enabled.', 'Vista completa activada.'), 'success');
+    applyPlainLabels();
+    if (announce) notify(enabled ? tr('Simple view enabled.', 'Vista simple activada.') : tr('Advanced options enabled.', 'Opciones avanzadas activadas.'), 'success');
   }
 
   function targetElement(id) { return $(id) || document.querySelector(`[data-simple-target="${id}"]`); }
@@ -74,10 +85,10 @@
     const close = dialog.querySelector('[data-close]');
     const safetyStrong = dialog.querySelector('[data-guide-safety-title]');
     const safetyBody = dialog.querySelector('[data-guide-safety-body]');
-    if (eyebrow) eyebrow.textContent = tr('HOW TO USE NEUROCANVAS', 'CÓMO USAR NEUROCANVAS');
+    if (eyebrow) eyebrow.textContent = tr('THREE SIMPLE STEPS', 'TRES PASOS SIMPLES');
     if (close) close.setAttribute('aria-label', tr('Close guide', 'Cerrar guía'));
     if (safetyStrong) safetyStrong.textContent = tr('You cannot damage the original information.', 'No podés dañar la información original.');
-    if (safetyBody) safetyBody.textContent = tr('Everything stays local by default. Save a backup before deleting or replacing a project.', 'Todo queda local por defecto. Guardá una copia antes de borrar o reemplazar un proyecto.');
+    if (safetyBody) safetyBody.textContent = tr('Changes save automatically on this device. Export a copy before deleting or replacing a project.', 'Los cambios se guardan automáticamente en este dispositivo. Exportá una copia antes de borrar o reemplazar un proyecto.');
   }
 
   function renderGuide() {
@@ -109,12 +120,8 @@
     const current = getSteps()[step];
     closeGuide();
     setTimeout(() => {
-      if (current.special === 'proof') {
-        window.ExoviaTrustCenter?.open?.('proof');
-        return;
-      }
       const target = targetElement(current.target);
-      if (!target) return notify(tr('This action is not available yet. Open or create a workspace first.', 'Esta acción todavía no está disponible. Primero abrí o creá un proyecto.'), 'info');
+      if (!target) return notify(tr('Create or open a project first.', 'Primero creá o abrí un proyecto.'), 'info');
       target.click();
     }, 60);
   }
@@ -143,8 +150,8 @@
     const guideButton = document.createElement('button');
     guideButton.id = 'simpleGuideBtn';
     guideButton.type = 'button';
-    guideButton.textContent = tr('Guide me', 'Guiame');
-    guideButton.title = tr('Open a step-by-step guide', 'Abrir una guía paso a paso');
+    guideButton.textContent = tr('How it works', 'Cómo funciona');
+    guideButton.title = tr('Open the three-step guide', 'Abrir la guía de tres pasos');
     guideButton.addEventListener('click', openGuide);
     toolbar?.prepend(guideButton);
     toolbar?.prepend(modeButton);
@@ -180,11 +187,6 @@
 
   window.addEventListener('DOMContentLoaded', build);
   window.addEventListener('exovia:language-changed', () => {
-    const guideButton = $('simpleGuideBtn');
-    if (guideButton) {
-      guideButton.textContent = tr('Guide me', 'Guiame');
-      guideButton.title = tr('Open a step-by-step guide', 'Abrir una guía paso a paso');
-    }
     applyMode(enabled);
     if ($('simpleGuideDialog')?.open) renderGuide();
     else updateStaticCopy();
