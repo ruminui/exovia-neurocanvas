@@ -27,12 +27,12 @@
     },
     es: {
       toggle: 'English', title: 'Exovia NeuroCanvas — Espacio de Confiabilidad de IA', searchLabel: 'Buscar dentro del proyecto', searchPlaceholder: 'Escribí una pregunta o concepto…', zoom: 'Buscar',
-      workspace: 'Nuevo espacio', pulse: 'Actividad de agentes', open: 'Abrir archivo', import: 'Importar texto', trust: 'Verificar IA', capsule: 'Cápsula de contexto', export: 'Exportar copia', fit: 'Ver mapa completo',
+      workspace: 'Nuevo espacio', pulse: 'Actividad de agentes', open: 'Abrir archivo', import: 'Pegar información', trust: 'Verificar IA', capsule: 'Cápsula de contexto', export: 'Exportar copia', fit: 'Ver mapa completo',
       simple: 'Vista simple', guide: 'Guiame', purpose: '¿Qué querés hacer?', save: 'Guardar', snapshot: 'Copia de recuperación', library: 'Mis proyectos', undo: '↶ Deshacer', redo: '↷ Rehacer',
       explorer: 'Explorador de información', inspector: 'Fuente y evidencia', hint: 'Arrastrá para mover · acercá con dos dedos · tocá una idea para inspeccionarla', details: 'Seleccioná una idea para ver la fuente exacta detrás de una respuesta o decisión.',
       saved: 'Todos los cambios están guardados', saving: 'Guardando automáticamente…', localProtected: 'Local primero · Protegido', homeEyebrow: 'LA CAPA DE CONFIABILIDAD PARA IA',
       homeTitle: 'Usá IA sin perder verdad, privacidad ni control.', homeLead: 'NeuroCanvas convierte documentos, conversaciones y actividad de agentes en un espacio verificable. Conservá contexto, detectá riesgos, demostrá las respuestas y aprobá cada cambio importante de IA.',
-      homeStart: 'Crear un espacio confiable', homeImport: 'Importar una respuesta de IA o documento', guaranteeLocal: 'Tus datos quedan locales por defecto', guaranteeEvidence: 'Las respuestas siguen conectadas a evidencia', guaranteeHuman: 'Las personas aprueban cambios importantes',
+      homeStart: 'Crear un espacio confiable', homeImport: 'Pegar una respuesta de IA o documento', guaranteeLocal: 'Tus datos quedan locales por defecto', guaranteeEvidence: 'Las respuestas siguen conectadas a evidencia', guaranteeHuman: 'Las personas aprueban cambios importantes',
       controlCenter: 'CENTRO DE CONTROL DE IA', ready: 'LISTO', layers: 'capas', controlHeadline: 'Un espacio. Cuatro protecciones.', controlDescription: 'Evidencia, privacidad, contexto y control de agentes trabajan juntos en lugar de quedar separados.',
       verifyAnswers: 'Verificar respuestas de IA', verifyAnswersSub: 'Encontrá afirmaciones sin respaldo, fuentes faltantes y contradicciones.', preserveContext: 'Conservar contexto reutilizable', preserveContextSub: 'Creá una cápsula portátil para cualquier modelo.', governAgents: 'Controlar agentes de IA', governAgentsSub: 'Reconstruí acciones y mantené una aprobación humana.',
       whyExists: 'POR QUÉ EXISTE NEUROCANVAS', problemTitle: 'Los mayores problemas de la IA no son problemas del modelo.', problemLead: 'Son fallas de memoria, evidencia, privacidad y control. NeuroCanvas las trata como un único sistema conectado.',
@@ -44,52 +44,19 @@
     }
   };
 
-  function setText(selector, text) {
-    const element = typeof selector === 'string' ? document.querySelector(selector) : selector;
-    if (element) element.textContent = text;
-  }
-
+  function setText(selector, text) { const element = typeof selector === 'string' ? document.querySelector(selector) : selector; if (element) element.textContent = text; }
   function apply(nextLanguage, announce = false) {
-    language = supported.includes(nextLanguage) ? nextLanguage : 'en';
-    localStorage.setItem(STORAGE_KEY, language);
-    document.documentElement.lang = language;
-    document.title = copy[language].title;
-    const t = copy[language];
-
-    const button = $('languageBtn');
-    if (button) {
-      button.textContent = t.toggle;
-      button.setAttribute('aria-label', language === 'en' ? 'Cambiar la interfaz a español' : 'Change interface to English');
-    }
-
-    document.querySelectorAll('[data-i18n]').forEach(element => {
-      const key = element.dataset.i18n;
-      if (t[key]) element.textContent = t[key];
-    });
-
-    setText('label[for="searchInput"]', t.searchLabel);
-    const search = $('searchInput'); if (search) search.placeholder = t.searchPlaceholder;
-    setText('#searchBtn', t.zoom); setText('#demoBtn', t.workspace); setText('#pulseDemoBtn', t.pulse);
-    const fileLabel = document.querySelector('.fileButton'); if (fileLabel?.firstChild) fileLabel.firstChild.textContent = t.open;
+    language = supported.includes(nextLanguage) ? nextLanguage : 'en'; localStorage.setItem(STORAGE_KEY, language); document.documentElement.lang = language; document.title = copy[language].title; const t = copy[language];
+    const button = $('languageBtn'); if (button) { button.textContent = t.toggle; button.setAttribute('aria-label', language === 'en' ? 'Cambiar la interfaz a español' : 'Change interface to English'); }
+    document.querySelectorAll('[data-i18n]').forEach(element => { const key = element.dataset.i18n; if (t[key]) element.textContent = t[key]; });
+    setText('label[for="searchInput"]', t.searchLabel); const search = $('searchInput'); if (search) search.placeholder = t.searchPlaceholder;
+    setText('#searchBtn', t.zoom); setText('#demoBtn', t.workspace); setText('#pulseDemoBtn', t.pulse); const fileLabel = document.querySelector('.fileButton'); if (fileLabel?.firstChild) fileLabel.firstChild.textContent = t.open;
     setText('#pasteBtn', t.import); setText('#trustCenterBtn', t.trust); setText('#capsuleBtn', t.capsule); setText('#exportBtn', t.export); setText('#fitBtn', t.fit);
-    setText('#simpleModeBtn', window.ExoviaSimpleMode?.isEnabled?.() ? (language === 'es' ? 'Vista completa' : 'Standard view') : t.simple);
-    setText('#simpleGuideBtn', t.guide); setText('#purposeBtn', t.purpose); setText('#saveProjectBtn', t.save); setText('#snapshotBtn', t.snapshot); setText('#workspaceBtn', t.library);
-    setText('#safeUndoBtn', t.undo); setText('#safeRedoBtn', t.redo); setText('.leftPanel .panelTitle', t.explorer); setText('.rightPanel .panelTitle', t.inspector); setText('.leftPanel .hint', t.hint);
-    const details = $('details'); if (details?.classList.contains('empty')) details.textContent = t.details;
-    const saveStatus = $('safeSaveStatus'); if (saveStatus) { const state = saveStatus.dataset.state; const strong = saveStatus.querySelector('strong'); if (state === 'saved' && strong) strong.textContent = t.saved; if (state === 'saving' && strong) strong.textContent = t.saving; }
-
-    window.dispatchEvent(new CustomEvent('exovia:language-changed', { detail: { language } }));
-    if (announce) window.ExoviaNotify?.(language === 'es' ? 'Interfaz en español.' : 'Interface in English.', 'success');
+    setText('#simpleModeBtn', window.ExoviaSimpleMode?.isEnabled?.() ? (language === 'es' ? 'Vista completa' : 'Standard view') : t.simple); setText('#simpleGuideBtn', t.guide); setText('#purposeBtn', t.purpose); setText('#saveProjectBtn', t.save); setText('#snapshotBtn', t.snapshot); setText('#workspaceBtn', t.library); setText('#safeUndoBtn', t.undo); setText('#safeRedoBtn', t.redo); setText('.leftPanel .panelTitle', t.explorer); setText('.rightPanel .panelTitle', t.inspector); setText('.leftPanel .hint', t.hint);
+    const details = $('details'); if (details?.classList.contains('empty')) details.textContent = t.details; const saveStatus = $('safeSaveStatus'); if (saveStatus) { const state = saveStatus.dataset.state; const strong = saveStatus.querySelector('strong'); if (state === 'saved' && strong) strong.textContent = t.saved; if (state === 'saving' && strong) strong.textContent = t.saving; }
+    window.dispatchEvent(new CustomEvent('exovia:language-changed', { detail: { language } })); if (announce) window.ExoviaNotify?.(language === 'es' ? 'Interfaz en español.' : 'Interface in English.', 'success');
   }
-
-  function build() {
-    if ($('languageBtn')) return;
-    const button = document.createElement('button'); button.id = 'languageBtn'; button.type = 'button'; button.className = 'languageButton'; button.addEventListener('click', () => apply(language === 'en' ? 'es' : 'en', true));
-    document.querySelector('.toolbar')?.prepend(button);
-    apply(language);
-  }
-
+  function build() { if ($('languageBtn')) return; const button = document.createElement('button'); button.id = 'languageBtn'; button.type = 'button'; button.className = 'languageButton'; button.addEventListener('click', () => apply(language === 'en' ? 'es' : 'en', true)); document.querySelector('.toolbar')?.prepend(button); apply(language); }
   window.ExoviaLanguage = { set: apply, get: () => language, supported: [...supported], copy };
-  window.addEventListener('DOMContentLoaded', build);
-  window.addEventListener('exovia:map-changed', () => setTimeout(() => apply(language), 0));
+  window.addEventListener('DOMContentLoaded', build); window.addEventListener('exovia:map-changed', () => setTimeout(() => apply(language), 0));
 })();
