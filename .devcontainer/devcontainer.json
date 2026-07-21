@@ -1,0 +1,22 @@
+{
+  "name": "Exovia NeuroCanvas Hackathon Judge",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-24-bookworm",
+  "remoteUser": "node",
+  "forwardPorts": [8787],
+  "portsAttributes": {
+    "8787": {
+      "label": "Exovia ProofLayer MCP",
+      "onAutoForward": "notify"
+    }
+  },
+  "postCreateCommand": "cd chatgpt-app && npm install --no-audit --no-fund && npm run verify",
+  "postAttachCommand": "printf '\nExovia judge commands:\n  cd chatgpt-app && npm run judge\n  cd chatgpt-app && npm start\nSee chatgpt-app/JUDGE_QUICKSTART.md\n\n'",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "ms-azuretools.vscode-docker"
+      ]
+    }
+  }
+}
