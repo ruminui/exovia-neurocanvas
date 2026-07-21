@@ -3,7 +3,7 @@ import path from 'node:path';
 import process from 'node:process';
 
 const ROOT = process.cwd();
-const RUNTIME_SCRIPTS = ['core.js','upgrade.js','product.js','mobile.js','brain.js','ai-bridge.js','intelligence.js','diagnostics.js','live-room.js','clarity.js','simple-mode.js','use-cases.js','safety-net.js'];
+const RUNTIME_SCRIPTS = ['core.js','upgrade.js','product.js','mobile.js','brain.js','ai-bridge.js','intelligence.js','diagnostics.js','live-room.js','clarity.js','simple-mode.js','use-cases.js','safety-net.js','language.js'];
 const STYLESHEETS = ['styles.css','upgrade.css','product.css','mobile.css','brain.css','ai-bridge.css','intelligence.css','diagnostics.css','live-room.css','clarity.css','simple-mode.css','use-cases.css','safety-net.css'];
 const REQUIRED = [
   'index.html','manifest.webmanifest','sw.js','README.md','SECURITY.md','CONTRIBUTING.md','LEEME_PRIMERO.txt',
@@ -11,7 +11,7 @@ const REQUIRED = [
   'docs/TESTER_CHECKLIST.md','docs/MARCE_GASTON_HELP_PLAN.md','docs/VIDEO_SCRIPT_MARCE.md','docs/SIMPLE_USE_GUIDE.md',
   'docs/CAPABILITY_VERIFICATION_MATRIX.md','docs/LIVE_COLLABORATION_ARCHITECTURE.md','schemas/live-evidence-room.schema.json',
   'examples/live-evidence-room.json','tests/e2e/judge-clarity.spec.mjs','tests/e2e/simple-mode.spec.mjs',
-  'tests/e2e/use-cases.spec.mjs','tests/e2e/safety-net.spec.mjs',
+  'tests/e2e/use-cases.spec.mjs','tests/e2e/safety-net.spec.mjs','tests/e2e/language.spec.mjs',
   ...RUNTIME_SCRIPTS.map(file => `src/${file}`), ...STYLESHEETS.map(file => `src/${file}`)
 ];
 
@@ -30,8 +30,8 @@ const clarity=await fs.readFile(path.join(ROOT,'src/clarity.js'),'utf8');
 const simpleMode=await fs.readFile(path.join(ROOT,'src/simple-mode.js'),'utf8');
 const useCases=await fs.readFile(path.join(ROOT,'src/use-cases.js'),'utf8');
 const safetyNet=await fs.readFile(path.join(ROOT,'src/safety-net.js'),'utf8');
+const language=await fs.readFile(path.join(ROOT,'src/language.js'),'utf8');
 const simpleStyles=await fs.readFile(path.join(ROOT,'src/simple-mode.css'),'utf8');
-const useCaseStyles=await fs.readFile(path.join(ROOT,'src/use-cases.css'),'utf8');
 const safetyStyles=await fs.readFile(path.join(ROOT,'src/safety-net.css'),'utf8');
 const security=await fs.readFile(path.join(ROOT,'SECURITY.md'),'utf8');
 const videoScript=await fs.readFile(path.join(ROOT,'docs/VIDEO_SCRIPT_MARCE.md'),'utf8');
@@ -51,7 +51,8 @@ const capabilities=[
  ['live room validation',liveRoom.includes('function validateRoom(')],['judge clarity API',clarity.includes('window.ExoviaClarity')],
  ['simple mode API',simpleMode.includes('window.ExoviaSimpleMode')],['purpose chooser API',useCases.includes('window.ExoviaUseCases')],
  ['safety net API',safetyNet.includes('window.ExoviaSafetyNet')],['session undo',safetyNet.includes('function undo(')],
- ['session redo',safetyNet.includes('function redo(')],['automatic save status',safetyNet.includes('Saving automatically')]
+ ['session redo',safetyNet.includes('function redo(')],['automatic save status',safetyNet.includes('Saving automatically')],
+ ['bilingual API',language.includes('window.ExoviaLanguage')],['Spanish plain language',language.includes('Pegar información')]
 ];
 for(const [name,present] of capabilities)present?pass(`capability entry point: ${name}`):fail(`missing capability entry point: ${name}`);
 
@@ -67,7 +68,9 @@ const uxMarkers=[
  ['video problem statement',/Teams now work with documents/i.test(videoScript)],['large touch targets',simpleStyles.includes('min-height:48px')],
  ['purpose-first onboarding',simpleMode.includes('Choose what you want to organize')],['family template',useCases.includes("id: 'family'")],
  ['no-wrong-choice reassurance',useCases.includes('There is no wrong choice')],['save indicator style',safetyStyles.includes('.safeSaveStatus')],
- ['saved state style',safetyStyles.includes('data-state="saved"')],['undo controls visible in simple mode',safetyStyles.includes('.simpleMode .canvasTools #safeUndoBtn')]
+ ['saved state style',safetyStyles.includes('data-state="saved"')],['undo controls visible in simple mode',safetyStyles.includes('.simpleMode .canvasTools #safeUndoBtn')],
+ ['repaired undo listeners',safetyNet.includes("undoButton.addEventListener('click', undo)")],['pending-save exit guard',safetyNet.includes("addEventListener('beforeunload'")],
+ ['language preference',language.includes("localStorage.setItem(STORAGE_KEY, language)")],['Spanish search wording',language.includes('Buscar dentro del proyecto')]
 ];
 for(const [name,present] of uxMarkers)present?pass(`usability: ${name}`):fail(`missing usability marker: ${name}`);
 
