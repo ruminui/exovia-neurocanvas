@@ -3,6 +3,7 @@ server/data/
 server/backups/
 server/*.log
 server/*.pid
+chatgpt-app/judge-output/
 
 # Local environment and credentials
 .env
@@ -11,6 +12,9 @@ server/*.pid
 server/.env
 server/.env.*
 !server/.env.example
+chatgpt-app/.env
+chatgpt-app/.env.*
+!chatgpt-app/.env.example
 
 # Node and editor artifacts
 node_modules/

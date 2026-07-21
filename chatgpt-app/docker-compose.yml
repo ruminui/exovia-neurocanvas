@@ -1,0 +1,26 @@
+services:
+  exovia-prooflayer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: exovia-neurocanvas-chatgpt-app:judge
+    environment:
+      NODE_ENV: production
+      PORT: 8787
+      APP_DOMAIN: ${APP_DOMAIN:-}
+    ports:
+      - "8787:8787"
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8787/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped

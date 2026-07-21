@@ -5,10 +5,14 @@ on:
     branches: [main]
     paths:
       - 'chatgpt-app/**'
+      - '.devcontainer/**'
+      - 'JUDGE_START_HERE.md'
       - '.github/workflows/chatgpt-app.yml'
   pull_request:
     paths:
       - 'chatgpt-app/**'
+      - '.devcontainer/**'
+      - 'JUDGE_START_HERE.md'
       - '.github/workflows/chatgpt-app.yml'
   workflow_dispatch:
 
@@ -18,7 +22,7 @@ permissions:
 jobs:
   validate-chatgpt-app:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     defaults:
       run:
         working-directory: chatgpt-app
@@ -34,22 +38,47 @@ jobs:
       - name: Install dependencies
         run: npm install --no-audit --no-fund
 
-      - name: Syntax and unit tests
-        run: npm run verify
+      - name: Syntax unit and submission tests
+        shell: bash
+        run: |
+          set -o pipefail
+          mkdir -p ci-output
+          npm run verify 2>&1 | tee ci-output/verify.log
 
-      - name: MCP runtime sanity
+      - name: Complete hackathon judge flow
+        shell: bash
+        run: |
+          set -o pipefail
+          npm run judge 2>&1 | tee ci-output/judge.log
+
+      - name: Upload judge and diagnostic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exovia-chatgpt-app-judge-evidence
+          path: |
+            chatgpt-app/judge-output
+            chatgpt-app/ci-output
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Build hardened container
+        shell: bash
+        run: |
+          set -o pipefail
+          docker build --tag exovia-prooflayer:ci . 2>&1 | tee ci-output/docker-build.log
+
+      - name: Container runtime sanity
         shell: bash
         run: |
           set -euo pipefail
-          node src/server.mjs > /tmp/exovia-chatgpt-app.log 2>&1 &
-          server_pid=$!
-          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
-          sleep 2
-          curl --fail --silent --show-error http://127.0.0.1:8787/health
-          curl --fail --silent --show-error \
-            -X POST http://127.0.0.1:8787/mcp \
-            -H 'content-type: application/json' \
-            -H 'accept: application/json, text/event-stream' \
-            --data '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"github-actions","version":"1.0.0"}}}' \
-            | grep 'exovia-neurocanvas'
-          cat /tmp/exovia-chatgpt-app.log
+          docker run --detach --rm --name exovia-prooflayer-ci --publish 8798:8787 exovia-prooflayer:ci
+          trap 'docker logs exovia-prooflayer-ci > ci-output/docker-runtime.log 2>&1 || true; docker stop exovia-prooflayer-ci >/dev/null 2>&1 || true' EXIT
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:8798/health | tee ci-output/container-health.json; then
+              exit 0
+            fi
+            sleep 1
+          done
+          docker logs exovia-prooflayer-ci
+          exit 1
