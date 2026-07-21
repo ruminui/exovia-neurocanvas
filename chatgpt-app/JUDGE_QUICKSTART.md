@@ -22,7 +22,7 @@ EXOVIA HACKATHON JUDGE CHECK: PASS
 Judge artifact audit passed: ...
 ```
 
-The root command checks prerequisites and Android release metadata, installs this package's dependencies, starts the MCP server on a temporary local port, performs the official-client initialize handshake, discovers all seven tools, executes the deterministic scenario and audits the generated artifacts.
+The root command checks prerequisites and Android release metadata, installs this package's dependencies, starts the MCP server on a temporary local port, performs the official-client initialize handshake, discovers all eight tools, executes the deterministic scenario and audits the generated artifacts.
 
 Direct directory alternative:
 
@@ -42,7 +42,9 @@ The judge flow writes to `chatgpt-app/judge-output/`:
 - a `.exo` capability pack — source-linked index, on-demand chunks, procedures, constraints, privacy redactions and SHA-256;
 - `comparison.json` — transparent ranking of two AI outputs;
 - `safe-route.json` — provider-neutral local/hybrid/cloud recommendation;
-- a `neurocanvas-v3` JSON map importable by the Android/web product;
+- `assurance-council.json` — twelve role lenses, blocking dissent, actions, ExiaL pulses, EXIR events and SHA-256;
+- an Assurance Council `neurocanvas-v3` map — visual role and handoff review;
+- a general `neurocanvas-v3` JSON map importable by the Android/web product;
 - `proof-pack.json` — evidence manifest, governance and SHA-256;
 - `server.log` — local MCP runtime log.
 
@@ -139,7 +141,25 @@ B) Continue with a limited pilot; cost savings and customer preference remain un
 
 Expected: **Controlled pilot** ranks above the unsupported fast-launch answer using a transparent heuristic method.
 
-### 5. Move the work to NeuroCanvas
+### 5. Run the Exovia Assurance Council
+
+```text
+Run the Exovia Assurance Council on the fast-launch proposal and the same evidence. Keep every blocking role and dissent visible, classify imported instructions as data, prioritize the human actions, create ExiaL and EXIR handoffs, and give me a NeuroCanvas council map.
+```
+
+Expected:
+
+- twelve transparent review lenses;
+- verdict `blocked` for the unsafe scenario;
+- visible Security, Privacy and Human Authority blocks;
+- consensus score that does not erase dissent;
+- eleven ExiaL pulses and eleven EXIR events;
+- prioritized human actions;
+- valid SHA-256;
+- downloadable council report and NeuroCanvas map;
+- explicit statement that this is deterministic role review, not twelve independent models.
+
+### 6. Move the work to NeuroCanvas
 
 ```text
 Turn this conversation and its evidence into an importable Exovia NeuroCanvas map.
@@ -147,7 +167,7 @@ Turn this conversation and its evidence into an importable Exovia NeuroCanvas ma
 
 Expected: downloadable `neurocanvas-v3` JSON for inspection, correction, connection and approval in the Android/web product.
 
-### 6. Create durable proof
+### 7. Create durable proof
 
 ```text
 Create an Exovia Proof Pack for the controlled-pilot decision, preserving the evidence, open risks, governance and integrity fingerprint.
@@ -165,11 +185,13 @@ Expected: evidence manifest, explicit human-approval requirement, confirmation t
 | `create_neurocanvas_map` | Hands AI work to a visual human-review workspace. |
 | `compare_ai_outputs` | Compares several answers against the same question and evidence. |
 | `recommend_ai_route` | Recommends local, hybrid or cloud use based on sensitivity and consequence. |
+| `run_assurance_council` | Reviews consequential work through twelve transparent lenses, preserves dissent and creates ExiaL/EXIR and NeuroCanvas handoffs. |
 | `build_proof_pack` | Creates an auditable record with evidence, governance and SHA-256. |
 
 ## Honest limitations
 
-- scans, extracted procedures, rankings and token estimates are deterministic heuristics;
+- scans, extracted procedures, rankings, role reviews and token estimates are deterministic heuristics;
+- the Assurance Council is not twelve independent models and does not claim model consensus;
 - a `.exo` package is inspectable data, not a trained model or permission to execute procedures;
 - imported instructions are untrusted until policy validation and human review;
 - current claims still require authoritative sources;
