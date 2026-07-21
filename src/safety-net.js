@@ -71,6 +71,7 @@
       await window.ExoviaWorkspace.saveCurrent({ reason });
       pendingSave = false;
       setStatus('saved', 'All changes saved');
+      window.dispatchEvent(new CustomEvent('exovia:safe-saved', { detail: { reason } }));
     } catch (error) {
       pendingSave = false;
       console.error(error);
