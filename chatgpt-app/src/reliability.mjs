@@ -158,9 +158,9 @@ export function analyzeAiOutput({ title = "AI output", aiOutput, evidence = [], 
   const overclaimCount = countPatternMatches(OVERCLAIM_PATTERNS, text);
 
   for (const claim of claims) {
-    const score = corpus ? overlapScore(claim, corpus) : 0;
-    if (score >= 0.28) supportedClaims.push({ claim, supportScore: Math.round(score * 100) });
-    else unsupportedClaims.push({ claim, supportScore: Math.round(score * 100) });
+    const supportScore = corpus ? overlapScore(claim, corpus) : 0;
+    if (supportScore >= 0.28) supportedClaims.push({ claim, supportScore: Math.round(supportScore * 100) });
+    else unsupportedClaims.push({ claim, supportScore: Math.round(supportScore * 100) });
   }
 
   if (!evidence.length) {
@@ -198,10 +198,17 @@ export function analyzeAiOutput({ title = "AI output", aiOutput, evidence = [], 
   const criticalCount = issues.filter((finding) => finding.severity === "critical").length;
   const baseScore = Math.round(Object.values(dimensions).reduce((sum, value) => sum + value, 0) / 4);
   const score = Math.max(0, baseScore - criticalCount * 10);
+  const safeTitle = redactSensitiveText(title);
+  let outputRedactionCount = safeTitle.redactionCount;
+  const safeUnsupportedClaims = unsupportedClaims.slice(0, 8).map((item) => {
+    const safeClaim = redactSensitiveText(item.claim);
+    outputRedactionCount += safeClaim.redactionCount;
+    return { ...item, claim: safeClaim.text };
+  });
 
   return {
     kind: "trust_scan",
-    title,
+    title: safeTitle.text,
     score,
     grade: grade(score),
     summary: score >= 85
@@ -220,8 +227,10 @@ export function analyzeAiOutput({ title = "AI output", aiOutput, evidence = [], 
       evidenceSourceCount: evidence.length,
       criticalCount,
     },
-    unsupportedClaims: unsupportedClaims.slice(0, 8),
+    unsupportedClaims: safeUnsupportedClaims,
     unsupportedNumbers: unsupportedNumberValues.slice(0, 12),
+    redactionCount: outputRedactionCount,
+    privacyMode: "redacted",
     limitations: tr(language, "Heuristic reliability scan; it does not replace domain-expert review or live source verification.", "Análisis heurístico de confiabilidad; no reemplaza la revisión de especialistas ni la verificación con fuentes actuales."),
   };
 }
@@ -234,12 +243,12 @@ export function createContextCapsule({ objective, content, evidence = [], tokenB
   let redactionCount = safeObjective.redactionCount + safeContent.redactionCount;
   const budgetChars = Math.max(1600, Math.min(32000, Number(tokenBudget || 2000) * 4));
   const sourceSections = evidence.slice(0, 12).map((item, index) => {
-    const safeTitle = redactSensitiveText(item.title || `Source ${index + 1}`);
+    const safeSourceTitle = redactSensitiveText(item.title || `Source ${index + 1}`);
     const safeUrl = redactSensitiveText(item.url || "");
     const safeText = redactSensitiveText(item.text || "");
-    redactionCount += safeTitle.redactionCount + safeUrl.redactionCount + safeText.redactionCount;
+    redactionCount += safeSourceTitle.redactionCount + safeUrl.redactionCount + safeText.redactionCount;
     const excerpt = safeText.text.trim().slice(0, Math.max(350, Math.floor(budgetChars / Math.max(3, evidence.length))));
-    return `### [${index + 1}] ${safeTitle.text}\n${safeUrl.text ? `URL: ${safeUrl.text}\n` : ""}${excerpt}`;
+    return `### [${index + 1}] ${safeSourceTitle.text}\n${safeUrl.text ? `URL: ${safeUrl.text}\n` : ""}${excerpt}`;
   });
   const clippedContent = safeContent.text.trim().slice(0, Math.max(700, Math.floor(budgetChars * 0.45)));
   const risks = scan.issues.slice(0, 8).map((finding) => `- ${finding.title}: ${finding.detail}`);
@@ -270,18 +279,12 @@ export function compareAiOutputs({ question, answers, evidence = [], language = 
     const evidenceAlignment = corpus ? Math.round(overlapScore(answer.text, corpus) * 100) : 0;
     const claimCount = Math.max(1, scan.metrics.claimCount);
     const supportCoverage = Math.round((scan.metrics.supportedClaimCount / claimCount) * 100);
-    const privacyPenalty = scan.issues
-      .filter((finding) => finding.category === "privacy")
-      .reduce((sum, finding) => sum + severityWeight(finding.severity), 0);
+    const privacyPenalty = scan.issues.filter((finding) => finding.category === "privacy").reduce((sum, finding) => sum + severityWeight(finding.severity), 0);
     const unsupportedClaimPenalty = Math.min(36, scan.metrics.unsupportedClaimCount * 9);
     const unsupportedNumberPenalty = Math.min(36, scan.metrics.unsupportedNumberCount * 18);
     const overclaimPenalty = Math.min(24, scan.metrics.overclaimCount * 12);
     const criticalPenalty = Math.min(36, scan.metrics.criticalCount * 18);
-    const governanceSignals = [
-      EVIDENCE_LANGUAGE.test(answer.text),
-      UNCERTAINTY_LANGUAGE.test(answer.text),
-      HUMAN_CONTROL_LANGUAGE.test(answer.text),
-    ].filter(Boolean).length;
+    const governanceSignals = [EVIDENCE_LANGUAGE.test(answer.text), UNCERTAINTY_LANGUAGE.test(answer.text), HUMAN_CONTROL_LANGUAGE.test(answer.text)].filter(Boolean).length;
     const governanceBonus = governanceSignals * 5;
     const finalScore = Math.max(0, Math.min(100, Math.round(
       scan.score * 0.32
@@ -296,7 +299,7 @@ export function compareAiOutputs({ question, answers, evidence = [], language = 
       - criticalPenalty,
     )));
     return {
-      label: answer.label || `Answer ${index + 1}`,
+      label: redactSensitiveText(answer.label || `Answer ${index + 1}`).text,
       score: finalScore,
       trustScore: scan.score,
       relevance,
@@ -312,7 +315,7 @@ export function compareAiOutputs({ question, answers, evidence = [], language = 
   }).sort((a, b) => b.score - a.score);
   return {
     kind: "comparison",
-    question,
+    question: redactSensitiveText(question).text,
     ranking: ranked,
     winner: ranked[0]?.label || null,
     recommendation: ranked.length
