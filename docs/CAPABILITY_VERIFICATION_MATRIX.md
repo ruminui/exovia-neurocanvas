@@ -5,42 +5,56 @@ This document prevents product claims from outrunning evidence.
 Status vocabulary:
 
 - **IMPLEMENTED** — code and UI entry point exist.
-- **AUTOMATED TESTED** — a repository test covers the behavior.
+- **AUTOMATED TESTED** — a repository test covers the behavior, but the latest run may still be pending.
 - **RUNTIME VERIFIED** — a real execution completed successfully and evidence was captured.
+- **HUMAN VERIFIED** — an external person completed the workflow without developer assistance.
 - **PARTIAL** — a limited workflow exists but not the full advertised capability.
-- **BLOCKED** — requires credentials, account configuration or external hardware.
+- **BLOCKED** — requires credentials, account configuration, external hardware or an execution environment not available in this editing session.
 
 | Capability | Current status | Evidence gate |
 |---|---|---|
 | One-click Windows launcher | IMPLEMENTED | External Windows double-click test pending |
 | macOS/Linux launcher | IMPLEMENTED | Device execution pending |
-| Text/Markdown import | IMPLEMENTED | Browser E2E import-content assertion still required |
-| JSON/ExiaL/log import | IMPLEMENTED | Per-format fixture tests still required |
-| Neural/tree/pulse/FAPI views | IMPLEMENTED | Visual regression and interaction tests still required |
-| Search and Zoom to Answer | IMPLEMENTED | Exact focus-path assertion still required |
-| Evidence inspector | IMPLEMENTED | Exact source preservation fixture test still required |
+| Text/Markdown import | AUTOMATED TESTED | Latest Playwright/CI result pending |
+| JSON/ExiaL/log import | AUTOMATED TESTED | Latest Playwright/CI result pending |
+| Malformed import rejection | AUTOMATED TESTED | Latest Playwright/CI result pending |
+| Neural/tree/pulse/FAPI views | IMPLEMENTED | Visual interaction execution pending |
+| Search and Zoom to Answer | AUTOMATED TESTED | Latest Playwright/CI result pending |
+| Evidence inspector | AUTOMATED TESTED | Latest Playwright/CI result pending |
 | Persistent workspaces | AUTOMATED TESTED | Playwright reload test exists; CI result pending |
-| JSON export | IMPLEMENTED | Round-trip export/import test still required |
-| Local answer engine | AUTOMATED TESTED | Answer and citation UI covered; semantic quality needs human review |
-| Knowledge Health | AUTOMATED TESTED | UI covered; scoring calibration needs corpus review |
-| Contradiction Radar | IMPLEMENTED | Dedicated conflict fixtures still required |
-| Agent Replay | AUTOMATED TESTED | UI covered; real MCP event replay still pending |
-| Guided Judge Mode | IMPLEMENTED | Full timed browser test pending |
-| Secondary Brain panel | AUTOMATED TESTED | Dialog opens; each connector requires separate validation |
-| Obsidian/Joplin workflow | PARTIAL | Import/export based workflow; no native vault mutation claim |
-| PDF workflow | PARTIAL | Do not claim universal PDF extraction or page-perfect navigation until fixtures pass |
-| Wikipedia workflow | PARTIAL | Network and source-specific runtime validation pending |
-| Human + AI bridge UI | AUTOMATED TESTED | Dialog and local URL covered |
+| Project lifecycle, snapshots and duplication | AUTOMATED TESTED | Latest Playwright/CI result pending |
+| JSON export/import round trip | AUTOMATED TESTED | Latest Playwright/CI result pending |
+| Visible autosave state | AUTOMATED TESTED | Latest Playwright/CI result pending |
+| Session Undo/Redo | AUTOMATED TESTED | Latest Playwright/CI result pending; history remains session-scoped |
+| Emergency recovery copy | AUTOMATED TESTED | Latest Playwright/CI result pending |
+| Multi-tab conflict warning | AUTOMATED TESTED | Latest Playwright/CI result pending; conflict merge is not claimed |
+| Accessible graph list | AUTOMATED TESTED | Screen-reader and keyboard human audit pending |
+| Privacy-safe support report | AUTOMATED TESTED | Download execution and privacy review pending |
+| Large-input warning and hard limit | AUTOMATED TESTED | Real large-file memory/performance profiling pending |
+| Simple view and guided onboarding | AUTOMATED TESTED | Human usability test pending |
+| Purpose-based starter templates | AUTOMATED TESTED | Human usability test pending |
+| Spanish/English primary interface | AUTOMATED TESTED | Full dynamic-string localization audit pending |
+| Local answer engine | AUTOMATED TESTED | Semantic quality needs human review |
+| Knowledge Health | AUTOMATED TESTED | Scoring calibration needs corpus review |
+| Contradiction Radar | IMPLEMENTED | Dedicated runtime conflict fixture result pending |
+| Agent Replay | AUTOMATED TESTED | Real MCP event replay still pending |
+| Guided Judge Mode | IMPLEMENTED | Full timed browser execution pending |
+| Secondary Brain panel | AUTOMATED TESTED | Each connector requires separate validation |
+| Obsidian/Joplin workflow | PARTIAL | Import/export workflow only; no native vault mutation claim |
+| PDF workflow | PARTIAL | No universal or page-perfect PDF claim until fixtures pass |
+| Wikipedia workflow | PARTIAL | Network and source-specific validation pending |
+| Human + AI bridge UI | AUTOMATED TESTED | Real credentialed provider execution pending |
 | Durable MCP/hooks backend | IMPLEMENTED | Server integration tests exist; CI/runtime result pending |
 | GPT-5.6 live provider | BLOCKED | Requires secure server credential and real provider call |
 | Codex Session ID | BLOCKED | Requires real Codex session and `/feedback` output |
-| Mobile responsive UI | AUTOMATED TESTED | Playwright Pixel viewport covered; physical device pending |
-| PWA install/offline | IMPLEMENTED | HTTPS deployment and physical install test pending |
-| GitHub Pages deployment | BLOCKED | Repository Pages configuration and successful manual workflow required |
-| In-app System Check | IMPLEMENTED | Browser test covers PASS result on demo workspace; CI result pending |
+| Mobile responsive UI | AUTOMATED TESTED | Physical device pending |
+| PWA install/offline | IMPLEMENTED | HTTPS deployment and physical install/offline test pending |
+| GitHub Pages deployment | BLOCKED | Repository Pages configuration and successful deployment required |
+| In-app System Check | IMPLEMENTED | Browser test exists; latest CI result pending |
+| Reproducible dependency lock | BLOCKED | Authentic Node 24 `package-lock.json` must be generated by npm, never hand-authored |
 
 ## Release rule
 
-A feature may appear in the submission video as fully working only after it reaches **RUNTIME VERIFIED** or after the video itself visibly demonstrates the complete behavior without cuts that hide the result.
+A feature may appear in a public claim as fully working only after it reaches **RUNTIME VERIFIED**, or when the public demonstration visibly proves the complete behavior without cuts that hide the result.
 
-Anything marked **PARTIAL** must be described with its actual limitation. Anything marked **BLOCKED** must not be simulated.
+Anything marked **PARTIAL** must be described with its actual limitation. Anything marked **BLOCKED** must not be simulated. Automated test files existing is not equivalent to a confirmed passing run.
