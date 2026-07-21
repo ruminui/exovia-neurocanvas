@@ -1,13 +1,23 @@
 {
-  "name": "Exovia NeuroCanvas",
+  "name": "Exovia NeuroCanvas — AI Reliability Workspace",
   "short_name": "NeuroCanvas",
-  "description": "Navigate knowledge, evidence and agent activity as a living neural map.",
+  "description": "Preserve AI context, verify evidence, detect privacy and prompt-injection risks, govern agents and export portable proof packs.",
+  "id": "./",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#070707",
-  "theme_color": "#070707",
+  "display_override": ["window-controls-overlay", "standalone"],
+  "background_color": "#050505",
+  "theme_color": "#070706",
   "orientation": "any",
-  "categories": ["productivity", "developer tools", "education"],
-  "lang": "en"
+  "categories": ["productivity", "business", "education", "developer tools"],
+  "lang": "en",
+  "icons": [
+    { "src": "src/exovia-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "src/exovia-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Verify AI", "short_name": "Verify", "description": "Open the local AI reliability scan", "url": "./?action=verify", "icons": [{ "src": "src/exovia-icon.svg", "sizes": "any", "type": "image/svg+xml" }] },
+    { "name": "Context Capsule", "short_name": "Context", "description": "Build portable context for any AI", "url": "./?action=context", "icons": [{ "src": "src/exovia-icon.svg", "sizes": "any", "type": "image/svg+xml" }] }
+  ]
 }
