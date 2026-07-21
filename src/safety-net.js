@@ -10,6 +10,7 @@
   let lastFingerprint = '';
   let restoring = false;
   let saveTimer = null;
+  let pendingSave = false;
 
   function runtimeMap() {
     return window.ExoviaRuntime?.getMap?.() || null;
@@ -31,7 +32,8 @@
     if (!host) return;
     host.dataset.state = state;
     host.querySelector('strong').textContent = message;
-    const detail = host.querySelector('span');
+    const detail = host.querySelector('span:not(.safeDot)');
+    if (!detail) return;
     if (state === 'saved') detail.textContent = `Stored in this browser · ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
     if (state === 'saving') detail.textContent = 'Please keep this tab open for a moment.';
     if (state === 'error') detail.textContent = 'Use Save or Export to protect your work.';
@@ -39,10 +41,10 @@
   }
 
   function updateButtons() {
-    const undo = $('safeUndoBtn');
-    const redo = $('safeRedoBtn');
-    if (undo) undo.disabled = undoStack.length < 2;
-    if (redo) redo.disabled = redoStack.length === 0;
+    const undoButton = $('safeUndoBtn');
+    const redoButton = $('safeRedoBtn');
+    if (undoButton) undoButton.disabled = undoStack.length < 2;
+    if (redoButton) redoButton.disabled = redoStack.length === 0;
   }
 
   function rememberCurrent() {
@@ -62,12 +64,15 @@
     const map = runtimeMap();
     if (!map) return setStatus('idle', 'Nothing to save yet');
     clearTimeout(saveTimer);
+    pendingSave = true;
     setStatus('saving', 'Saving automatically…');
     try {
       if (!window.ExoviaWorkspace?.saveCurrent) throw new Error('Local workspace is not ready.');
       await window.ExoviaWorkspace.saveCurrent({ reason });
+      pendingSave = false;
       setStatus('saved', 'All changes saved');
     } catch (error) {
+      pendingSave = false;
       console.error(error);
       setStatus('error', 'Automatic save needs attention');
     }
@@ -75,18 +80,20 @@
 
   function scheduleSave() {
     clearTimeout(saveTimer);
+    pendingSave = true;
     setStatus('saving', 'Saving automatically…');
     saveTimer = setTimeout(() => saveNow(), SAVE_DELAY_MS);
   }
 
   function restoreEntry(entry, action) {
     if (!entry || !window.ExoviaRuntime?.loadMap) return;
+    const restoredMap = clone(entry.map);
+    restoredMap.audit ||= [];
+    restoredMap.audit.push({ time: new Date().toISOString(), action, detail: 'Restored from the session safety history.' });
     restoring = true;
-    window.ExoviaRuntime.loadMap(clone(entry.map), entry.view || 'network');
-    lastFingerprint = fingerprint(entry.map);
+    window.ExoviaRuntime.loadMap(restoredMap, entry.view || 'network');
+    lastFingerprint = fingerprint(restoredMap);
     restoring = false;
-    entry.map.audit ||= [];
-    entry.map.audit.push({ time: new Date().toISOString(), action, detail: 'Restored from the session safety history.' });
     updateButtons();
     scheduleSave();
   }
@@ -125,22 +132,22 @@
 
     const tools = document.querySelector('.canvasTools');
     if (tools) {
-      const undo = document.createElement('button');
-      undo.id = 'safeUndoBtn';
-      undo.type = 'button';
-      undo.textContent = '↶ Undo';
-      undo.title = 'Undo the last change in this session';
-      undo.disabled = true;
-      const redo = document.createElement('button');
-      redo.id = 'safeRedoBtn';
-      redo.type = 'button';
-      redo.textContent = '↷ Redo';
-      redo.title = 'Restore the change you just undid';
-      redo.disabled = true;
-      tools.prepend(redo);
-      tools.prepend(undo);
-      undo.addEventListener('click', undo);
-      redo.addEventListener('click', redo);
+      const undoButton = document.createElement('button');
+      undoButton.id = 'safeUndoBtn';
+      undoButton.type = 'button';
+      undoButton.textContent = '↶ Undo';
+      undoButton.title = 'Undo the last change in this session';
+      undoButton.disabled = true;
+      const redoButton = document.createElement('button');
+      redoButton.id = 'safeRedoBtn';
+      redoButton.type = 'button';
+      redoButton.textContent = '↷ Redo';
+      redoButton.title = 'Restore the change you just undid';
+      redoButton.disabled = true;
+      tools.prepend(redoButton);
+      tools.prepend(undoButton);
+      undoButton.addEventListener('click', undo);
+      redoButton.addEventListener('click', redo);
     }
 
     $('exportBtn')?.addEventListener('click', safeExportReminder, { capture: true });
@@ -149,6 +156,12 @@
       if (!modifier) return;
       if (event.key.toLowerCase() === 'z' && !event.shiftKey) { event.preventDefault(); undo(); }
       if ((event.key.toLowerCase() === 'y') || (event.key.toLowerCase() === 'z' && event.shiftKey)) { event.preventDefault(); redo(); }
+    });
+
+    window.addEventListener('beforeunload', event => {
+      if (!pendingSave) return;
+      event.preventDefault();
+      event.returnValue = '';
     });
 
     window.addEventListener('exovia:map-changed', () => {
@@ -162,7 +175,7 @@
     undo,
     redo,
     saveNow,
-    getState: () => ({ undo: undoStack.length, redo: redoStack.length, status: $('safeSaveStatus')?.dataset.state || 'missing' })
+    getState: () => ({ undo: undoStack.length, redo: redoStack.length, pendingSave, status: $('safeSaveStatus')?.dataset.state || 'missing' })
   };
   window.addEventListener('DOMContentLoaded', buildUi);
 })();
