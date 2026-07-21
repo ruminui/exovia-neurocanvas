@@ -79,6 +79,8 @@ try {
   assert(trust.kind === "trust_scan", "Trust Scan returned the wrong result kind");
   assert(trust.issues.some((item) => item.category === "privacy"), "Trust Scan did not detect the demo privacy risk");
   assert(trust.issues.some((item) => item.category === "control"), "Trust Scan did not detect the demo prompt-injection/control risk");
+  assert(trust.metrics.unsupportedNumberCount >= 1, "Trust Scan did not identify the unsupported 40 percent claim");
+  assert(trust.metrics.overclaimCount >= 1, "Trust Scan did not identify absolute language");
 
   const capsule = await callTool(client, "create_context_capsule", {
     objective: demo.objective,
@@ -89,6 +91,9 @@ try {
   });
   assert(capsule.kind === "context_capsule", "Context Capsule returned the wrong result kind");
   assert(capsule.markdown.includes("Exovia Context Capsule"), "Context Capsule Markdown is incomplete");
+  assert(capsule.redactionCount >= 2, "Context Capsule did not redact the demo email and credential");
+  assert(!capsule.markdown.includes("luciano@example.com"), "Context Capsule leaked the demo email");
+  assert(!capsule.markdown.includes("demo_secret_123456789"), "Context Capsule leaked the demo credential");
 
   const comparison = await callTool(client, "compare_ai_outputs", {
     question: demo.question,
@@ -98,6 +103,10 @@ try {
   });
   assert(comparison.kind === "comparison", "Comparison returned the wrong result kind");
   assert(comparison.ranking?.length === 2, "Comparison did not rank both answers");
+  assert(comparison.winner === "Controlled pilot", `Comparison rewarded the overconfident answer: ${comparison.winner}`);
+  const fastLaunch = comparison.ranking.find((item) => item.label === "Fast launch");
+  assert(fastLaunch?.unsupportedNumberCount >= 1, "Comparison did not penalize the unsupported 40 percent claim");
+  assert(fastLaunch?.overclaimPenalty > 0, "Comparison did not penalize overconfident language");
 
   const route = await callTool(client, "recommend_ai_route", {
     ...demo.route,
@@ -119,14 +128,19 @@ try {
 
   const proof = await callTool(client, "build_proof_pack", {
     title: demo.title,
-    claimOrDecision: demo.answers[1].text,
+    claimOrDecision: `${demo.answers[1].text}\nReviewer: luciano@example.com\napi_key=demo_secret_123456789`,
     evidence: demo.evidence,
     notes: "Hackathon judge demonstration. No external action was executed.",
     language: "es",
   });
+  const proofSerialized = JSON.stringify(proof.proofPack);
   assert(proof.kind === "proof_pack", "Proof Pack returned the wrong result kind");
   assert(/^[a-f0-9]{64}$/.test(proof.hash), "Proof Pack SHA-256 is invalid");
   assert(proof.proofPack?.governance?.humanApprovalRequired === true, "Proof Pack lost the human approval requirement");
+  assert(proof.proofPack?.governance?.sensitiveValuesRedacted === true, "Proof Pack did not record privacy redaction");
+  assert(proof.redactionCount >= 2, "Proof Pack did not redact the demo email and credential");
+  assert(!proofSerialized.includes("luciano@example.com"), "Proof Pack leaked the demo email");
+  assert(!proofSerialized.includes("demo_secret_123456789"), "Proof Pack leaked the demo credential");
 
   const summary = {
     verifiedAt: new Date().toISOString(),
@@ -139,20 +153,27 @@ try {
       toolDiscovery: true,
       privacyRiskDetected: true,
       promptInjectionDetected: true,
+      unsupportedNumberDetected: true,
+      overclaimDetected: true,
       contextCapsuleCreated: true,
+      contextCapsuleRedacted: true,
       answersCompared: true,
+      evidenceBoundedAnswerWon: true,
       safeRouteCreated: true,
       neurocanvasMapCreated: true,
       proofPackCreated: true,
+      proofPackRedacted: true,
     },
     results: {
       trustScore: trust.score,
       trustGrade: trust.grade,
       findingCount: trust.issues.length,
+      capsuleRedactions: capsule.redactionCount,
       comparisonWinner: comparison.winner,
       recommendedRoute: route.mode,
       neurocanvasNodes: mapResult.nodeCount,
       neurocanvasEdges: mapResult.edgeCount,
+      proofRedactions: proof.redactionCount,
       proofSha256: proof.hash,
     },
   };
@@ -171,6 +192,8 @@ try {
   console.log(`MCP tools discovered: ${toolNames.length}`);
   console.log(`Trust score: ${trust.score}/100 (${trust.grade})`);
   console.log(`Risks detected: ${trust.issues.length}`);
+  console.log(`Privacy redactions: capsule ${capsule.redactionCount} / proof ${proof.redactionCount}`);
+  console.log(`Evidence-bounded winner: ${comparison.winner}`);
   console.log(`Recommended route: ${route.mode}`);
   console.log(`NeuroCanvas map: ${mapResult.nodeCount} nodes / ${mapResult.edgeCount} relationships`);
   console.log(`Proof Pack SHA-256: ${proof.hash}`);
