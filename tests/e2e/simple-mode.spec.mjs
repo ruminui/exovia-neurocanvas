@@ -8,29 +8,46 @@ async function openAsFirstTimeUser(page) {
   await page.goto('/');
 }
 
-test('first-time users start with fewer choices and plain labels', async ({ page }) => {
+test('first-time users start with a clean full-width home and plain language', async ({ page }) => {
   await openAsFirstTimeUser(page);
   await expect(page.locator('html')).toHaveClass(/simpleMode/);
   await expect(page.locator('#simpleModeBtn')).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.locator('#simpleModeBtn')).toHaveText('More options');
+  await expect(page.locator('#leftPanel,.leftPanel')).toBeHidden();
+  await expect(page.locator('.rightPanel')).toBeHidden();
+  await expect(page.locator('#languageBtn')).toBeVisible();
+  await expect(page.locator('#pasteBtn')).toBeHidden();
   await expect(page.locator('#pulseDemoBtn')).toBeHidden();
   await expect(page.locator('#intentBtn')).toBeHidden();
   await expect(page.locator('#snapshotBtn')).toBeHidden();
-  await expect(page.locator('#pasteBtn')).toHaveText('Add information');
-  await expect(page.locator('#trustCenterBtn')).toHaveText('Check AI');
-  await expect(page.locator('#capsuleBtn')).toHaveText('Save context');
+  await expect(page.locator('#homeStartBtn')).toContainText('60-second example');
+  await expect(page.locator('#homeImportBtn')).toContainText('own information');
 
-  const size = await page.locator('#pasteBtn').evaluate(element => {
-    const rect = element.getBoundingClientRect();
-    const style = getComputedStyle(element);
-    return { height: rect.height, fontSize: parseFloat(style.fontSize) };
+  const layout = await page.evaluate(() => {
+    const title = document.querySelector('#emptyState h1').getBoundingClientRect();
+    const start = document.querySelector('#homeStartBtn').getBoundingClientRect();
+    const own = document.querySelector('#homeImportBtn').getBoundingClientRect();
+    return {
+      titleInsideViewport: title.left >= 0 && title.right <= innerWidth && title.top >= 0,
+      titleWidth: title.width,
+      startHeight: start.height,
+      ownHeight: own.height,
+      visibleToolbarControls: [...document.querySelectorAll('.toolbar > *')].filter(element => {
+        const style = getComputedStyle(element);
+        const rect = element.getBoundingClientRect();
+        return style.display !== 'none' && style.visibility !== 'hidden' && rect.width > 0 && rect.height > 0;
+      }).map(element => element.id || element.className)
+    };
   });
-  expect(size.height).toBeGreaterThanOrEqual(48);
-  expect(size.fontSize).toBeGreaterThanOrEqual(16);
+  expect(layout.titleInsideViewport).toBe(true);
+  expect(layout.titleWidth).toBeGreaterThan(300);
+  expect(layout.startHeight).toBeGreaterThanOrEqual(48);
+  expect(layout.ownHeight).toBeGreaterThanOrEqual(48);
+  expect(layout.visibleToolbarControls).toEqual(['languageBtn']);
 });
 
 test('the selected interface level persists after reload', async ({ page }) => {
   await openAsFirstTimeUser(page);
+  await page.evaluate(() => window.ExoviaTrustCenter.closeHome());
   await page.locator('#simpleModeBtn').click();
   await expect(page.locator('html')).not.toHaveClass(/simpleMode/);
   await page.reload();
@@ -40,7 +57,7 @@ test('the selected interface level persists after reload', async ({ page }) => {
 
 test('guided help explains the complete journey in three steps', async ({ page }) => {
   await openAsFirstTimeUser(page);
-  await page.locator('#simpleGuideBtn').click();
+  await page.locator('#homeGuidedBtn').click();
   await expect(page.locator('#simpleGuideDialog')).toBeVisible();
   await expect(page.locator('#simpleGuideStep')).toHaveText('1 of 3');
   await expect(page.locator('#simpleGuideTitle')).toContainText('Add the original information');
