@@ -9,7 +9,8 @@ on:
       - 'sw.js'
       - 'src/**'
       - 'examples/**'
-      - 'scripts/build-android-web.mjs'
+      - 'scripts/**'
+      - 'tests/**'
       - 'capacitor.config.json'
       - 'package.json'
       - 'package-lock.json'
@@ -198,7 +199,7 @@ jobs:
               --pattern 'Exovia-NeuroCanvas-Android.apk*' \
               --dir release-verification
             cmp Exovia-NeuroCanvas-Android.apk release-verification/Exovia-NeuroCanvas-Android.apk
-            sha256sum --check release-verification/Exovia-NeuroCanvas-Android.apk.sha256
+            (cd release-verification && sha256sum --check Exovia-NeuroCanvas-Android.apk.sha256)
             echo 'Release assets downloaded and verified successfully.'
           } 2>&1 | tee -a android-build.log
 
@@ -249,7 +250,7 @@ jobs:
 
           issue_number="$(gh issue list --state open --search '"[Android Build] Automatic failure report" in:title' --json number --jq '.[0].number' 2>/dev/null || true)"
           if [[ -n "$issue_number" && "$issue_number" != "null" ]]; then
-            gh issue comment "$issue_number" --body-file android-failure.md
+            gh issue edit "$issue_number" --body-file android-failure.md
           else
             gh issue create --title '[Android Build] Automatic failure report' --body-file android-failure.md
           fi
