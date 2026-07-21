@@ -1,0 +1,104 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'manifest.webmanifest'
+      - 'sw.js'
+      - 'src/**'
+      - 'examples/**'
+      - 'scripts/build-android-web.mjs'
+      - 'capacitor.config.json'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/android-apk.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: android-apk
+  cancel-in-progress: true
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -f package-lock.json ]]; then
+            npm ci --no-audit --no-fund
+          else
+            npm install --no-audit --no-fund
+          fi
+
+      - name: Verify web application
+        run: npm run validate && npm run verify:static && npm test
+
+      - name: Build Android web assets
+        run: npm run build:android:web
+
+      - name: Generate Android native project
+        run: npx cap add android
+
+      - name: Sync Android project
+        run: npx cap sync android
+
+      - name: Build signed debug APK
+        working-directory: android
+        run: ./gradlew assembleDebug --no-daemon
+
+      - name: Prepare APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s android/app/build/outputs/apk/debug/app-debug.apk
+          cp android/app/build/outputs/apk/debug/app-debug.apk Exovia-NeuroCanvas-Android.apk
+          sha256sum Exovia-NeuroCanvas-Android.apk > Exovia-NeuroCanvas-Android.apk.sha256
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Exovia-NeuroCanvas-Android
+          path: |
+            Exovia-NeuroCanvas-Android.apk
+            Exovia-NeuroCanvas-Android.apk.sha256
+          retention-days: 30
+
+      - name: Publish stable prerelease download
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git tag -f android-latest "$GITHUB_SHA"
+          git push origin refs/tags/android-latest --force
+          gh release delete android-latest --yes --cleanup-tag=false || true
+          gh release create android-latest \
+            Exovia-NeuroCanvas-Android.apk \
+            Exovia-NeuroCanvas-Android.apk.sha256 \
+            --prerelease \
+            --title 'Exovia NeuroCanvas Android - latest test build' \
+            --notes "Installable Android test APK built automatically from commit $GITHUB_SHA. Android may ask permission to install apps from the browser or file manager."
