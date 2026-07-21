@@ -5,10 +5,14 @@ on:
     branches: [main]
     paths:
       - 'chatgpt-app/**'
+      - '.devcontainer/**'
+      - 'JUDGE_START_HERE.md'
       - '.github/workflows/chatgpt-app.yml'
   pull_request:
     paths:
       - 'chatgpt-app/**'
+      - '.devcontainer/**'
+      - 'JUDGE_START_HERE.md'
       - '.github/workflows/chatgpt-app.yml'
   workflow_dispatch:
 
@@ -18,7 +22,7 @@ permissions:
 jobs:
   validate-chatgpt-app:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     defaults:
       run:
         working-directory: chatgpt-app
@@ -37,19 +41,32 @@ jobs:
       - name: Syntax and unit tests
         run: npm run verify
 
-      - name: MCP runtime sanity
+      - name: Complete hackathon judge flow
+        run: npm run judge
+
+      - name: Upload judge evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exovia-chatgpt-app-judge-evidence
+          path: chatgpt-app/judge-output
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Build hardened container
+        run: docker build --tag exovia-prooflayer:ci .
+
+      - name: Container runtime sanity
         shell: bash
         run: |
           set -euo pipefail
-          node src/server.mjs > /tmp/exovia-chatgpt-app.log 2>&1 &
-          server_pid=$!
-          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
-          sleep 2
-          curl --fail --silent --show-error http://127.0.0.1:8787/health
-          curl --fail --silent --show-error \
-            -X POST http://127.0.0.1:8787/mcp \
-            -H 'content-type: application/json' \
-            -H 'accept: application/json, text/event-stream' \
-            --data '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"github-actions","version":"1.0.0"}}}' \
-            | grep 'exovia-neurocanvas'
-          cat /tmp/exovia-chatgpt-app.log
+          docker run --detach --rm --name exovia-prooflayer-ci --publish 8798:8787 exovia-prooflayer:ci
+          trap 'docker stop exovia-prooflayer-ci >/dev/null 2>&1 || true' EXIT
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:8798/health; then
+              exit 0
+            fi
+            sleep 1
+          done
+          docker logs exovia-prooflayer-ci
+          exit 1
