@@ -5,7 +5,7 @@ test.use({ ...devices['Pixel 7'] });
 async function openFresh(page) {
   await page.addInitScript(() => {
     localStorage.clear();
-    Object.defineProperty(navigator, 'language', { get: () => 'es-AR' });
+    localStorage.setItem('exovia:language', 'es');
   });
   await page.goto('/');
 }
@@ -14,8 +14,8 @@ test('Android first launch uses Spanish, simple mode and purpose chooser', async
   await openFresh(page);
   await expect(page.locator('#mobileNav')).toBeVisible();
   await expect(page.locator('#mobileAsk')).toContainText('Preguntar');
-  await expect(page.locator('body')).toHaveClass(/simpleMode/);
-  await expect(page.locator('#useCaseDialog')).toBeVisible();
+  await expect(page.locator('html')).toHaveClass(/simpleMode/);
+  await expect(page.locator('#purposeDialog')).toBeVisible();
 });
 
 test('bottom navigation opens explorer, evidence and actions as mobile sheets', async ({ page }) => {
@@ -65,6 +65,6 @@ test('mobile help enables simple mode and opens the guide', async ({ page }) => 
   await page.keyboard.press('Escape');
   await page.locator('#mobileActions').click();
   await page.locator('#mobileHelp').click();
-  await expect(page.locator('body')).toHaveClass(/simpleMode/);
+  await expect(page.locator('html')).toHaveClass(/simpleMode/);
   await expect(page.locator('#simpleGuideDialog')).toBeVisible();
 });
