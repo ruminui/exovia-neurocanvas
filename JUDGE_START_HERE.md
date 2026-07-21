@@ -49,18 +49,32 @@ npm start
 
 Open `http://127.0.0.1:8080` if the browser does not open automatically.
 
-Recommended sequence:
+### Fast comprehension test
 
-1. Select **New workspace**.
-2. Select a node and inspect its exact source.
-3. Open **Answer & Audit**.
-4. Ask: `How does NeuroCanvas keep AI answers connected to evidence?`
-5. Select **Navigate to answer**.
-6. Open **Knowledge health** and **Agent replay**.
-7. Run Path A, then import the generated `.exo` file from `chatgpt-app/judge-output/`.
-8. Import the generated Assurance Council NeuroCanvas map and inspect one blocking role and one ExiaL handoff.
-9. Inspect one source, one constraint and one prohibited action.
-10. Export the workspace.
+1. Select **Try a 60-second example**.
+2. Confirm the application loads a deliberately risky AI answer.
+3. Confirm **Check AI** opens automatically.
+4. Inspect the unsupported claim, private data, demonstration credential and suspicious instruction.
+5. Open **Save context** and confirm the useful facts, sources, risks and approval rules remain connected.
+
+### Test with your own information
+
+The visible first-run model is:
+
+```text
+Add → Check → Save
+```
+
+1. Select **Use my own information**.
+2. Paste a short AI answer together with its original question and one source.
+3. Select **Create project**.
+4. Select one idea in the map and inspect the original information.
+5. Select **Check AI**.
+6. Select **Save context**.
+7. Select **Save / Share** and confirm a portable copy downloads.
+8. Select **More options** only when inspecting advanced replay, EXO, ExiaL, EXIR, Exil or FAPI capabilities.
+9. Run Path A, then import the generated `.exo` and Assurance Council NeuroCanvas map from `chatgpt-app/judge-output/`.
+10. Inspect one source, one blocking role and one role-to-role handoff.
 
 First-time user guide: [`USER_START_HERE.md`](USER_START_HERE.md)
 
@@ -81,6 +95,14 @@ Machine-readable verification record:
 The Android workflow builds the APK, publishes it, downloads the published assets again, byte-compares them and verifies SHA-256 before marking the release verified.
 
 Android may ask permission to install a test application from the browser or file manager. No Google Play account is required.
+
+Android navigation uses five plain destinations:
+
+- **Home / Inicio** — explanation and starting actions;
+- **Canvas / Lienzo** — visual information map;
+- **Verify / Verificar** — AI check;
+- **Context / Contexto** — reusable context;
+- **More / Más** — project, evidence, help and advanced capabilities.
 
 ## Optional Docker path
 
@@ -139,6 +161,8 @@ Open the repository release named `android-latest`, download the APK asset and c
 
 ## Implemented and testable
 
+- clean three-step first-run flow and 60-second example;
+- Simple View with larger touch targets and advanced controls behind **More options**;
 - local visual evidence workspace and Android package;
 - eight deterministic read-only MCP tools;
 - evidence/privacy/context/control analysis;
