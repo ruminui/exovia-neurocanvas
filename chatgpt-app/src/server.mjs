@@ -12,8 +12,10 @@ import { createNeuroCanvasMap } from "./map-builder.mjs";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const widgetCss = await readFile(path.join(__dirname, "../web/widget.css"), "utf8");
 const widgetJs = await readFile(path.join(__dirname, "../web/widget.js"), "utf8");
+const statusHtml = await readFile(path.join(__dirname, "../web/status.html"), "utf8");
 const widgetHtml = `<main id="app" class="app"><div class="empty">Exovia ProofLayer is waiting for a tool result.</div></main><style>${widgetCss}</style><script>${widgetJs}</script>`;
 const TEMPLATE_URI = "ui://widget/exovia-prooflayer-v1.html";
+const VERSION = "0.3.0";
 const PORT = Number(process.env.PORT || 8787);
 const APP_DOMAIN = process.env.APP_DOMAIN || "";
 
@@ -38,7 +40,7 @@ function result(payload, text) {
 }
 
 const server = new McpServer(
-  { name: "exovia-neurocanvas", version: "0.2.0" },
+  { name: "exovia-neurocanvas", version: VERSION },
   { instructions: "Exovia ProofLayer helps verify AI outputs, preserve portable context, compare answers, choose safer AI routes, create importable NeuroCanvas maps, and generate proof packs. Always say that scans and rankings are heuristic. Never claim factual verification unless the user supplied evidence. Require human approval for consequential actions." },
 );
 
@@ -161,9 +163,31 @@ registerAppTool(server, "build_proof_pack", {
 
 const app = express();
 app.disable("x-powered-by");
-app.use(express.json({ limit: "2mb" }));
-app.get("/", (_req, res) => res.json({ name: "Exovia NeuroCanvas ChatGPT App", version: "0.2.0", mcp: "/mcp", privacy: "No content persistence; no external AI calls." }));
-app.get("/health", (_req, res) => res.json({ ok: true, service: "exovia-neurocanvas-mcp" }));
+app.use((req, res, next) => {
+  res.set({
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "no-referrer",
+    "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+    "Cache-Control": req.path === "/health" ? "no-store" : "public, max-age=60",
+  });
+  next();
+});
+app.use(express.json({ limit: "2mb", strict: true }));
+app.get("/", (req, res) => {
+  if (req.accepts(["html", "json"]) === "json") {
+    return res.json({
+      name: "Exovia NeuroCanvas ChatGPT App",
+      version: VERSION,
+      status: "ready",
+      mcp: "/mcp",
+      health: "/health",
+      tools: ["analyze_ai_output", "create_context_capsule", "create_neurocanvas_map", "compare_ai_outputs", "recommend_ai_route", "build_proof_pack"],
+      privacy: "No content persistence; no external AI calls.",
+    });
+  }
+  return res.type("html").send(statusHtml);
+});
+app.get("/health", (_req, res) => res.json({ ok: true, service: "exovia-neurocanvas-mcp", version: VERSION }));
 
 const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined, enableJsonResponse: true });
 await server.connect(transport);
@@ -182,5 +206,5 @@ app.use((error, _req, res, _next) => {
 });
 
 app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Exovia NeuroCanvas MCP listening on http://0.0.0.0:${PORT}/mcp`);
+  console.log(`Exovia NeuroCanvas MCP v${VERSION} listening on http://0.0.0.0:${PORT}/mcp`);
 });
