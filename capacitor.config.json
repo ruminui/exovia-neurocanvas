@@ -1,0 +1,15 @@
+{
+  "appId": "com.exovia.neurocanvas",
+  "appName": "Exovia NeuroCanvas",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "android": {
+    "allowMixedContent": false,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": true
+  },
+  "server": {
+    "androidScheme": "https",
+    "cleartext": false
+  }
+}
