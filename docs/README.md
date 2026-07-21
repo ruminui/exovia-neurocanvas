@@ -18,6 +18,7 @@
 ## Product and architecture
 
 - [`ARCHITECTURE.md`](ARCHITECTURE.md) — system architecture.
+- [`EXOVIA_ASSURANCE_COUNCIL.md`](EXOVIA_ASSURANCE_COUNCIL.md) — twelve-lens review, visible dissent, ExiaL/EXIR handoffs and human authority.
 - [`EXO_CAPABILITY_PACK.md`](EXO_CAPABILITY_PACK.md) — transparent `.exo` format.
 - [`FAPI_EXIAL_EXIL_INTEGRATION.md`](FAPI_EXIAL_EXIL_INTEGRATION.md) — Exovia protocol layers.
 - [`LIVE_COLLABORATION_ARCHITECTURE.md`](LIVE_COLLABORATION_ARCHITECTURE.md) — Living Evidence Room architecture and roadmap boundary.

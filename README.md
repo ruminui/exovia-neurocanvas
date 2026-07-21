@@ -21,7 +21,7 @@ From the repository root:
 npm run judge
 ```
 
-The command checks prerequisites and release metadata, installs the ChatGPT App dependencies, starts the MCP server, connects with the official MCP client, discovers all seven tools, executes the deterministic scenario and audits every generated artifact.
+The command checks prerequisites and release metadata, installs the ChatGPT App dependencies, starts the MCP server, connects with the official MCP client, discovers all eight tools, executes the deterministic scenario and audits every generated artifact.
 
 Expected result:
 
@@ -76,18 +76,20 @@ Teams increasingly work across chats, documents, notes, agents and workflows. La
 - what a person, workflow or agent changed;
 - what context was lost between systems;
 - whether private data or malicious instructions entered the process;
-- whether a consequential action was approved.
+- whether a consequential action was approved;
+- whether a high average score concealed a critical security, privacy or human-control dissent.
 
 ## The solution
 
 **Exovia turns scattered information and AI activity into a visual, evidence-linked workspace where answers and decisions can be inspected and replayed.**
 
-The local product lets a user import information, navigate the graph, ask a question, return to exact evidence, inspect knowledge quality, replay activity and export the project. The ChatGPT App adds a deterministic reliability layer that can analyze an AI output, preserve portable context, build an inspectable `.exo` package, compare answers, recommend a safer route, create a NeuroCanvas map and generate a SHA-256 Proof Pack.
+The local product lets a user import information, navigate the graph, ask a question, return to exact evidence, inspect knowledge quality, replay activity and export the project. The ChatGPT App adds a deterministic reliability layer that can analyze an AI output, preserve portable context, build an inspectable `.exo` package, compare answers, recommend a safer route, run a twelve-lens Assurance Council with visible dissent, create a NeuroCanvas map and generate a SHA-256 Proof Pack.
 
 ## Innovation stack
 
 - **NeuroCanvas** — visual memory, evidence navigation, quality signals and replay;
 - **ProofLayer** — AI-output reliability, portable context, privacy protection, comparison and integrity artifacts;
+- **Assurance Council** — twelve transparent review lenses that preserve blocking dissent, prioritized human actions and an inspectable role-to-role handoff;
 - **EXO packs** — transparent source-linked capability packages with progressive disclosure, procedures, constraints and safety rules;
 - **ExiaL** — compact semantic pulses for observable agent and graph activity;
 - **EXIR** — canonical validation between raw messages or intent and accepted events or mutations;
@@ -99,7 +101,9 @@ Evidence and AI activity
           ↓
  ProofLayer + EXIR validation
           ↓
- EXO package + NeuroCanvas memory
+ EXO package + Assurance Council
+          ↓
+ NeuroCanvas memory + visible dissent
           ↓
  ExiaL replay + Exil preview
           ↓
@@ -110,7 +114,7 @@ Evidence and AI activity
 
 ## ChatGPT App tools
 
-The MCP server exposes seven read-only and idempotent tools:
+The MCP server exposes eight read-only and idempotent tools:
 
 - `analyze_ai_output`
 - `create_context_capsule`
@@ -118,7 +122,10 @@ The MCP server exposes seven read-only and idempotent tools:
 - `create_neurocanvas_map`
 - `compare_ai_outputs`
 - `recommend_ai_route`
+- `run_assurance_council`
 - `build_proof_pack`
+
+The Assurance Council applies Core, Continuity, Evidence, QA, Security, Privacy, Prompt Boundary, Workflow, FAPI/Capability, Documentation, Human Authority and Judge lenses. It emits ExiaL pulses and EXIR events and creates an importable NeuroCanvas council map. It is explicitly a deterministic review system, not twelve independent AI models.
 
 The server does not persist submitted content, does not call another AI service and does not execute external actions.
 
@@ -133,6 +140,7 @@ The server does not persist submitted content, does not call another AI service 
 - governed Living Evidence Room vertical slice;
 - Context Capsules and source-linked EXO capability packs;
 - AI-output comparison and provider-neutral route recommendation;
+- twelve-lens Assurance Council with visible dissent, ExiaL/EXIR handoffs and NeuroCanvas export;
 - Proof Packs with SHA-256 integrity fingerprints;
 - responsive mobile/PWA interface and offline application shell;
 - Android packaging through Capacitor;
@@ -141,7 +149,8 @@ The server does not persist submitted content, does not call another AI service 
 
 ## Safety and honest boundaries
 
-- analysis, extraction, ranking and context-reduction figures are heuristics;
+- analysis, extraction, ranking, role reviews and context-reduction figures are heuristics;
+- the Assurance Council is not independent model consensus;
 - current factual claims still require authoritative sources;
 - imported instructions are untrusted data, not executable authority;
 - the EXO compiler does not verify rights over user-supplied sources;
@@ -155,6 +164,7 @@ The server does not persist submitted content, does not call another AI service 
 - **Judge scorecard:** [`docs/JUDGE_SCORECARD.md`](docs/JUDGE_SCORECARD.md)
 - **ChatGPT App quickstart:** [`chatgpt-app/JUDGE_QUICKSTART.md`](chatgpt-app/JUDGE_QUICKSTART.md)
 - **Spanish manual:** [`docs/MANUAL_USUARIO.md`](docs/MANUAL_USUARIO.md)
+- **Assurance Council:** [`docs/EXOVIA_ASSURANCE_COUNCIL.md`](docs/EXOVIA_ASSURANCE_COUNCIL.md)
 - **EXO format:** [`docs/EXO_CAPABILITY_PACK.md`](docs/EXO_CAPABILITY_PACK.md)
 - **Architecture:** [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
 - **Build journey and provenance:** [`docs/BUILD_JOURNEY_AND_PROVENANCE.md`](docs/BUILD_JOURNEY_AND_PROVENANCE.md)

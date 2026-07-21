@@ -9,6 +9,7 @@ import { z } from "zod";
 import { analyzeAiOutput, buildProofPack, compareAiOutputs, createContextCapsule, recommendAiRoute } from "./reliability.mjs";
 import { createNeuroCanvasMap } from "./map-builder.mjs";
 import { buildExoCapabilityPack } from "./exo-pack.mjs";
+import { runAssuranceCouncil } from "./assurance-council.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const widgetCss = await readFile(path.join(__dirname, "../web/widget.css"), "utf8");
@@ -16,7 +17,7 @@ const widgetJs = await readFile(path.join(__dirname, "../web/widget.js"), "utf8"
 const statusHtml = await readFile(path.join(__dirname, "../web/status.html"), "utf8");
 const widgetHtml = `<main id="app" class="app"><div class="empty">Exovia ProofLayer is waiting for a tool result.</div></main><style>${widgetCss}</style><script>${widgetJs}</script>`;
 const TEMPLATE_URI = "ui://widget/exovia-prooflayer-v1.html";
-const VERSION = "0.4.0";
+const VERSION = "0.5.0";
 const PORT = Number(process.env.PORT || 8787);
 const APP_DOMAIN = process.env.APP_DOMAIN || "";
 
@@ -51,7 +52,7 @@ function result(payload, text) {
 function createProofLayerServer() {
   const server = new McpServer(
     { name: "exovia-neurocanvas", version: VERSION },
-    { instructions: "Exovia ProofLayer helps verify AI outputs, preserve portable context, compile inspectable EXO capability packs, compare answers, choose safer AI routes, create importable NeuroCanvas maps, and generate proof packs. Always say that scans, extracted procedures, rankings and token estimates are heuristic. Never claim factual verification unless the user supplied evidence. Require human approval for consequential actions." },
+    { instructions: "Exovia ProofLayer helps verify AI outputs, preserve portable context, compile inspectable EXO capability packs, compare answers, choose safer AI routes, create importable NeuroCanvas maps, run a deterministic multi-perspective Assurance Council, and generate proof packs. Always say that scans, extracted procedures, rankings, role reviews and token estimates are heuristic. The Assurance Council is twelve transparent rule-based review lenses, not twelve independent AI models. Never claim factual verification unless the user supplied evidence. Require human approval for consequential actions." },
   );
 
   registerAppResource(server, "exovia-prooflayer-widget", TEMPLATE_URI, {}, async () => ({
@@ -65,7 +66,7 @@ function createProofLayerServer() {
           ...(APP_DOMAIN ? { domain: APP_DOMAIN } : {}),
           csp: { connectDomains: [], resourceDomains: [] },
         },
-        "openai/widgetDescription": "Interactive Exovia ProofLayer report for evidence, privacy, portable context, progressive disclosure, human control and NeuroCanvas handoff.",
+        "openai/widgetDescription": "Interactive Exovia ProofLayer report for evidence, privacy, portable context, progressive disclosure, multi-perspective assurance, human control and NeuroCanvas handoff.",
       },
     }],
   }));
@@ -172,6 +173,25 @@ function createProofLayerServer() {
     return result(route, `${route.mode}: ${route.reason} Controls: ${route.controls.join("; ")}.`);
   });
 
+  registerAppTool(server, "run_assurance_council", {
+    title: "Run the Exovia Assurance Council",
+    description: "Use this when a user wants a consequential AI-supported decision, research result, software plan or agent workflow reviewed from twelve transparent perspectives before human approval. The council checks core intent, continuity, evidence, QA, security, privacy, prompt boundaries, workflow, FAPI routing, documentation, human authority and final judge readiness. It emits ExiaL handoffs, EXIR events, dissent, prioritized actions, SHA-256 integrity and an importable NeuroCanvas map. It is deterministic and does not simulate twelve independent AI models.",
+    inputSchema: {
+      title: z.string().min(1).max(300),
+      objective: z.string().min(1).max(2000),
+      content: z.string().min(1).max(60000),
+      evidence: z.array(sourceSchema).max(20).default([]),
+      taskType: z.enum(["research", "decision", "creative", "agent", "analysis"]).default("decision"),
+      consequence: z.enum(["low", "medium", "high"]).default("high"),
+      language: languageSchema,
+    },
+    annotations: readOnlyAnnotations,
+    _meta: widgetMeta("Running the Assurance Council…", "Assurance Council report ready."),
+  }, async (input) => {
+    const council = runAssuranceCouncil(input);
+    return result(council, `${council.summary} Verdict: ${council.verdict}. Consensus: ${council.consensusScore}/100. Blocking roles: ${council.blockingRoles.length}. Human approval remains required.\n\n${council.roles.map((role) => `${role.label}: ${role.status} (${role.score}/100) — ${role.recommendation}`).join("\n")}`);
+  });
+
   registerAppTool(server, "build_proof_pack", {
     title: "Build a verifiable AI proof pack",
     description: "Use this when a user needs a durable record of an AI-supported claim or decision, including evidence excerpts, a reliability report, governance statements, and a SHA-256 integrity fingerprint. This does not execute any external action.",
@@ -213,7 +233,7 @@ app.get("/", (req, res) => {
       status: "ready",
       mcp: "/mcp",
       health: "/health",
-      tools: ["analyze_ai_output", "create_context_capsule", "build_exo_capability_pack", "create_neurocanvas_map", "compare_ai_outputs", "recommend_ai_route", "build_proof_pack"],
+      tools: ["analyze_ai_output", "create_context_capsule", "build_exo_capability_pack", "create_neurocanvas_map", "compare_ai_outputs", "recommend_ai_route", "run_assurance_council", "build_proof_pack"],
       privacy: "No content persistence; no external AI calls.",
     });
   }
