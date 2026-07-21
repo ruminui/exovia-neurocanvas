@@ -2,6 +2,12 @@
 
 **Ask. Verify. Trace. Replay.**
 
+## Official links
+
+- **Official website:** https://exovia.wixsite.com/exovia-neurocanvas-1
+- **Android test APK:** https://github.com/ruminui/exovia-neurocanvas/releases/download/android-latest/Exovia-NeuroCanvas-Android.apk
+- **Source repository:** https://github.com/ruminui/exovia-neurocanvas
+
 ## The problem
 
 Teams increasingly work with documents, notes and AI-generated answers. The information becomes fragmented, and later it is difficult to prove:
@@ -56,6 +62,14 @@ The final narration and recording instructions are in [`docs/VIDEO_SCRIPT_MARCE.
 
 ## Start here
 
+### Android
+
+Download the current test build:
+
+https://github.com/ruminui/exovia-neurocanvas/releases/download/android-latest/Exovia-NeuroCanvas-Android.apk
+
+Android may ask permission to install apps from the browser or file manager. This is a test build distributed outside Google Play.
+
 ### Windows
 
 1. Download the repository as ZIP.
@@ -98,6 +112,8 @@ Requirement: **Node.js 24 LTS or newer**.
 - human approval represented in graph and replay;
 - optional MCP and authenticated bridge;
 - mobile/PWA interface and offline application shell;
+- Android packaging through Capacitor;
+- contextual floating help and simple mode;
 - static, backend and browser test suites.
 
 ## Living Evidence Rooms
@@ -112,6 +128,20 @@ Architecture and examples:
 - [`schemas/live-evidence-room.schema.json`](schemas/live-evidence-room.schema.json)
 - [`examples/live-evidence-room.json`](examples/live-evidence-room.json)
 
+## OpenAI Build Week submission readiness
+
+The official submission materials are tracked in [`docs/BUILD_WEEK_COMPLIANCE.md`](docs/BUILD_WEEK_COMPLIANCE.md).
+
+Required items include:
+
+- clear project description;
+- demo video;
+- public code repository;
+- authentic Codex `/feedback` Session ID from the primary build thread;
+- selected challenge track;
+- accurate disclosure of implemented versus roadmap capabilities;
+- links that judges can open without requesting access.
+
 ## Help and validation
 
 - [`LEEME_PRIMERO.txt`](LEEME_PRIMERO.txt)
@@ -123,4 +153,4 @@ Architecture and examples:
 
 ## Honest status
 
-The local visual product and governed Live Room vertical slice are implemented. Full automated execution, external System Check, public deployment, final video and authentic Codex feedback evidence still require completion before submission.
+The local visual product, mobile interface, official website and governed Live Room vertical slice are implemented. Android packaging and automated deployment are configured. Features described as roadmap remain explicitly labeled as such. Final submission still depends on the authentic Codex `/feedback` Session ID and the owner-controlled Devpost fields being completed and submitted before the deadline.
