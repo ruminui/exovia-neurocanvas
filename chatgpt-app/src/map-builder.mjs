@@ -1,3 +1,5 @@
+import { redactSensitiveText } from "./reliability.mjs";
+
 const STOP_WORDS = new Set("the a an and or of to in on for with from by is are that this it de la el los las y o en para por con desde que un una es son se como al del".split(/\s+/));
 
 function clean(value) {
@@ -42,13 +44,19 @@ export function createNeuroCanvasMap({ title = "ChatGPT workspace", content, evi
   const generatedAt = new Date().toISOString();
   const projectId = `chatgpt-${Date.now().toString(36)}`;
   const rootId = "root";
+  const safeTitle = redactSensitiveText(title);
+  const safeObjective = redactSensitiveText(objective);
+  const safeContent = redactSensitiveText(content);
+  let redactionCount = safeTitle.redactionCount + safeObjective.redactionCount + safeContent.redactionCount;
+  const mapTitle = clean(safeTitle.text) || "ChatGPT workspace";
+  const mapObjective = clean(safeObjective.text);
   const nodes = [{
     id: rootId,
     type: "corpus",
-    title: clean(title) || "ChatGPT workspace",
-    summary: clean(objective) || (language === "es" ? "Espacio creado desde ChatGPT para revisar en NeuroCanvas." : "Workspace created from ChatGPT for review in NeuroCanvas."),
-    text: clean(objective) || clean(content).slice(0, 800),
-    keywords: words(`${title} ${objective}`).slice(0, 12),
+    title: mapTitle,
+    summary: mapObjective || (language === "es" ? "Espacio creado desde ChatGPT para revisar en NeuroCanvas." : "Workspace created from ChatGPT for review in NeuroCanvas."),
+    text: mapObjective || clean(safeContent.text).slice(0, 800),
+    keywords: words(`${mapTitle} ${mapObjective}`).slice(0, 12),
     parent: null,
     level: 0,
     source: { name: "ChatGPT conversation", generatedAt },
@@ -63,7 +71,7 @@ export function createNeuroCanvasMap({ title = "ChatGPT workspace", content, evi
     return id;
   };
 
-  for (const [index, section] of splitSections(content).entries()) {
+  for (const [index, section] of splitSections(safeContent.text).entries()) {
     const id = uniqueId(slug(section.title, `section-${index + 1}`));
     nodes.push({
       id,
@@ -80,17 +88,22 @@ export function createNeuroCanvasMap({ title = "ChatGPT workspace", content, evi
   }
 
   for (const [index, source] of evidence.slice(0, 20).entries()) {
-    const id = uniqueId(`source-${slug(source.title, String(index + 1))}`);
+    const safeSourceTitle = redactSensitiveText(source.title || `Source ${index + 1}`);
+    const safeSourceText = redactSensitiveText(source.text || "");
+    const safeSourceUrl = redactSensitiveText(source.url || "");
+    redactionCount += safeSourceTitle.redactionCount + safeSourceText.redactionCount + safeSourceUrl.redactionCount;
+    const sourceTitle = safeSourceTitle.text || `Source ${index + 1}`;
+    const id = uniqueId(`source-${slug(sourceTitle, String(index + 1))}`);
     nodes.push({
       id,
       type: "evidence",
-      title: shortTitle(source.title, `Source ${index + 1}`),
-      summary: clean(source.text).slice(0, 220),
-      text: String(source.text || "").trim(),
-      keywords: words(`${source.title} ${source.text}`).slice(0, 16),
+      title: shortTitle(sourceTitle, `Source ${index + 1}`),
+      summary: clean(safeSourceText.text).slice(0, 220),
+      text: safeSourceText.text.trim(),
+      keywords: words(`${sourceTitle} ${safeSourceText.text}`).slice(0, 16),
       parent: rootId,
       level: 1,
-      source: { name: source.title || `Source ${index + 1}`, url: source.url || "", importedAt: generatedAt },
+      source: { name: sourceTitle, url: safeSourceUrl.text, importedAt: generatedAt },
     });
     edges.push({ id: `${rootId}-${id}`, a: rootId, b: id, type: "evidence", weight: 1 });
   }
@@ -106,20 +119,25 @@ export function createNeuroCanvasMap({ title = "ChatGPT workspace", content, evi
     for (const item of ranked) edges.push({ id: `${topic.id}-${item.source.id}`, a: topic.id, b: item.source.id, type: "supported-by", weight: Math.min(1, 0.35 + item.score * 0.12) });
   }
 
+  const audit = [{ time: generatedAt, action: "CHATGPT_MAP_CREATED", detail: `Created ${nodes.length} nodes and ${edges.length} relationships for human review.` }];
+  if (redactionCount) audit.push({ time: generatedAt, action: "SENSITIVE_VALUES_REDACTED", detail: `Replaced ${redactionCount} credential-like or personal-data value(s) before map export.` });
   const map = {
     format: "neurocanvas-v3",
     projectId,
-    title: clean(title) || "ChatGPT workspace",
+    title: mapTitle,
     kind: "network",
     createdAt: generatedAt,
     updatedAt: generatedAt,
     nodes,
     edges,
-    audit: [{ time: generatedAt, action: "CHATGPT_MAP_CREATED", detail: `Created ${nodes.length} nodes and ${edges.length} relationships for human review.` }],
+    audit,
     governance: {
       generatedBy: "Exovia NeuroCanvas ChatGPT App",
       humanReviewRequired: true,
-      sourceTextPreserved: true,
+      sourceTextPreserved: redactionCount === 0,
+      sourceTextPreservedWithSensitiveRedaction: true,
+      sensitiveValuesRedacted: true,
+      redactionCount,
       externalActionsExecuted: false,
     },
   };
@@ -127,12 +145,14 @@ export function createNeuroCanvasMap({ title = "ChatGPT workspace", content, evi
   return {
     kind: "neurocanvas_map",
     map,
-    fileName: `${slug(title, "exovia-chatgpt-map")}.json`,
+    fileName: `${slug(mapTitle, "exovia-chatgpt-map")}.json`,
     nodeCount: nodes.length,
     edgeCount: edges.length,
     evidenceSourceCount: evidenceNodes.length,
+    redactionCount,
+    privacyMode: "redacted",
     instructions: language === "es"
-      ? "Descargá o copiá el JSON y abrilo en Exovia NeuroCanvas para explorar, corregir, verificar y conservar el trabajo."
-      : "Download or copy the JSON and open it in Exovia NeuroCanvas to explore, correct, verify and preserve the work.",
+      ? "Descargá o copiá el JSON y abrilo en Exovia NeuroCanvas para explorar, corregir, verificar y conservar el trabajo. Los patrones sensibles detectados fueron reemplazados antes de exportar."
+      : "Download or copy the JSON and open it in Exovia NeuroCanvas to explore, correct, verify and preserve the work. Detected sensitive patterns were replaced before export.",
   };
 }
