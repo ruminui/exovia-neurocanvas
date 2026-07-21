@@ -42,15 +42,12 @@ jobs:
           distribution: temurin
           java-version: '21'
 
-      - name: Install dependencies
+      - name: Install dependencies and repair stale lockfile
         shell: bash
         run: |
           set -euo pipefail
-          if [[ -f package-lock.json ]]; then
-            npm ci --no-audit --no-fund
-          else
-            npm install --no-audit --no-fund
-          fi
+          npm install --no-audit --no-fund
+          npm ls --depth=0
 
       - name: Verify web application
         run: npm run validate && npm run verify:static && npm test
