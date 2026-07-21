@@ -1,8 +1,8 @@
 {
   "name": "exovia-neurocanvas",
-  "version": "1.0.0-rc.6",
+  "version": "1.1.0-rc.1",
   "private": true,
-  "description": "Offline-first visual knowledge explorer and auditable human-AI secondary brain.",
+  "description": "Local-first AI reliability workspace for evidence, portable context, privacy protection and accountable agents.",
   "type": "module",
   "scripts": {
     "start": "node scripts/launch.mjs",
@@ -16,7 +16,8 @@
     "finish:solo": "node scripts/autonomous-finish.mjs",
     "build:android:web": "node scripts/build-android-web.mjs",
     "android:add": "npx cap add android",
-    "android:sync": "npm run build:android:web && npx cap sync android",
+    "android:brand": "node scripts/configure-android-brand.mjs",
+    "android:sync": "npm run build:android:web && npx cap sync android && npm run android:brand",
     "android:apk": "npm run android:sync && cd android && ./gradlew assembleDebug",
     "serve": "node scripts/serve.mjs"
   },
