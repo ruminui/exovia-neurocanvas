@@ -2,11 +2,29 @@
 
 This directory is a self-contained ChatGPT App built with the Apps SDK and MCP.
 
-**No OpenAI API key, database, account setup or external AI service is required to run the technical demo.** The server provides deterministic reliability tools to ChatGPT; ChatGPT supplies the conversational intelligence.
+**No OpenAI API key, database, account setup or external AI service is required to run the technical demo.** The server provides deterministic reliability tools; ChatGPT supplies conversational intelligence when the MCP endpoint is connected in Developer Mode.
 
-## Fastest verification: one command
+## Fastest verification — one command
 
-Requirements: Node.js 22 or newer.
+Requirement: Node.js 22 or newer.
+
+From the repository root:
+
+```bash
+npm run judge
+```
+
+Expected markers:
+
+```text
+EXOVIA JUDGE PREFLIGHT: PASS
+EXOVIA HACKATHON JUDGE CHECK: PASS
+Judge artifact audit passed: ...
+```
+
+The root command checks prerequisites and Android release metadata, installs this package's dependencies, starts the MCP server on a temporary local port, performs the official-client initialize handshake, discovers all seven tools, executes the deterministic scenario and audits the generated artifacts.
+
+Direct directory alternative:
 
 ```bash
 cd chatgpt-app
@@ -14,36 +32,30 @@ npm install
 npm run judge
 ```
 
-Expected final line:
+## Generated evidence
 
-```text
-EXOVIA HACKATHON JUDGE CHECK: PASS
-```
-
-The command starts the MCP server on a temporary local port, performs an MCP initialize handshake, discovers all tools, executes the complete demo scenario, validates the results and writes inspectable artifacts to `chatgpt-app/judge-output/`.
-
-Generated evidence includes:
+The judge flow writes to `chatgpt-app/judge-output/`:
 
 - `judge-summary.json` — machine-readable pass/fail summary;
-- `trust-scan.json` — evidence, privacy, context and control findings;
+- `trust-scan.json` — evidence, privacy, prompt-injection, context and control findings;
 - `context-capsule.md` — portable context for another AI or teammate;
-- a `.exo` capability pack — source-linked index, on-demand chunks, procedures, constraints, privacy redactions and SHA-256 integrity;
+- a `.exo` capability pack — source-linked index, on-demand chunks, procedures, constraints, privacy redactions and SHA-256;
 - `comparison.json` — transparent ranking of two AI outputs;
 - `safe-route.json` — provider-neutral local/hybrid/cloud recommendation;
-- a `neurocanvas-v3` JSON map importable by the Android/web app;
-- `proof-pack.json` — evidence manifest, governance and SHA-256 integrity fingerprint;
+- a `neurocanvas-v3` JSON map importable by the Android/web product;
+- `proof-pack.json` — evidence manifest, governance and SHA-256;
 - `server.log` — local MCP runtime log.
 
 ## Docker path
 
-Requirements: Docker with Compose.
+Requirement: Docker with Compose.
 
 ```bash
 cd chatgpt-app
 docker compose up --build
 ```
 
-Then verify:
+Verify:
 
 ```bash
 curl http://localhost:8787/health
@@ -55,21 +67,19 @@ Expected response:
 {"ok":true,"service":"exovia-neurocanvas-mcp"}
 ```
 
-The MCP endpoint is:
+Endpoints:
 
 ```text
-http://localhost:8787/mcp
+Status: http://localhost:8787/
+Health: http://localhost:8787/health
+MCP:    http://localhost:8787/mcp
 ```
 
-Stop it with:
-
-```bash
-docker compose down
-```
+Stop with `docker compose down`.
 
 ## Test the real ChatGPT App experience
 
-ChatGPT needs an HTTPS URL that can reach the MCP server.
+ChatGPT needs a public HTTPS URL that can reach the MCP server.
 
 1. Start the server:
 
@@ -79,19 +89,16 @@ ChatGPT needs an HTTPS URL that can reach the MCP server.
    npm start
    ```
 
-2. Expose port `8787` with a temporary HTTPS tunnel or a public Codespaces port.
-3. In ChatGPT, enable **Settings → Apps & Connectors → Advanced settings → Developer Mode**.
-4. Create a new app and paste:
+2. Expose port `8787` through a temporary HTTPS tunnel, hosted container or public Codespaces port.
+3. In ChatGPT enable **Settings → Apps & Connectors → Advanced settings → Developer Mode**.
+4. Create a new app with `https://YOUR-PUBLIC-HTTPS-DOMAIN/mcp`.
+5. Refresh the app after changing tools or widget resources.
 
-   ```text
-   https://YOUR-PUBLIC-HTTPS-DOMAIN/mcp
-   ```
+No secret is required. A stable deployment may set `APP_DOMAIN=https://YOUR-DOMAIN` so widget metadata is bound to the final host.
 
-5. Refresh the app after connecting so ChatGPT reloads the seven tool descriptors and widget resource.
+## Recommended judge flow in ChatGPT
 
-No secret is required. A production deployment may set `APP_DOMAIN=https://YOUR-DOMAIN` so the widget metadata is bound to the final host.
-
-## Recommended 6-minute judge flow in ChatGPT
+Use non-confidential demonstration data only.
 
 ### 1. Reveal reliability risks
 
@@ -104,7 +111,7 @@ Evidence 1: A two-week internal pilot resolved 62 percent of repetitive question
 Evidence 2: Production changes require human approval. Credentials and personal information must not be placed in prompts or logs. Claims about customers, costs and current performance require evidence.
 ```
 
-Expected: the black-and-gold widget reports weak evidence, personal/credential risk, prompt-injection risk and human-control requirements.
+Expected: weak-evidence, personal/credential, prompt-injection and human-control findings, with sensitive values replaced in exported artifacts.
 
 ### 2. Preserve context
 
@@ -112,7 +119,7 @@ Expected: the black-and-gold widget reports weak evidence, personal/credential r
 Create an Exovia Context Capsule from the previous analysis so another AI can continue without losing the evidence, uncertainty, privacy constraints or approval rules.
 ```
 
-Expected: a compact Markdown capsule with sources, open risks and explicit rules for the next AI.
+Expected: compact Markdown with sources, open risks and explicit continuation rules.
 
 ### 3. Compile reusable knowledge into `.exo`
 
@@ -120,9 +127,9 @@ Expected: a compact Markdown capsule with sources, open risks and explicit rules
 Compile the evidence and operating rules into an Exovia .exo capability pack. Keep source and chunk IDs, use index-first progressive disclosure, extract procedures and constraints, redact sensitive values, estimate context reduction and require human approval for consequential actions.
 ```
 
-Expected: a downloadable JSON-based `.exo` file with source-linked chunks, search index, glossary, procedures, constraints, safety contract, privacy report and SHA-256 fingerprint. The file can be opened by NeuroCanvas, which converts it into an inspectable human-review graph.
+Expected: downloadable JSON-based `.exo` with source-linked chunks, index, glossary, procedures, constraints, untrusted-source policy, privacy record and SHA-256. Open it in NeuroCanvas for visual human review.
 
-### 4. Compare two AI strategies
+### 4. Compare two strategies
 
 ```text
 Compare these two answers against the same evidence:
@@ -130,15 +137,15 @@ A) Launch immediately; it will reduce costs by 40 percent.
 B) Continue with a limited pilot; cost savings and customer preference remain unverified, so keep human review and require approval before production.
 ```
 
-Expected: a transparent heuristic ranking, not an unsupported claim that one answer is factually correct.
+Expected: **Controlled pilot** ranks above the unsupported fast-launch answer using a transparent heuristic method.
 
-### 5. Move the work from AI to the human workspace
+### 5. Move the work to NeuroCanvas
 
 ```text
 Turn this conversation and its evidence into an importable Exovia NeuroCanvas map.
 ```
 
-Expected: the widget offers a downloadable `neurocanvas-v3` JSON file. Open it in the Android or web product to inspect, correct, connect and approve the graph.
+Expected: downloadable `neurocanvas-v3` JSON for inspection, correction, connection and approval in the Android/web product.
 
 ### 6. Create durable proof
 
@@ -146,7 +153,7 @@ Expected: the widget offers a downloadable `neurocanvas-v3` JSON file. Open it i
 Create an Exovia Proof Pack for the controlled-pilot decision, preserving the evidence, open risks, governance and integrity fingerprint.
 ```
 
-Expected: an evidence manifest, explicit human-approval requirement, confirmation that no external action was executed and a SHA-256 fingerprint.
+Expected: evidence manifest, explicit human-approval requirement, confirmation that no external action was executed and a SHA-256 fingerprint.
 
 ## Tools exposed to ChatGPT
 
@@ -162,17 +169,18 @@ Expected: an evidence manifest, explicit human-approval requirement, confirmatio
 
 ## Honest limitations
 
-- The scans, extracted procedures, rankings and token estimates are deterministic heuristics, not domain-expert factual verification.
-- A `.exo` package is an inspectable JSON capability package, not a trained model and not permission to execute its procedures.
-- Live/current claims still require authoritative sources.
-- The MCP server does not persist submitted content.
-- The server does not call another AI model.
-- All consequential actions remain subject to explicit human approval.
-- Multiuser synchronization, unrestricted Exil execution and a production FAPI service mesh are roadmap capabilities unless separately deployed and tested.
+- scans, extracted procedures, rankings and token estimates are deterministic heuristics;
+- a `.exo` package is inspectable data, not a trained model or permission to execute procedures;
+- imported instructions are untrusted until policy validation and human review;
+- current claims still require authoritative sources;
+- the server does not persist submitted content or call another AI model;
+- all consequential actions remain subject to explicit human approval;
+- production multiuser synchronization, unrestricted Exil execution and a production FAPI mesh are not claimed.
 
 ## Troubleshooting
 
-- Port already in use: run `PORT=8790 npm start` or `JUDGE_PORT=8791 npm run judge`.
+- Old Node version: use Node.js 22+ for this flow.
+- Port in use: run `JUDGE_PORT=8791 npm run judge` or `PORT=8790 npm start` inside `chatgpt-app`.
 - ChatGPT cannot connect to `localhost`: expose the server through public HTTPS and use the URL ending in `/mcp`.
-- Tool changes do not appear: refresh or recreate the ChatGPT Developer Mode app.
+- Tool changes do not appear: refresh or recreate the Developer Mode app.
 - Docker health check fails: inspect `docker compose logs exovia-prooflayer`.
