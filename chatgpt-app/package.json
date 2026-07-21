@@ -6,11 +6,11 @@
   "description": "Exovia ProofLayer for ChatGPT: evidence, portable context, privacy, human control and NeuroCanvas handoff.",
   "scripts": {
     "start": "node src/server.mjs",
-    "check": "node --check src/server.mjs && node --check src/reliability.mjs && node --check src/map-builder.mjs && node --check web/widget.js && node --check scripts/judge-smoke.mjs && node --check scripts/validate-submission.mjs",
+    "check": "node --check src/server.mjs && node --check src/reliability.mjs && node --check src/map-builder.mjs && node --check web/widget.js && node --check scripts/judge-smoke.mjs && node --check scripts/audit-judge-output.mjs && node --check scripts/validate-submission.mjs",
     "validate:submission": "node scripts/validate-submission.mjs",
     "test": "node --test",
     "verify": "npm run check && npm run validate:submission && npm test",
-    "judge": "node scripts/judge-smoke.mjs",
+    "judge": "node scripts/judge-smoke.mjs && node scripts/audit-judge-output.mjs",
     "judge:clean": "node -e \"require('node:fs').rmSync('judge-output',{recursive:true,force:true})\""
   },
   "dependencies": {
