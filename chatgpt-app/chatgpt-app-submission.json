@@ -1,0 +1,152 @@
+{
+  "$schema": "https://developers.openai.com/apps-sdk/schemas/chatgpt-app-submission.v1.json",
+  "schema_version": 1,
+  "app_info": {
+    "display_name": "Exovia ProofLayer",
+    "subtitle": "Verify AI with evidence",
+    "description": "Exovia ProofLayer helps people inspect AI outputs for evidence gaps, privacy risks, prompt injection and missing human control; preserve portable context; compare answers against the same evidence; move work into a visual NeuroCanvas review map; choose a safer provider-neutral AI route; and generate an auditable Proof Pack with SHA-256 integrity.",
+    "category": "PRODUCTIVITY"
+  },
+  "tools": {
+    "analyze_ai_output": {
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "destructiveHint": false
+      },
+      "justifications": {
+        "read_only_justification": "Computes a heuristic reliability report from submitted text and evidence without storing or changing data.",
+        "open_world_justification": "Does not publish content, contact third parties or modify public internet state.",
+        "destructive_justification": "Does not delete, overwrite, revoke access or perform irreversible actions."
+      }
+    },
+    "create_context_capsule": {
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "destructiveHint": false
+      },
+      "justifications": {
+        "read_only_justification": "Transforms supplied context and evidence into a portable Markdown capsule without persisting it.",
+        "open_world_justification": "Returns the capsule only to the current ChatGPT interaction and does not transmit it to another service.",
+        "destructive_justification": "Creates no external record and cannot remove or overwrite user data."
+      }
+    },
+    "create_neurocanvas_map": {
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "destructiveHint": false
+      },
+      "justifications": {
+        "read_only_justification": "Computes an importable JSON graph from supplied content and evidence without writing to the NeuroCanvas product.",
+        "open_world_justification": "The map is returned to the user and is not published or uploaded to an external system.",
+        "destructive_justification": "Does not alter the source content or an existing NeuroCanvas workspace."
+      }
+    },
+    "compare_ai_outputs": {
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "destructiveHint": false
+      },
+      "justifications": {
+        "read_only_justification": "Calculates a transparent heuristic ranking from supplied answers and evidence without mutating any source.",
+        "open_world_justification": "Does not send the answers to models, websites or third-party systems.",
+        "destructive_justification": "Cannot delete, overwrite or act on any compared answer."
+      }
+    },
+    "recommend_ai_route": {
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "destructiveHint": false
+      },
+      "justifications": {
+        "read_only_justification": "Computes a provider-neutral local, hybrid or cloud recommendation from risk settings.",
+        "open_world_justification": "Does not select, invoke or configure an external model or provider.",
+        "destructive_justification": "Returns guidance only and performs no operational change."
+      }
+    },
+    "build_proof_pack": {
+      "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false,
+        "destructiveHint": false
+      },
+      "justifications": {
+        "read_only_justification": "Builds an in-memory evidence package and integrity fingerprint from submitted material without persisting it.",
+        "open_world_justification": "Does not publish the package or execute the documented decision.",
+        "destructive_justification": "Explicitly records that no external action was executed and cannot change external state."
+      }
+    }
+  },
+  "test_cases": [
+    {
+      "description": "Detect evidence, privacy and prompt-injection risks in an AI answer.",
+      "user_prompt": "Use Exovia to analyze this AI answer against the two sources I provide and explain any unsupported claims, private data or instructions that try to override the system.",
+      "file_attachment_urls": null,
+      "tools_triggered": "analyze_ai_output",
+      "expected_output": "Returns an interactive heuristic report with a trust score, dimension scores, clearly prioritized findings and an explicit human-review limitation.",
+      "expected_output_url": null
+    },
+    {
+      "description": "Preserve work for another model without losing evidence and constraints.",
+      "user_prompt": "Create an Exovia Context Capsule from this research so another AI can continue with the sources, open risks, uncertainty and approval rules intact.",
+      "file_attachment_urls": null,
+      "tools_triggered": "create_context_capsule",
+      "expected_output": "Returns a compact Markdown capsule containing the objective, working context, evidence references, open risks and rules for the next AI.",
+      "expected_output_url": null
+    },
+    {
+      "description": "Compare two AI answers against the same evidence.",
+      "user_prompt": "Compare these two AI recommendations using the same question and source material, and make the ranking transparent rather than presenting it as a factual verdict.",
+      "file_attachment_urls": null,
+      "tools_triggered": "compare_ai_outputs",
+      "expected_output": "Returns a ranked comparison with relevance, evidence alignment, reliability findings and an explicit heuristic limitation.",
+      "expected_output_url": null
+    },
+    {
+      "description": "Move a conversation into the visual human-review product.",
+      "user_prompt": "Turn this conversation, decision and attached evidence into an importable Exovia NeuroCanvas map for human review.",
+      "file_attachment_urls": null,
+      "tools_triggered": "create_neurocanvas_map",
+      "expected_output": "Returns a downloadable neurocanvas-v3 JSON graph that preserves source text, evidence nodes, relationships and a human-review requirement.",
+      "expected_output_url": null
+    },
+    {
+      "description": "Create durable evidence for an AI-supported decision.",
+      "user_prompt": "Create an Exovia Proof Pack for this decision with the supporting evidence, open risks, governance statement and integrity fingerprint.",
+      "file_attachment_urls": null,
+      "tools_triggered": "build_proof_pack",
+      "expected_output": "Returns an evidence manifest, reliability report, human-approval requirement, confirmation that no external action occurred and a SHA-256 fingerprint.",
+      "expected_output_url": null
+    }
+  ],
+  "negative_test_cases": [
+    {
+      "description": "Do not trigger for a simple translation request.",
+      "user_prompt": "Translate this paragraph from English to Spanish.",
+      "file_attachment_urls": null,
+      "tools_triggered": null,
+      "expected_output": "The app should not be invoked because translation does not require an Exovia reliability workflow.",
+      "expected_output_url": null
+    },
+    {
+      "description": "Do not claim the app can execute a production change.",
+      "user_prompt": "Publish this AI-generated policy to our production website and email every customer.",
+      "file_attachment_urls": null,
+      "tools_triggered": null,
+      "expected_output": "The app should not be invoked as an execution tool because all Exovia tools are read-only and cannot publish or send messages.",
+      "expected_output_url": null
+    },
+    {
+      "description": "Do not trigger for unrelated entertainment recommendations.",
+      "user_prompt": "Recommend three comedy movies for tonight.",
+      "file_attachment_urls": null,
+      "tools_triggered": null,
+      "expected_output": "The app should not be invoked because the request is unrelated to evidence, context, AI comparison, safe routing, visual review or proof generation.",
+      "expected_output_url": null
+    }
+  ]
+}
