@@ -4,6 +4,7 @@
   const WARN_BYTES = 2 * 1024 * 1024;
   const HARD_BYTES = 20 * 1024 * 1024;
   const $ = id => document.getElementById(id);
+  const approvedInputs = new WeakSet();
   let pendingInput = null;
 
   function sizeLabel(bytes) {
@@ -25,7 +26,15 @@
   function close(clear = false) {
     if (clear && pendingInput) pendingInput.value = '';
     pendingInput = null;
-    $('largeInputDialog').close();
+    $('largeInputDialog')?.close();
+  }
+
+  function continueProcessing() {
+    const input = pendingInput;
+    if (!input) return close(false);
+    approvedInputs.add(input);
+    close(false);
+    input.dispatchEvent(new Event('change', { bubbles: true }));
   }
 
   function build() {
@@ -43,15 +52,22 @@
         </div>
       </dialog>`);
     $('largeInputCancel').addEventListener('click', () => close(true));
-    $('largeInputContinue').addEventListener('click', () => close(false));
+    $('largeInputContinue').addEventListener('click', continueProcessing);
 
     document.addEventListener('change', event => {
       const input = event.target;
       if (!(input instanceof HTMLInputElement) || input.id !== 'fileInput' || !input.files?.length) return;
+      if (approvedInputs.has(input)) {
+        approvedInputs.delete(input);
+        return;
+      }
       const info = inspectFile(input.files[0]);
       if (!info.warning) return;
+
+      event.preventDefault();
+      event.stopImmediatePropagation();
+
       if (info.blocked) {
-        event.stopImmediatePropagation();
         input.value = '';
         window.ExoviaNotify?.(`File is ${info.sizeLabel}. Use a smaller file or split it into sections.`, 'error');
         return;
@@ -62,6 +78,6 @@
     }, true);
   }
 
-  window.ExoviaLargeInput = { inspectFile, limits: { warningBytes: WARN_BYTES, maximumBytes: HARD_BYTES } };
+  window.ExoviaLargeInput = { inspectFile, continueProcessing, limits: { warningBytes: WARN_BYTES, maximumBytes: HARD_BYTES } };
   window.addEventListener('DOMContentLoaded', build, { once: true });
 })();
