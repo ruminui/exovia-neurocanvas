@@ -68,7 +68,7 @@ test("uses index-first progressive disclosure and reports measurable context red
   assert.ok(Object.keys(result.package.searchIndex).length > 0);
 });
 
-test("records safety boundaries and a SHA-256 integrity fingerprint", () => {
+test("records precise compliance boundaries and a SHA-256 integrity fingerprint", () => {
   const result = buildExoCapabilityPack({
     title: "Governed capability",
     sources: [{ title: "Policy", text: "The agent must not execute external actions. Human approval is required before changes." }],
@@ -76,7 +76,9 @@ test("records safety boundaries and a SHA-256 integrity fingerprint", () => {
 
   assert.equal(result.package.manifest.humanApprovalRequired, true);
   assert.equal(result.package.manifest.externalActionsExecuted, false);
-  assert.equal(result.package.manifest.thirdPartyCodeIncluded, false);
+  assert.equal(result.package.manifest.bundledThirdPartyRuntimeCode, false);
+  assert.equal(result.package.manifest.adjacentProjectCodeCopied, false);
+  assert.equal(result.package.manifest.sourceRightsVerifiedByCompiler, false);
   assert.ok(result.package.capability.prohibitedActions.includes("execute_external_action_without_approval"));
   assert.equal(result.package.integrity.algorithm, "SHA-256");
   assert.match(result.hash, /^[a-f0-9]{64}$/);
