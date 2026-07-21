@@ -3,16 +3,16 @@ import path from 'node:path';
 import process from 'node:process';
 
 const ROOT = process.cwd();
-const RUNTIME_SCRIPTS = ['core.js', 'upgrade.js', 'product.js', 'mobile.js', 'brain.js', 'ai-bridge.js', 'intelligence.js', 'diagnostics.js', 'live-room.js', 'clarity.js'];
-const STYLESHEETS = ['styles.css', 'upgrade.css', 'product.css', 'mobile.css', 'brain.css', 'ai-bridge.css', 'intelligence.css', 'diagnostics.css', 'live-room.css', 'clarity.css'];
+const RUNTIME_SCRIPTS = ['core.js', 'upgrade.js', 'product.js', 'mobile.js', 'brain.js', 'ai-bridge.js', 'intelligence.js', 'diagnostics.js', 'live-room.js', 'clarity.js', 'simple-mode.js'];
+const STYLESHEETS = ['styles.css', 'upgrade.css', 'product.css', 'mobile.css', 'brain.css', 'ai-bridge.css', 'intelligence.css', 'diagnostics.css', 'live-room.css', 'clarity.css', 'simple-mode.css'];
 const REQUIRED = [
   'index.html', 'manifest.webmanifest', 'sw.js', 'README.md', 'SECURITY.md', 'CONTRIBUTING.md',
   'LEEME_PRIMERO.txt', 'INICIAR_EXOVIA.bat', 'INICIAR_EXOVIA.command', 'INICIAR_EXOVIA.sh',
   'docs/MANUAL_USUARIO.md', 'docs/GUEST_HELPER_GUIDE.md', 'docs/TESTER_CHECKLIST.md',
-  'docs/MARCE_GASTON_HELP_PLAN.md', 'docs/VIDEO_SCRIPT_MARCE.md',
+  'docs/MARCE_GASTON_HELP_PLAN.md', 'docs/VIDEO_SCRIPT_MARCE.md', 'docs/SIMPLE_USE_GUIDE.md',
   'docs/CAPABILITY_VERIFICATION_MATRIX.md', 'docs/LIVE_COLLABORATION_ARCHITECTURE.md',
   'schemas/live-evidence-room.schema.json', 'examples/live-evidence-room.json',
-  'tests/e2e/judge-clarity.spec.mjs',
+  'tests/e2e/judge-clarity.spec.mjs', 'tests/e2e/simple-mode.spec.mjs',
   ...RUNTIME_SCRIPTS.map(file => `src/${file}`), ...STYLESHEETS.map(file => `src/${file}`)
 ];
 
@@ -31,6 +31,8 @@ const diagnostics = await fs.readFile(path.join(ROOT, 'src/diagnostics.js'), 'ut
 const bridge = await fs.readFile(path.join(ROOT, 'src/ai-bridge.js'), 'utf8');
 const liveRoom = await fs.readFile(path.join(ROOT, 'src/live-room.js'), 'utf8');
 const clarity = await fs.readFile(path.join(ROOT, 'src/clarity.js'), 'utf8');
+const simpleMode = await fs.readFile(path.join(ROOT, 'src/simple-mode.js'), 'utf8');
+const simpleStyles = await fs.readFile(path.join(ROOT, 'src/simple-mode.css'), 'utf8');
 const security = await fs.readFile(path.join(ROOT, 'SECURITY.md'), 'utf8');
 const videoScript = await fs.readFile(path.join(ROOT, 'docs/VIDEO_SCRIPT_MARCE.md'), 'utf8');
 
@@ -59,7 +61,9 @@ const capabilityMarkers = [
   ['live room graph projection', liveRoom.includes('function projectRoom(')],
   ['live room public API', liveRoom.includes('window.ExoviaLiveRoom')],
   ['judge clarity public API', clarity.includes('window.ExoviaClarity')],
-  ['judge clarity problem statement', clarity.includes('The problem')]
+  ['simple mode public API', simpleMode.includes('window.ExoviaSimpleMode')],
+  ['simple mode persistent preference', simpleMode.includes("localStorage.setItem(STORAGE_KEY")],
+  ['step-by-step guide', simpleMode.includes('STEP-BY-STEP HELP')]
 ];
 for (const [name, present] of capabilityMarkers) present ? pass(`capability entry point: ${name}`) : fail(`missing capability entry point: ${name}`);
 
@@ -81,6 +85,15 @@ const clarityMarkers = [
   ['video contains honest live-room boundary', /local vertical slice/i.test(videoScript)]
 ];
 for (const [name, present] of clarityMarkers) present ? pass(`judge clarity: ${name}`) : fail(`missing judge clarity marker: ${name}`);
+
+const simpleModeMarkers = [
+  ['large touch targets', simpleStyles.includes('min-height:48px')],
+  ['larger text', simpleStyles.includes('font-size:18px')],
+  ['advanced choices hidden', simpleStyles.includes('#intentBtn') && simpleStyles.includes('display:none!important')],
+  ['guide target highlight', simpleStyles.includes('.simpleGuideTarget')],
+  ['safety reassurance', simpleMode.includes('cannot damage the original information')]
+];
+for (const [name, present] of simpleModeMarkers) present ? pass(`simple usability: ${name}`) : fail(`missing simple usability marker: ${name}`);
 
 (manifest.name && manifest.short_name && manifest.start_url && manifest.display) ? pass('manifest contains installability metadata') : fail('manifest is missing required installability metadata');
 manifest.display === 'standalone' ? pass('manifest uses standalone display mode') : fail(`unexpected manifest display mode: ${manifest.display}`);
