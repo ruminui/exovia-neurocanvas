@@ -50,11 +50,13 @@
 
   function updateMobileLabels() {
     const labels = {
-      mobileExplore: mobileText('Explore', 'Explorar'),
-      mobileMap: mobileText('Map', 'Mapa'),
-      mobileAsk: mobileText('Ask', 'Preguntar'),
-      mobileEvidence: mobileText('Evidence', 'Fuente'),
+      mobileHome: mobileText('Home', 'Inicio'),
+      mobileMap: mobileText('Canvas', 'Lienzo'),
+      mobileVerify: mobileText('Verify', 'Verificar'),
+      mobileContext: mobileText('Context', 'Contexto'),
       mobileActions: mobileText('More', 'Más'),
+      mobileExplore: mobileText('Explore project', 'Explorar proyecto'),
+      mobileEvidence: mobileText('Evidence inspector', 'Fuentes y evidencia'),
       mobileInstall: mobileText('Install app', 'Instalar app'),
       mobileHelp: mobileText('How to use', 'Cómo usar'),
       mobileClose: mobileText('Close panel', 'Cerrar panel')
@@ -89,27 +91,31 @@
     nav.className = 'mobileNav';
     nav.setAttribute('aria-label', 'Mobile navigation');
     nav.innerHTML = `
-      <button type="button" id="mobileExplore" data-mobile-sheet="left" aria-pressed="false"><span aria-hidden="true">⌕</span><span data-mobile-label>Explore</span></button>
-      <button type="button" id="mobileMap"><span aria-hidden="true">◎</span><span data-mobile-label>Map</span></button>
-      <button type="button" id="mobileAsk"><span aria-hidden="true">?</span><span data-mobile-label>Ask</span></button>
-      <button type="button" id="mobileEvidence" data-mobile-sheet="right" aria-pressed="false"><span aria-hidden="true">≡</span><span data-mobile-label>Evidence</span></button>
-      <button type="button" id="mobileActions" data-mobile-sheet="actions" aria-pressed="false"><span aria-hidden="true">＋</span><span data-mobile-label>More</span></button>`;
+      <button type="button" id="mobileHome" class="active"><span aria-hidden="true">⌂</span><span data-mobile-label>Home</span></button>
+      <button type="button" id="mobileMap"><span aria-hidden="true">◎</span><span data-mobile-label>Canvas</span></button>
+      <button type="button" id="mobileVerify"><span aria-hidden="true">◇</span><span data-mobile-label>Verify</span></button>
+      <button type="button" id="mobileContext"><span aria-hidden="true">▣</span><span data-mobile-label>Context</span></button>
+      <button type="button" id="mobileActions" data-mobile-sheet="actions" aria-pressed="false"><span aria-hidden="true">•••</span><span data-mobile-label>More</span></button>`;
     body.appendChild(nav);
 
     const quick = document.createElement('div');
     quick.id = 'mobileQuickActions';
     quick.className = 'mobileQuickActions';
     quick.innerHTML = `
+      <button id="mobileExplore" type="button" data-mobile-sheet="left" aria-pressed="false"><span aria-hidden="true">⌕</span><span data-mobile-label>Explore project</span></button>
+      <button id="mobileEvidence" type="button" data-mobile-sheet="right" aria-pressed="false"><span aria-hidden="true">≡</span><span data-mobile-label>Evidence inspector</span></button>
       <button id="mobileHelp" type="button"><span aria-hidden="true">ⓘ</span><span data-mobile-label>How to use</span></button>
       <button id="mobileInstall" type="button" hidden><span aria-hidden="true">⇩</span><span data-mobile-label>Install app</span></button>`;
     document.querySelector('.toolbar')?.prepend(quick);
 
-    nav.querySelectorAll('[data-mobile-sheet]').forEach(button => button.addEventListener('click', () => toggleSheet(button.dataset.mobileSheet)));
-    document.getElementById('mobileMap').addEventListener('click', () => { fitButton?.click(); closeSheets(); });
-    document.getElementById('mobileAsk').addEventListener('click', () => {
-      toggleSheet('left');
-      setTimeout(() => { searchInput?.focus(); searchInput?.scrollIntoView({ block: 'center' }); }, 260);
-    });
+    document.querySelectorAll('[data-mobile-sheet]').forEach(button => button.addEventListener('click', () => toggleSheet(button.dataset.mobileSheet)));
+    const setActive = id => nav.querySelectorAll('button').forEach(button => button.classList.toggle('active', button.id === id));
+    document.getElementById('mobileHome').addEventListener('click', () => { closeSheets(); window.ExoviaTrustCenter?.showHome?.(); setActive('mobileHome'); });
+    document.getElementById('mobileMap').addEventListener('click', () => { window.ExoviaTrustCenter?.closeHome?.(); fitButton?.click(); closeSheets(); setActive('mobileMap'); });
+    document.getElementById('mobileVerify').addEventListener('click', () => { closeSheets(); window.ExoviaTrustCenter?.open?.('scan'); setActive('mobileVerify'); });
+    document.getElementById('mobileContext').addEventListener('click', () => { closeSheets(); window.ExoviaTrustCenter?.open?.('capsule'); setActive('mobileContext'); });
+    window.addEventListener('exovia:map-changed', () => setActive('mobileMap'));
+    document.body.addEventListener('click', event => { if (event.target.closest('#homeBtn,#mobileHome')) setActive('mobileHome'); });
     document.getElementById('mobileHelp').addEventListener('click', () => {
       closeSheets();
       const simple = document.getElementById('simpleModeBtn');
@@ -206,8 +212,7 @@
     localStorage.setItem(MOBILE_PREF, '1');
     if (!localStorage.getItem('exovia:language') && /^es\b/i.test(navigator.language || '')) window.ExoviaLanguage?.set?.('es');
     setTimeout(() => {
-      if (!window.ExoviaSimpleMode?.isEnabled?.()) document.getElementById('simpleModeBtn')?.click();
-      document.getElementById('purposeBtn')?.click();
+      window.ExoviaTrustCenter?.showHome?.();
     }, 700);
   }
 
