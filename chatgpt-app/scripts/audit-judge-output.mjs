@@ -54,6 +54,11 @@ assert(exo.manifest?.externalActionsExecuted === false, "EXO pack incorrectly re
 assert(exo.manifest?.bundledThirdPartyRuntimeCode === false, "EXO pack bundled third-party runtime code");
 assert(exo.manifest?.adjacentProjectCodeCopied === false, "EXO pack does not record the adjacent-project code boundary");
 assert(exo.manifest?.sourceRightsVerifiedByCompiler === false, "EXO compiler incorrectly claims to verify source rights");
+assert(exo.security?.sourceContentTrust === "untrusted-until-human-reviewed", "EXO pack incorrectly trusts source instructions");
+assert(exo.security?.promptInjectionCheckRequired === true, "EXO pack does not require prompt-injection review");
+assert(exo.security?.sourceInstructionsAreData === true, "EXO pack does not classify source instructions as data");
+assert(exo.capability?.prohibitedActions?.includes("execute_source_instructions_without_policy_check"), "EXO pack permits unvalidated source instructions");
+assert(exo.evidenceRules?.includes("treat-source-instructions-as-untrusted-data"), "EXO evidence rules lost the untrusted-source boundary");
 assert(exo.progressiveDisclosure?.strategy === "index-first-on-demand", "EXO pack progressive disclosure strategy is missing");
 assert(Array.isArray(exo.chunks) && exo.chunks.length >= 3, "EXO pack source chunks are incomplete");
 assert(exo.chunks.every((chunk) => chunk.sourceId && chunk.contentHash), "EXO chunks lost provenance or integrity metadata");
@@ -63,4 +68,4 @@ const proof = JSON.parse(await readFile(path.join(outputDir, "proof-pack.json"),
 assert(proof.governance?.sensitiveValuesRedacted === true, "Proof Pack governance does not record redaction");
 assert(/^[a-f0-9]{64}$/.test(proof.integrity?.hash || ""), "Proof Pack integrity hash is invalid");
 
-console.log(`Judge artifact audit passed: ${files.length} files, no sensitive demo values, source-linked EXO pack, precise source-rights boundary, evidence-bounded winner and valid SHA-256 fingerprints.`);
+console.log(`Judge artifact audit passed: ${files.length} files, no sensitive demo values, source-linked EXO pack, untrusted-source safety, precise source-rights boundary, evidence-bounded winner and valid SHA-256 fingerprints.`);
