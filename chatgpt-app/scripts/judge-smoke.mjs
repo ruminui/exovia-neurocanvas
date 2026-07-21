@@ -113,7 +113,9 @@ try {
   assert(exoPack.sourceCount >= 3 && exoPack.chunkCount >= 3, "EXO pack did not preserve enough source structure");
   assert(exoPack.estimatedInitialReductionPercent >= 0, "EXO pack did not report the progressive-disclosure estimate");
   assert(exoPack.package?.manifest?.humanApprovalRequired === true, "EXO pack lost the human approval requirement");
-  assert(exoPack.package?.manifest?.thirdPartyCodeIncluded === false, "EXO pack did not record the third-party code boundary");
+  assert(exoPack.package?.manifest?.bundledThirdPartyRuntimeCode === false, "EXO pack bundled third-party runtime code");
+  assert(exoPack.package?.manifest?.adjacentProjectCodeCopied === false, "EXO pack did not record the adjacent-project code boundary");
+  assert(exoPack.package?.manifest?.sourceRightsVerifiedByCompiler === false, "EXO compiler incorrectly claimed to verify source rights");
   assert(exoPack.redactionCount >= 2, "EXO pack did not redact the demo email and credential");
   assert(!exoSerialized.includes("luciano@example.com"), "EXO pack leaked the demo email");
   assert(!exoSerialized.includes("demo_secret_123456789"), "EXO pack leaked the demo credential");
@@ -184,6 +186,7 @@ try {
       exoCapabilityPackCreated: true,
       exoCapabilityPackRedacted: true,
       exoProgressiveDisclosureMeasured: true,
+      exoSourceRightsBoundaryRecorded: true,
       answersCompared: true,
       evidenceBoundedAnswerWon: true,
       safeRouteCreated: true,
