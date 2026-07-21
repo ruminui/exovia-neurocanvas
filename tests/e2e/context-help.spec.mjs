@@ -11,8 +11,10 @@ test('floating help explains main controls and can be disabled', async ({ page }
   await expect.poll(() => page.evaluate(() => localStorage.getItem('exovia:contextHelp'))).toBe('false');
 });
 
+const { defaultBrowserType: _defaultBrowserType, ...pixel7Context } = devices['Pixel 7'];
+
 test.describe('Android contextual help', () => {
-  test.use({ ...devices['Pixel 7'] });
+  test.use(pixel7Context);
 
   test('tap on mobile navigation shows a bottom floating explanation', async ({ page }) => {
     await page.goto('/');
