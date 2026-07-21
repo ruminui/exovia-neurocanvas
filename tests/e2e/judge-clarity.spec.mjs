@@ -2,8 +2,12 @@ import { test, expect } from '@playwright/test';
 
 test('explains the problem and value before requiring product knowledge', async ({ page }) => {
   await page.goto('/');
-  await expect(page.locator('#emptyState h1')).toContainText(/answers you can prove/i);
-  await expect(page.locator('#emptyState p')).toContainText(/exact evidence/i);
+  await expect(page.locator('#emptyState h1')).toContainText(/what an AI answer is based on/i);
+  await expect(page.locator('#emptyState .homeLead')).toContainText(/original information/i);
+  await expect(page.locator('.homeThreeSteps article')).toHaveCount(3);
+  await expect(page.locator('.homeThreeSteps')).toContainText(/Add/i);
+  await expect(page.locator('.homeThreeSteps')).toContainText(/Check/i);
+  await expect(page.locator('.homeThreeSteps')).toContainText(/Save/i);
   await expect(page.locator('#clarityBtn')).toHaveText(/what problem does this solve/i);
 });
 
