@@ -1,0 +1,31 @@
+name: Generate Node 24 lockfile
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lockfile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Generate authentic npm lockfile
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+      - name: Validate lockfile
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s package-lock.json
+          node -e "const p=require('./package-lock.json'); if(!p.lockfileVersion) process.exit(1); console.log('lockfileVersion', p.lockfileVersion)"
+      - name: Upload lockfile
+        uses: actions/upload-artifact@v4
+        with:
+          name: node24-package-lock
+          path: package-lock.json
+          retention-days: 30
