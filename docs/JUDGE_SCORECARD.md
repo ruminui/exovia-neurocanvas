@@ -18,9 +18,11 @@ Official rules: `https://openai.devpost.com/rules`
 ### What to inspect
 
 - a real MCP server using the official MCP client in the judge check;
-- seven read-only, idempotent ChatGPT tools;
+- eight read-only, idempotent ChatGPT tools;
 - deterministic evidence, privacy, context and control analysis;
-- Context Capsule, EXO capability pack, NeuroCanvas map and Proof Pack generation;
+- Context Capsule, EXO capability pack, NeuroCanvas map, Assurance Council and Proof Pack generation;
+- twelve Council role lenses with visible blocking dissent;
+- eleven ExiaL handoff pulses and eleven canonical EXIR events;
 - exact source and chunk IDs, redaction records and SHA-256 integrity;
 - local browser product, IndexedDB persistence and Android packaging;
 - automated unit, static, browser, MCP, artifact, container and Android checks.
@@ -44,15 +46,16 @@ Then inspect `chatgpt-app/judge-output/`.
 5. Navigate from the answer back to evidence.
 6. Open **Knowledge health** and **Agent replay**.
 7. Import the generated `.exo` package and inspect sources, procedures, constraints and safety rules as a graph.
-8. Export a portable project.
+8. Import the Assurance Council NeuroCanvas map and inspect a blocking role and a role-to-role handoff.
+9. Export a portable project.
 
-The product includes a black-and-gold visual system, responsive mobile layout, simple mode, contextual help, empty-state guidance and local recovery.
+The product includes a black-and-gold visual system, responsive mobile layout, simple mode, contextual help, empty-state guidance and local recovery. The ChatGPT widget shows both an aggregate score and the specialist dissent that the score cannot erase.
 
 ## 3. Potential impact
 
 ### Problem addressed
 
-AI work is often split across chats, documents, agents and tools. Later, people cannot reliably recover the evidence, uncertainty, approvals or activity that produced a decision.
+AI work is often split across chats, documents, agents and tools. Later, people cannot reliably recover the evidence, uncertainty, approvals or activity that produced a decision. Existing confidence scores may also conceal a critical minority finding in security, privacy or accountability.
 
 ### Specific audiences
 
@@ -60,15 +63,16 @@ AI work is often split across chats, documents, agents and tools. Later, people 
 - researchers connecting conclusions to sources;
 - teams moving work between multiple AI systems;
 - developers and operators reviewing agent activity;
-- students and knowledge workers managing complex notes.
+- students and knowledge workers managing complex notes;
+- organizations that need visible dissent before an AI-supported decision.
 
 ### Demonstrated outcome
 
-Exovia preserves the answer, exact evidence, privacy findings, unknowns, actor activity, approval rules and integrity proof in a reusable human-controlled workspace.
+Exovia preserves the answer, exact evidence, privacy findings, unknowns, actor activity, specialist dissent, approval rules and integrity proof in a reusable human-controlled workspace.
 
 ## 4. Quality and originality of the idea
 
-The differentiator is the combined workflow rather than a generic graph or chat interface:
+The differentiator is the combined workflow rather than a generic graph, multi-agent vote or chat interface:
 
 ```text
 AI conversation or source material
@@ -77,6 +81,9 @@ ProofLayer reliability analysis
               ↓
 portable Context Capsule or EXO package
               ↓
+Exovia Assurance Council
+12 lenses + visible dissent + ExiaL/EXIR handoffs
+              ↓
 NeuroCanvas visual evidence workspace
               ↓
 ExiaL replay + constrained Exil preview
@@ -84,21 +91,25 @@ ExiaL replay + constrained Exil preview
 human approval + SHA-256 Proof Pack
 ```
 
+The Council does not pretend to be twelve independent models. It turns the prior Exovia agent-network architecture into a deterministic, inspectable governance system where Security, Privacy or Human Authority can block a result even when the average score is high.
+
 The originality boundary and comparison with adjacent products are documented in `docs/ORIGINALITY_AND_DIFFERENTIATION.md`. No source code, prompts, assets or documentation from the adjacent projects reviewed there are included.
 
 ## Recommended judge path — under five minutes
 
 1. Run `npm run judge`.
 2. Confirm the PASS marker.
-3. Open `trust-scan.json`, the generated `.exo`, `comparison.json` and `proof-pack.json`.
-4. Run `npm install && npm start` or install the verified APK.
-5. Import the generated `.exo` file.
-6. Select one source, one constraint and one prohibited action.
-7. Close by exporting the project.
+3. Open `trust-scan.json`, the generated `.exo`, `comparison.json`, `assurance-council.json` and `proof-pack.json`.
+4. Confirm the unsafe scenario remains `blocked`, with visible Security and Privacy dissent.
+5. Run `npm install && npm start` or install the verified APK.
+6. Import the generated `.exo` and Assurance Council map.
+7. Select one source, one blocking role and one ExiaL handoff.
+8. Close by exporting the project.
 
 ## Honest boundaries
 
-- analysis, extraction, ranking and context-reduction figures are heuristics;
+- analysis, extraction, ranking, role review and context-reduction figures are heuristics;
+- the Assurance Council is not independent model consensus;
 - current factual claims still require authoritative sources;
 - imported instructions are untrusted data, not executable authority;
 - source rights are not verified automatically by the compiler;
