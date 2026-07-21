@@ -5,6 +5,8 @@
 ## Official links
 
 - **Official website:** https://exovia.wixsite.com/exovia-neurocanvas-1
+- **Public build conversation:** https://chatgpt.com/share/6a5cddb2-6080-83e9-82b7-b4b5940dc1a8
+- **Build journey and provenance:** [`docs/BUILD_JOURNEY_AND_PROVENANCE.md`](docs/BUILD_JOURNEY_AND_PROVENANCE.md)
 - **Android test APK:** https://github.com/ruminui/exovia-neurocanvas/releases/download/android-latest/Exovia-NeuroCanvas-Android.apk
 - **Source repository:** https://github.com/ruminui/exovia-neurocanvas
 
@@ -132,6 +134,8 @@ Architecture and examples:
 
 The official submission materials are tracked in [`docs/BUILD_WEEK_COMPLIANCE.md`](docs/BUILD_WEEK_COMPLIANCE.md).
 
+The full human-AI creation path, public conversation and implementation chronology are summarized in [`docs/BUILD_JOURNEY_AND_PROVENANCE.md`](docs/BUILD_JOURNEY_AND_PROVENANCE.md).
+
 Required items include:
 
 - clear project description;
@@ -153,4 +157,4 @@ Required items include:
 
 ## Honest status
 
-The local visual product, mobile interface, official website and governed Live Room vertical slice are implemented. Android packaging and automated deployment are configured. Features described as roadmap remain explicitly labeled as such. Final submission still depends on the authentic Codex `/feedback` Session ID and the owner-controlled Devpost fields being completed and submitted before the deadline.
+The local visual product, mobile interface, official website and governed Live Room vertical slice are implemented. Android packaging and automated deployment are configured. Features described as roadmap remain explicitly labeled as such. Final competition fields controlled by the owner should still be reviewed for accuracy, public accessibility and consistency before the editing deadline.
