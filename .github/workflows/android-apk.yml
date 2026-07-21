@@ -107,18 +107,20 @@ jobs:
             test -s dist/index.html
           } 2>&1 | tee -a android-build.log
 
-      - name: Generate and sync Android project
+      - name: Generate sync and brand Android project
         id: capacitor
         shell: bash
         run: |
           set -euo pipefail
           {
-            echo '=== generate/sync Capacitor Android project ==='
+            echo '=== generate/sync/brand Capacitor Android project ==='
             if [[ ! -d android ]]; then
               npx cap add android
             fi
             npx cap sync android
+            npm run android:brand
             test -f android/gradlew
+            test -f android/app/src/main/res/drawable/ic_exovia_foreground.xml
             chmod +x android/gradlew
           } 2>&1 | tee -a android-build.log
 
@@ -181,16 +183,16 @@ jobs:
                 --clobber
               gh release edit android-latest \
                 --prerelease \
-                --title 'Exovia NeuroCanvas Android - latest test build' \
-                --notes "Installable Android test APK built automatically from commit $BUILD_COMMIT. Includes SHA-256 verification file."
+                --title 'Exovia NeuroCanvas Android - AI Reliability Workspace' \
+                --notes "Professional AI Reliability Workspace built from commit $BUILD_COMMIT. Includes Trust Scan, Context Capsule, Safe Router, Proof Pack and SHA-256 verification."
             else
               gh release create android-latest \
                 Exovia-NeuroCanvas-Android.apk \
                 Exovia-NeuroCanvas-Android.apk.sha256 \
                 --target "$BUILD_COMMIT" \
                 --prerelease \
-                --title 'Exovia NeuroCanvas Android - latest test build' \
-                --notes "Installable Android test APK built automatically from commit $BUILD_COMMIT. Includes SHA-256 verification file."
+                --title 'Exovia NeuroCanvas Android - AI Reliability Workspace' \
+                --notes "Professional AI Reliability Workspace built from commit $BUILD_COMMIT. Includes Trust Scan, Context Capsule, Safe Router, Proof Pack and SHA-256 verification."
             fi
 
             rm -rf release-verification
