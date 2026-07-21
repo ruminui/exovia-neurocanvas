@@ -19,21 +19,22 @@ This command:
 3. installs the ChatGPT App dependencies;
 4. starts the MCP server on a temporary local port;
 5. connects with the official MCP client;
-6. discovers all seven tools;
-7. executes the deterministic reliability scenario;
-8. audits every generated artifact for privacy, provenance, human control and integrity.
+6. discovers all eight tools;
+7. executes the deterministic reliability and Assurance Council scenario;
+8. audits every generated artifact for privacy, provenance, visible dissent, human control and integrity.
 
 Expected final markers:
 
 ```text
 EXOVIA JUDGE PREFLIGHT: PASS
 EXOVIA HACKATHON JUDGE CHECK: PASS
-Judge artifact audit passed: 9+ files, ...
+Judge artifact audit passed: 11+ files, ...
 ```
 
 Generated files are written to `chatgpt-app/judge-output/`.
 
 - Detailed ChatGPT App guide: [`chatgpt-app/JUDGE_QUICKSTART.md`](chatgpt-app/JUDGE_QUICKSTART.md)
+- Assurance Council architecture: [`docs/EXOVIA_ASSURANCE_COUNCIL.md`](docs/EXOVIA_ASSURANCE_COUNCIL.md)
 - Acceptance criteria: [`docs/HACKATHON_JUDGE_EVIDENCE.md`](docs/HACKATHON_JUDGE_EVIDENCE.md)
 - Judging-criteria map: [`docs/JUDGE_SCORECARD.md`](docs/JUDGE_SCORECARD.md)
 
@@ -57,8 +58,9 @@ Recommended sequence:
 5. Select **Navigate to answer**.
 6. Open **Knowledge health** and **Agent replay**.
 7. Run Path A, then import the generated `.exo` file from `chatgpt-app/judge-output/`.
-8. Inspect one source, one constraint and one prohibited action.
-9. Export the workspace.
+8. Import the generated Assurance Council NeuroCanvas map and inspect one blocking role and one ExiaL handoff.
+9. Inspect one source, one constraint and one prohibited action.
+10. Export the workspace.
 
 First-time user guide: [`USER_START_HERE.md`](USER_START_HERE.md)
 
@@ -95,7 +97,7 @@ Health: http://localhost:8787/health
 MCP:    http://localhost:8787/mcp
 ```
 
-The status page lists the seven tools and their safety boundaries.
+The status page lists the eight tools and their safety boundaries.
 
 ## What to inspect after Path A
 
@@ -103,7 +105,9 @@ The status page lists the seven tools and their safety boundaries.
 - `context-capsule.md` — portable evidence, uncertainty and approval rules;
 - generated `.exo` — source/chunk IDs, procedures, constraints, untrusted-source policy and SHA-256;
 - `comparison.json` — **Controlled pilot** must rank above **Fast launch**;
-- NeuroCanvas JSON — importable visual AI-to-human handoff;
+- `assurance-council.json` — twelve roles, blocked unsafe verdict, visible dissent, prioritized actions, ExiaL pulses, EXIR events and SHA-256;
+- Assurance Council NeuroCanvas JSON — visual map of roles and handoffs;
+- general NeuroCanvas JSON — importable visual AI-to-human handoff;
 - `proof-pack.json` — evidence manifest, governance and integrity fingerprint.
 
 ## Real ChatGPT Developer Mode
@@ -136,7 +140,7 @@ Open the repository release named `android-latest`, download the APK asset and c
 ## Implemented and testable
 
 - local visual evidence workspace and Android package;
-- seven deterministic read-only MCP tools;
+- eight deterministic read-only MCP tools;
 - evidence/privacy/context/control analysis;
 - sensitive-value replacement in exported artifacts;
 - portable Context Capsule;
@@ -144,11 +148,14 @@ Open the repository release named `android-latest`, download the APK asset and c
 - EXO import into the human NeuroCanvas graph;
 - evidence-bounded answer comparison;
 - provider-neutral route recommendation;
-- AI-to-human NeuroCanvas map handoff;
-- EXO and Proof Pack SHA-256 fingerprints;
+- twelve-lens Assurance Council with visible dissent;
+- eleven ExiaL handoff pulses and eleven canonical EXIR events;
+- Assurance Council NeuroCanvas map handoff;
+- general AI-to-human NeuroCanvas map handoff;
+- EXO, Council and Proof Pack SHA-256 fingerprints;
 - local, Docker and Codespaces paths;
 - automated unit, static, browser, MCP, artifact, container and Android validation.
 
 ## Honest boundaries
 
-Analysis, extraction, ranking and context-reduction figures are heuristics. Imported source instructions are untrusted data, not executable authority. Current claims still require authoritative sources, source rights are not verified automatically and consequential actions require human approval. Production authentication, unrestricted Exil execution, a live distributed FAPI mesh, production multiuser synchronization and always-on MCP hosting are not claimed unless separately deployed and demonstrated.
+Analysis, extraction, ranking, role review and context-reduction figures are heuristics. The Assurance Council is a deterministic set of twelve review lenses, not twelve independent models or autonomous consensus. Imported source instructions are untrusted data, not executable authority. Current claims still require authoritative sources, source rights are not verified automatically and consequential actions require human approval. Production authentication, unrestricted Exil execution, a live distributed FAPI mesh, production multiuser synchronization and always-on MCP hosting are not claimed unless separately deployed and demonstrated.
