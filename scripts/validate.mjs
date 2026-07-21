@@ -48,8 +48,9 @@ for (const file of runtimeFiles) {
 if (!html.includes('src/live-room.css')) throw new Error('Living Evidence Room styles are not wired.');
 
 const markers = [
-  [core, 'normalizeMap', 'map normalization'],
-  [product, 'saveCurrentProject', 'project persistence'],
+  [core, 'function buildMap(', 'map construction'],
+  [product, 'function normalizeMap(', 'map normalization'],
+  [product, 'async function saveCurrent(', 'project persistence'],
   [intelligence, 'function answer(', 'answer engine'],
   [intelligence, 'function health(', 'knowledge health'],
   [intelligence, 'function replay(', 'agent replay'],
