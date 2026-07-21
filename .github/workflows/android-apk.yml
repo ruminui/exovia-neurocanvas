@@ -203,6 +203,50 @@ jobs:
             echo 'Release assets downloaded and verified successfully.'
           } 2>&1 | tee -a android-build.log
 
+      - name: Record verified Android release metadata
+        id: metadata
+        if: success() && github.ref == 'refs/heads/main'
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK_SHA="$(awk '{print $1}' Exovia-NeuroCanvas-Android.apk.sha256)"
+          APK_SIZE="$(stat -c '%s' Exovia-NeuroCanvas-Android.apk)"
+          RELEASE_COMMIT="$(git rev-list -n 1 android-latest)"
+          VERIFIED_AT="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          ASSET_URL="https://github.com/${GITHUB_REPOSITORY}/releases/download/android-latest/Exovia-NeuroCanvas-Android.apk"
+          CHECKSUM_URL="https://github.com/${GITHUB_REPOSITORY}/releases/download/android-latest/Exovia-NeuroCanvas-Android.apk.sha256"
+
+          git fetch origin main
+          git rebase origin/main
+          mkdir -p release-metadata
+          cp Exovia-NeuroCanvas-Android.apk.sha256 release-metadata/Exovia-NeuroCanvas-Android.apk.sha256
+          cat > release-metadata/android-latest.json <<EOF
+          {
+            "tag": "android-latest",
+            "asset": "Exovia-NeuroCanvas-Android.apk",
+            "assetUrl": "$ASSET_URL",
+            "checksumUrl": "$CHECKSUM_URL",
+            "sha256": "$APK_SHA",
+            "sizeBytes": $APK_SIZE,
+            "sourceCommit": "$GITHUB_SHA",
+            "releaseCommit": "$RELEASE_COMMIT",
+            "workflowRun": "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID",
+            "verified": true,
+            "verification": "The published release assets were downloaded again, byte-compared and checked with SHA-256.",
+            "verifiedAt": "$VERIFIED_AT"
+          }
+          EOF
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add release-metadata/android-latest.json release-metadata/Exovia-NeuroCanvas-Android.apk.sha256
+          if git diff --cached --quiet; then
+            echo 'Verified release metadata is already current.'
+          else
+            git commit -m 'release: record verified Android APK [skip ci]'
+            git push origin HEAD:main
+          fi
+
       - name: Close previous automatic failure report
         if: success()
         env:
@@ -237,6 +281,7 @@ jobs:
             echo "- APK preparation: ${{ steps.prepare.outcome }}"
             echo "- Artifact upload: ${{ steps.artifact.outcome }}"
             echo "- Release publication: ${{ steps.release.outcome }}"
+            echo "- Release metadata: ${{ steps.metadata.outcome }}"
             echo
             echo '### Last diagnostic lines'
             echo '```text'
