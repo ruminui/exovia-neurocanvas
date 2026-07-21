@@ -72,7 +72,7 @@ const securityMarkers=[
 for(const [name,present] of securityMarkers)present?pass(`security invariant: ${name}`):fail(`missing security invariant: ${name}`);
 
 const uxMarkers=[
- ['problem visible',/answers you can prove/i.test(html)],['exact evidence visible',/exact evidence/i.test(html)],
+ ['problem visible',/answers you can prove/i.test(html)],['exact evidence visible',/(?:exact|original) (?:evidence|information)/i.test(html)],
  ['video problem statement',/Teams now work with documents/i.test(videoScript)],['large touch targets',simpleStyles.includes('min-height:48px')],
  ['purpose-first onboarding',simpleMode.includes('Choose what you want to organize')],['family template',useCases.includes("id: 'family'")],
  ['no-wrong-choice reassurance',useCases.includes('There is no wrong choice')],['save indicator style',safetyStyles.includes('.safeSaveStatus')],

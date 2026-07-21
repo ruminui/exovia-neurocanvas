@@ -1,76 +1,151 @@
-# Exovia NeuroCanvas — User Start Here / Guía inicial
+# Exovia NeuroCanvas — Start Here / Empezá acá
 
-A practical first-run guide for people who have never used the project. No OpenAI API key, account or database is required for the local product.
+NeuroCanvas helps you check an AI answer, keep the original information and save a clear record another person can review.
+
+You do not need an OpenAI API key, account or database for the local product.
 
 ---
 
 ## English
 
-### Choose the easiest path
+### Understand it in 60 seconds
 
-**Android — no development setup**
+Open NeuroCanvas and select:
 
-1. Download the current verified test APK:
+```text
+Try a 60-second example
+```
+
+The app loads a safe demonstration containing intentional problems:
+
+- a claim with no source;
+- private information;
+- a demonstration credential;
+- a hidden instruction;
+- a decision that still needs human review.
+
+The AI check opens automatically and explains the risks. The demonstration values are not real.
+
+### Use your own information
+
+The complete workflow is:
+
+```text
+1. Add
+2. Check
+3. Save
+```
+
+1. Select **Use my own information** or **Add information**.
+2. Name the project and paste the complete AI answer, original question, notes, sources or document.
+3. Select **Create project**.
+4. Select **Check AI** to review evidence gaps, private data, credentials and suspicious instructions.
+5. Select **Save context** to create a compact continuation record.
+6. Select **Save / Share** to export a portable project copy.
+
+NeuroCanvas keeps the original text. It organizes and links it so you can return to the exact information later.
+
+### Simple View
+
+First-time users start in **Simple View**.
+
+It shows only the essential actions and uses larger touch targets. Select **More options** to reveal advanced Exovia tools. Select **Simple view** to return to the easier interface.
+
+Your choice is remembered on the device.
+
+### Android
+
+1. Download the verified test APK:
    `https://github.com/ruminui/exovia-neurocanvas/releases/download/android-latest/Exovia-NeuroCanvas-Android.apk`
-2. Android may ask permission to install an app from your browser or file manager.
-3. Open **Exovia NeuroCanvas** and select **New workspace**.
+2. Android may request permission to install from your browser or file manager.
+3. Open **Exovia NeuroCanvas**.
+4. Use the bottom navigation:
+   - **Home** — explanation and starting actions;
+   - **Canvas** — visual map;
+   - **Verify** — AI check;
+   - **Context** — reusable context;
+   - **More** — project, evidence, help and advanced actions.
 
-The matching SHA-256 and verification record are stored in `release-metadata/android-latest.json` and published beside the APK.
+### Windows, macOS or Linux
 
-**Windows, macOS or Linux — local web app**
-
-Requirements: Node.js 24 LTS or newer.
+Requirement: Node.js 24 LTS or newer.
 
 ```bash
 npm install
 npm start
 ```
 
-The launcher opens `http://127.0.0.1:8080`. Keep the terminal open while using the application.
-
-### Five-minute first run
-
-1. Select **New workspace**.
-2. Drag the canvas and zoom with the mouse wheel or touch gesture.
-3. Select a node to inspect its exact source.
-4. Open **Answer & Audit**.
-5. Ask: `How does NeuroCanvas keep AI answers connected to evidence?`
-6. Select **Navigate to answer** and follow a citation back to its node.
-7. Open **Knowledge health** and **Agent replay**.
-8. Select **Export** to save a portable JSON copy.
-
-### Import your own material
-
-**Open file** accepts text, Markdown, JSON, `.exo`, ExiaL and log files. **Import text** lets you paste content directly.
-
-Treat imported material as untrusted until you review it. Do not use passwords, API keys, confidential client files or personal information in a public demo.
+Open `http://127.0.0.1:8080` if the browser does not open automatically. Keep the terminal running while you use the application.
 
 ### What is saved
 
-Projects and recovery snapshots are stored locally in the browser. Export a JSON copy before clearing browser data or changing devices.
+Projects save locally in the browser or device. Export a copy before clearing browser data, uninstalling the app or changing devices.
 
-### Need more help?
-
-- Spanish manual: [`docs/MANUAL_USUARIO.md`](docs/MANUAL_USUARIO.md)
-- Judge and technical verification: [`JUDGE_START_HERE.md`](JUDGE_START_HERE.md)
-- EXO package format: [`docs/EXO_CAPABILITY_PACK.md`](docs/EXO_CAPABILITY_PACK.md)
+The local AI check is a review aid. It does not replace official sources, current professional advice or accountable human judgment.
 
 ---
 
 ## Español
 
-### Elegí el camino más fácil
+### Entendelo en 60 segundos
 
-**Android — sin preparar un entorno de desarrollo**
+Abrí NeuroCanvas y pulsá:
+
+```text
+Probar un ejemplo de 60 segundos
+```
+
+La aplicación carga una demostración segura con problemas intencionales:
+
+- una afirmación sin fuente;
+- información privada;
+- una credencial de demostración;
+- una instrucción escondida;
+- una decisión que todavía requiere revisión humana.
+
+La revisión de IA se abre automáticamente y explica los riesgos. Los datos del ejemplo no son reales.
+
+### Usar tu propia información
+
+El recorrido completo es:
+
+```text
+1. Agregá
+2. Revisá
+3. Guardá
+```
+
+1. Pulsá **Usar mi propia información** o **Agregar información**.
+2. Poné un nombre al proyecto y pegá la respuesta completa de la IA, la pregunta original, notas, fuentes o documento.
+3. Pulsá **Crear proyecto**.
+4. Pulsá **Revisar IA** para buscar falta de evidencia, datos privados, credenciales e instrucciones sospechosas.
+5. Pulsá **Guardar contexto** para crear un registro compacto de continuación.
+6. Pulsá **Guardar / compartir** para exportar una copia portátil del proyecto.
+
+NeuroCanvas conserva el texto original. Lo organiza y conecta para que después puedas volver a la información exacta.
+
+### Vista simple
+
+La primera vez, la aplicación abre en **Vista simple**.
+
+Muestra solamente las acciones esenciales y usa botones táctiles más grandes. Pulsá **Más opciones** para ver las herramientas avanzadas de Exovia. Pulsá **Vista simple** para volver a la interfaz fácil.
+
+La elección queda guardada en el dispositivo.
+
+### Android
 
 1. Descargá el APK de prueba verificado:
    `https://github.com/ruminui/exovia-neurocanvas/releases/download/android-latest/Exovia-NeuroCanvas-Android.apk`
-2. Android puede pedir permiso para instalar una aplicación desde el navegador o el administrador de archivos.
-3. Abrí **Exovia NeuroCanvas** y pulsá **New workspace**.
+2. Android puede pedir permiso para instalar desde el navegador o el administrador de archivos.
+3. Abrí **Exovia NeuroCanvas**.
+4. Usá la navegación inferior:
+   - **Inicio** — explicación y acciones iniciales;
+   - **Lienzo** — mapa visual;
+   - **Verificar** — revisión de IA;
+   - **Contexto** — contexto reutilizable;
+   - **Más** — proyecto, evidencia, ayuda y opciones avanzadas.
 
-El SHA-256 correspondiente y el registro de verificación están en `release-metadata/android-latest.json` y junto al APK publicado.
-
-**Windows, macOS o Linux — aplicación web local**
+### Windows, macOS o Linux
 
 Requisito: Node.js 24 LTS o superior.
 
@@ -79,31 +154,19 @@ npm install
 npm start
 ```
 
-El iniciador abre `http://127.0.0.1:8080`. Mantené la terminal abierta mientras usás la aplicación.
-
-### Primer recorrido de cinco minutos
-
-1. Pulsá **New workspace**.
-2. Arrastrá el lienzo y acercá o alejá con la rueda del mouse o un gesto táctil.
-3. Pulsá un nodo para inspeccionar su fuente exacta.
-4. Abrí **Answer & Audit**.
-5. Preguntá: `¿Cómo mantiene NeuroCanvas las respuestas de IA conectadas con la evidencia?`
-6. Pulsá **Navigate to answer** y seguí una cita hasta su nodo.
-7. Abrí **Knowledge health** y **Agent replay**.
-8. Pulsá **Export** para guardar una copia JSON transportable.
-
-### Importar material propio
-
-**Open file** admite texto, Markdown, JSON, `.exo`, ExiaL y archivos de registro. **Import text** permite pegar contenido directamente.
-
-Tratamos el material importado como no confiable hasta que una persona lo revise. No uses contraseñas, claves API, documentos confidenciales ni datos personales en una demostración pública.
+Abrí `http://127.0.0.1:8080` si el navegador no se abre automáticamente. Mantené la terminal abierta mientras usás la aplicación.
 
 ### Qué se guarda
 
-Los proyectos y las copias de recuperación se guardan localmente en el navegador. Exportá un JSON antes de borrar los datos del navegador o cambiar de dispositivo.
+Los proyectos se guardan localmente en el navegador o dispositivo. Exportá una copia antes de borrar datos, desinstalar la aplicación o cambiar de dispositivo.
 
-### Más ayuda
+La revisión local de IA es una ayuda. No reemplaza fuentes oficiales, asesoramiento profesional actualizado ni una decisión humana responsable.
 
-- Manual completo: [`docs/MANUAL_USUARIO.md`](docs/MANUAL_USUARIO.md)
-- Verificación para jueces: [`JUDGE_START_HERE.md`](JUDGE_START_HERE.md)
-- Formato de paquetes EXO: [`docs/EXO_CAPABILITY_PACK.md`](docs/EXO_CAPABILITY_PACK.md)
+---
+
+## More help / Más ayuda
+
+- Easy guide / Guía fácil: [`docs/SIMPLE_USE_GUIDE.md`](docs/SIMPLE_USE_GUIDE.md)
+- Complete Spanish manual / Manual completo: [`docs/MANUAL_USUARIO.md`](docs/MANUAL_USUARIO.md)
+- Judge verification / Verificación para jueces: [`JUDGE_START_HERE.md`](JUDGE_START_HERE.md)
+- EXO package format / Formato EXO: [`docs/EXO_CAPABILITY_PACK.md`](docs/EXO_CAPABILITY_PACK.md)

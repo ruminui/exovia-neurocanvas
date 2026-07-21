@@ -1,8 +1,8 @@
 # Exovia NeuroCanvas
 
-**Ask. Verify. Trace. Replay.**
+**Add. Check. Save the proof.**
 
-Exovia NeuroCanvas is a local-first visual workspace that keeps AI answers, evidence, uncertainty, activity and human approval connected in one inspectable project.
+Exovia NeuroCanvas is a local-first visual workspace that keeps AI answers, original information, evidence, uncertainty, activity and human approval connected in one inspectable project.
 
 ## Start in the right place
 
@@ -54,17 +54,34 @@ Windows users may instead download the repository as ZIP, extract it completely 
 
 The release workflow downloads the published assets again, byte-compares them and verifies their SHA-256 before recording the release as verified.
 
-## Three-minute product flow
+## Understand it in 60 seconds
 
-1. Select **New workspace**.
-2. Select a node and inspect its exact source.
-3. Open **Answer & Audit**.
-4. Ask: `How does NeuroCanvas keep AI answers connected to evidence?`
-5. Select **Navigate to answer** and follow a citation back to its node.
-6. Open **Knowledge health** and **Agent replay**.
-7. Import a generated `.exo` package.
-8. Inspect one source, one constraint and one prohibited action.
-9. Export the project.
+1. Select **Try a 60-second example**.
+2. NeuroCanvas loads an intentionally risky AI answer.
+3. **Check AI** opens automatically.
+4. Inspect the unsupported claim, private data, demonstration credential and suspicious instruction.
+5. Select **Save context** to preserve the useful facts, sources, risks and approval rules.
+
+The demonstration data is not real.
+
+## Use your own information
+
+The core journey is deliberately simple:
+
+```text
+1. Add
+2. Check
+3. Save
+```
+
+1. Select **Use my own information** or **Add information**.
+2. Paste the complete AI answer, original question, notes, sources or document.
+3. Select **Create project**.
+4. Select **Check AI** before relying on the result.
+5. Select **Save context** to continue with another AI or person without losing the important information.
+6. Select **Save / Share** to export a portable project copy.
+
+First-time users begin in **Simple View**. Advanced Exovia capabilities remain available behind **More options**.
 
 ## The problem
 
@@ -83,7 +100,7 @@ Teams increasingly work across chats, documents, notes, agents and workflows. La
 
 **Exovia turns scattered information and AI activity into a visual, evidence-linked workspace where answers and decisions can be inspected and replayed.**
 
-The local product lets a user import information, navigate the graph, ask a question, return to exact evidence, inspect knowledge quality, replay activity and export the project. The ChatGPT App adds a deterministic reliability layer that can analyze an AI output, preserve portable context, build an inspectable `.exo` package, compare answers, recommend a safer route, run a twelve-lens Assurance Council with visible dissent, create a NeuroCanvas map and generate a SHA-256 Proof Pack.
+The local product lets a user add information, navigate the graph, check an AI result, return to exact evidence, inspect knowledge quality, replay activity and export the project. The ChatGPT App adds a deterministic reliability layer that can analyze an AI output, preserve portable context, build an inspectable `.exo` package, compare answers, recommend a safer route, run a twelve-lens Assurance Council with visible dissent, create a NeuroCanvas map and generate a SHA-256 Proof Pack.
 
 ## Innovation stack
 
@@ -134,7 +151,7 @@ The server does not persist submitted content, does not call another AI service 
 - text, Markdown, JSON, `.exo`, ExiaL and log import;
 - persistent local workspaces, snapshots and export;
 - neural, tree, pulse and capability views;
-- Answer & Audit with navigation back to evidence;
+- plain-language AI checking with navigation back to evidence;
 - Evidence Inspector, Knowledge Health and Contradiction Radar;
 - Human and Agent Replay;
 - governed Living Evidence Room vertical slice;
@@ -144,7 +161,7 @@ The server does not persist submitted content, does not call another AI service 
 - Proof Packs with SHA-256 integrity fingerprints;
 - responsive mobile/PWA interface and offline application shell;
 - Android packaging through Capacitor;
-- contextual help, simple mode and recovery guidance;
+- three-step first-run flow, contextual help, Simple View and recovery guidance;
 - static, backend, browser, Android, MCP, artifact and container validation.
 
 ## Safety and honest boundaries
@@ -177,5 +194,3 @@ The server does not persist submitted content, does not call another AI service 
 ## OpenAI Build Week readiness
 
 The repository provides a public MIT license, reproducible judge command, verified Android test build, local and Docker execution paths, public provenance, an explicit implemented-versus-roadmap boundary and evidence mapped to the official judging dimensions.
-
-Submission fields controlled by the project owner—category, public YouTube video, description, testing links and authentic Codex `/feedback` Session ID—must remain accurate and publicly accessible throughout judging.

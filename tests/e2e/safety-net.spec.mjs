@@ -1,16 +1,20 @@
 import { test, expect } from '@playwright/test';
 
-test('shows a clear automatic save state', async ({ page }) => {
+async function openEditableDemo(page) {
   await page.goto('/');
+  await page.locator('#simpleModeBtn').click();
   await page.locator('#demoBtn').click();
+}
+
+test('shows a clear automatic save state', async ({ page }) => {
+  await openEditableDemo(page);
   await expect(page.locator('#safeSaveStatus')).toBeVisible();
   await expect.poll(async () => page.locator('#safeSaveStatus').getAttribute('data-state')).toMatch(/saving|saved/);
   await expect.poll(async () => page.locator('#safeSaveStatus strong').textContent(), { timeout: 7000 }).toMatch(/saved|ready/i);
 });
 
 test('undo and redo restore graph changes in the current session', async ({ page }) => {
-  await page.goto('/');
-  await page.locator('#demoBtn').click();
+  await openEditableDemo(page);
   const initialCount = await page.evaluate(() => window.ExoviaRuntime.getMap().nodes.length);
 
   await page.locator('#addNodeBtn').click();
@@ -26,8 +30,7 @@ test('undo and redo restore graph changes in the current session', async ({ page
 });
 
 test('keyboard shortcuts provide undo and redo', async ({ page }) => {
-  await page.goto('/');
-  await page.locator('#demoBtn').click();
+  await openEditableDemo(page);
   const initialCount = await page.evaluate(() => window.ExoviaRuntime.getMap().nodes.length);
   await page.locator('#addNodeBtn').click();
   await expect.poll(async () => page.evaluate(() => window.ExoviaRuntime.getMap().nodes.length)).toBe(initialCount + 1);

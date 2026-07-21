@@ -2,7 +2,8 @@ import { test, expect } from '@playwright/test';
 
 async function openApp(page) {
   await page.goto('/');
-  await page.getByRole('button', { name: /new workspace/i }).click();
+  await page.locator('#simpleModeBtn').click();
+  await page.locator('#demoBtn').click();
   await expect(page.locator('#canvas')).toBeVisible();
 }
 

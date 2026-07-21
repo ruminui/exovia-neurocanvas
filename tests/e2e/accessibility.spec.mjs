@@ -18,13 +18,13 @@ test('core controls are reachable by keyboard with visible focus', async ({ page
   await expect(page.locator('.fileButton')).toBeFocused();
 });
 
-test('import dialog has an accessible name and traps tab focus', async ({ page }) => {
+test('information dialog has an accessible name and traps tab focus', async ({ page }) => {
   await page.goto('/');
   await page.locator('#pasteBtn').click();
   const dialog = page.locator('#pasteDialog');
   await expect(dialog).toBeVisible();
   await expect(dialog).toHaveAttribute('aria-labelledby', 'pasteDialogTitle');
-  await expect(page.locator('#pasteDialogTitle')).toHaveText(/create or import a project/i);
+  await expect(page.locator('#pasteDialogTitle')).toHaveText(/add information/i);
 
   await page.locator('#docTitle').focus();
   await expect(page.locator('#docTitle')).toBeFocused();
@@ -41,11 +41,13 @@ test('canvas and file input expose accessible names', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('#canvas')).toHaveAttribute('tabindex', '0');
   await expect(page.locator('#canvas')).toHaveAttribute('aria-label', /interactive knowledge graph/i);
-  await expect(page.locator('#fileInput')).toHaveAttribute('aria-label', /open a neurocanvas source or project file/i);
+  await expect(page.locator('#fileInput')).toHaveAttribute('aria-label', /open a neurocanvas source.*project file/i);
 });
 
 test('reduced-motion preference disables meaningful transition duration', async ({ browser }) => {
-  const context = await browser.newContext({ reducedMotion: 'reduce' });
+  const context = await browser.newContext({ reducedMotion: 'reduce', storageState: {
+    cookies: [], origins: [{ origin: 'http://127.0.0.1:8080', localStorage: [{ name: 'exovia:simpleMode', value: 'false' }] }]
+  } });
   const page = await context.newPage();
   await page.goto('/');
   const duration = await page.locator('#demoBtn').evaluate(element => getComputedStyle(element).transitionDuration);
