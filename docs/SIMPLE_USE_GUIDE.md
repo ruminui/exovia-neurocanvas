@@ -1,179 +1,182 @@
 # Exovia NeuroCanvas — guía fácil
 
-Esta guía está pensada para personas que no usan herramientas técnicas habitualmente, incluidas personas mayores.
+Esta guía está pensada para personas sin conocimientos técnicos.
 
 ## Qué hace
 
-NeuroCanvas ayuda a ordenar información y volver a encontrarla.
+NeuroCanvas ayuda a revisar información creada por una IA sin perder la respuesta original, sus fuentes, los riesgos detectados ni la decisión humana.
 
-Puede servir para estudiar, organizar recetas, guardar historias familiares, revisar documentos, preparar clases, investigar, ordenar notas de trabajo, comparar ideas, recordar reuniones y conservar decisiones con sus fuentes.
-
-La idea central es sencilla:
+La idea completa entra en tres pasos:
 
 ```text
-Elegís para qué lo necesitás
-→ aparece un mapa simple
-→ reemplazás los ejemplos con tu información
-→ elegís una idea
-→ ves la fuente
-→ hacés una pregunta
-→ guardás el resultado
+1. Agregá información
+2. Revisá antes de confiar
+3. Guardá un registro claro
 ```
 
-## Poner la aplicación en español
+## La forma más rápida de entenderlo
 
-En la parte superior aparece el botón:
+En la pantalla inicial pulsá:
 
 ```text
-Español
+Probar un ejemplo de 60 segundos
 ```
 
-Al pulsarlo, las acciones principales cambian a lenguaje sencillo:
+La aplicación abre una respuesta de IA preparada con problemas intencionales:
 
-- `New workspace` pasa a `Nuevo ejemplo`;
-- `Import text` pasa a `Pegar información`;
-- `Export` pasa a `Exportar copia`;
-- `Workspace` pasa a `Mis proyectos`;
-- `Snapshot` pasa a `Copia de recuperación`;
-- `Undo` y `Redo` pasan a `Deshacer` y `Rehacer`.
+- falta de evidencia;
+- una afirmación demasiado segura;
+- datos privados;
+- una credencial de ejemplo;
+- una instrucción escondida.
 
-La aplicación recuerda el idioma elegido. Para regresar al inglés, pulsar `English`.
+Después abre automáticamente la revisión y explica cada riesgo. Los datos del ejemplo no son reales.
 
-Cambiar el idioma no modifica ni borra el proyecto.
+## Usar tu propia información
 
-## La forma más fácil de comenzar
-
-Pulsar:
+Pulsá:
 
 ```text
-¿Qué querés organizar?
+Usar mi propia información
 ```
 
-Después elegir una opción conocida:
+Luego:
 
-- guardar recuerdos familiares;
-- estudiar o preparar una clase;
-- organizar un proyecto de trabajo;
-- comparar opciones;
-- organizar recetas o un hobby;
-- investigar un tema;
-- recordar una reunión;
-- comenzar con información propia.
+1. poné un nombre al proyecto;
+2. pegá la respuesta completa, la pregunta original, notas, fuentes o un documento;
+3. pulsá `Crear proyecto`.
 
-No existe una elección incorrecta. La aplicación crea solamente un mapa inicial que después puede cambiarse por completo.
+NeuroCanvas no modifica el texto original. Lo organiza para que puedas volver a cada fragmento.
 
-## Vista simple
+## Los tres botones principales
 
-En español aparece:
+### Agregar información
+
+Sirve para pegar una respuesta de IA, conversación, nota o documento.
+
+### Revisar IA
+
+Busca localmente:
+
+- afirmaciones sin prueba;
+- fuentes faltantes;
+- contradicciones;
+- datos personales;
+- credenciales;
+- instrucciones que podrían manipular una IA;
+- falta de aprobación humana.
+
+El resultado es una ayuda para revisar. No reemplaza fuentes oficiales ni especialistas.
+
+### Guardar contexto
+
+Crea un resumen reutilizable con:
+
+- objetivo;
+- hechos importantes;
+- decisiones tomadas;
+- riesgos y dudas;
+- referencias a la información original;
+- reglas para que la próxima IA no invente datos.
+
+## Vista simple y opciones avanzadas
+
+La primera vez, la aplicación abre automáticamente en `Vista simple`.
+
+En esta vista:
+
+- el texto y los botones son más grandes;
+- quedan visibles solamente las acciones principales;
+- la aplicación guarda automáticamente;
+- las herramientas técnicas no molestan.
+
+Para ver FAPI, ExiaL, Exil y otras funciones avanzadas, pulsá:
+
+```text
+Más opciones
+```
+
+Para volver al recorrido sencillo, pulsá:
 
 ```text
 Vista simple
 ```
 
-Al activarla:
+La preferencia queda guardada en este dispositivo.
 
-- el texto se hace más grande;
-- los botones tienen más tamaño;
-- se ocultan opciones avanzadas;
-- quedan visibles las tareas principales;
-- la aplicación recuerda esta preferencia.
+## Guía dentro de la aplicación
 
-Para volver a ver todas las opciones, pulsar `Vista completa`.
-
-## Ayuda paso a paso
-
-Pulsar:
+Pulsá:
 
 ```text
-Guiame
+Cómo funciona
 ```
 
-La guía muestra cuatro pasos:
+La guía resalta el botón correcto en cada paso:
 
-1. elegir qué se quiere organizar;
-2. reemplazar los ejemplos con información propia;
-3. hacer una pregunta normal;
-4. guardar el trabajo de forma segura.
+1. `Agregar información`;
+2. `Revisar IA`;
+3. `Guardar contexto`.
 
-Cada paso resalta el botón o zona correspondiente.
+En cualquier paso podés pulsar el botón grande de la guía para realizar esa acción directamente.
 
-## Primer uso recomendado
+## Elegir un objetivo
 
-1. Pulsar `Español`.
-2. Pulsar `Vista simple`.
-3. Pulsar `Guiame`.
-4. Elegir `¿Qué querés organizar?`.
-5. Seleccionar el ejemplo más cercano a la necesidad real.
-6. Pulsar un círculo del mapa.
-7. Leer el panel `Fuente y evidencia`.
-8. Abrir `Answer & Audit`.
-9. Escribir una pregunta común.
-10. Guardar con `Guardar`.
-11. Crear otra copia con `Exportar copia`.
+El botón `Elegir objetivo` ofrece puntos de partida para:
 
-## Guardado y recuperación
+- verificar una respuesta de IA;
+- conservar contexto para otra IA;
+- comparar respuestas;
+- controlar un agente;
+- investigar;
+- tomar una decisión;
+- organizar trabajo;
+- estudiar;
+- guardar recuerdos familiares;
+- empezar con información propia.
 
-La aplicación muestra uno de estos estados:
+No hay una opción incorrecta. Todos los puntos de partida son editables y reversibles.
 
-```text
-Guardando automáticamente…
-Todos los cambios están guardados
-```
+## Guardar y compartir
 
-También existen:
+NeuroCanvas guarda automáticamente en el navegador o dispositivo.
 
-- `Deshacer`: vuelve al estado anterior;
-- `Rehacer`: recupera el cambio deshecho;
-- `Guardar`: conserva el proyecto en este navegador;
-- `Copia de recuperación`: crea un punto para restaurar;
-- `Exportar copia`: descarga un archivo portátil.
+El botón `Guardar / compartir` descarga una copia portátil del proyecto. Usalo antes de:
 
-Mientras aparece `Guardando automáticamente…`, conviene mantener la pestaña abierta unos segundos.
+- desinstalar la aplicación;
+- borrar datos del navegador;
+- cambiar de dispositivo;
+- reemplazar un proyecto importante.
 
-## Ejemplos útiles
+Desde el Centro de Confiabilidad también se puede generar un `Paquete de prueba`, que agrega evidencia, riesgos, actividad, aprobación humana y una huella SHA-256.
 
-### Recetas
+## Qué significan los nombres avanzados
 
-Elegir `Organizar recetas o un hobby`. Reemplazar los ejemplos por ingredientes, pasos y consejos. Después preguntar:
+No necesitás entenderlos para usar el recorrido principal.
 
-```text
-¿Qué recetas usan papa?
-```
-
-### Historia familiar
-
-Elegir `Guardar recuerdos familiares`. Guardar fechas, nombres, lugares, documentos y anécdotas.
-
-### Trabajo
-
-Elegir `Organizar un proyecto de trabajo`. Usar los apartados Objetivo, Personas, Tareas, Decisiones, Riesgos y Evidencia.
-
-### Estudio
-
-Elegir `Estudiar o preparar una clase`. Separar ideas principales, definiciones, ejemplos, preguntas y fuentes.
-
-### Comparar una compra o decisión
-
-Elegir `Comparar opciones`. Registrar ventajas, desventajas, evidencia y decisión final.
-
-### Reuniones
-
-Elegir `Recordar una reunión`. Guardar participantes, temas, decisiones, tareas y preguntas pendientes.
-
-### Salud personal
-
-Puede organizar información general o preguntas para llevar al médico, pero no reemplaza asesoramiento médico profesional.
+- **Cápsula de contexto:** resumen para continuar con otra IA o persona.
+- **Paquete de prueba:** archivo para revisar cómo se llegó a un resultado.
+- **NeuroCanvas:** mapa visual de información y evidencia.
+- **ExiaL:** registro compacto de actividad entre agentes.
+- **EXIR:** validación de mensajes y eventos.
+- **Exil:** vista previa de una intención antes de aplicarla.
+- **FAPI:** forma de elegir capacidades y rutas de IA con controles.
+- **Consejo de Confiabilidad:** revisión de una decisión desde varias perspectivas sin ocultar desacuerdos.
 
 ## Seguridad
 
-- La información local no se publica automáticamente.
-- Ninguna plantilla modifica archivos originales.
-- Cambiar el idioma no modifica el contenido.
-- Guardar con frecuencia.
-- Usar `Exportar copia` para crear una segunda copia.
-- No incluir contraseñas ni claves privadas.
-- No borrar datos del navegador sin exportar antes.
+- La información no se publica automáticamente.
+- El análisis local no envía el proyecto a otro proveedor de IA.
+- No pegues contraseñas ni claves reales.
+- Una advertencia no significa automáticamente que el contenido sea falso; significa que necesita revisión.
+- Las decisiones importantes siguen necesitando una persona responsable.
+- Exportá una copia antes de borrar o reemplazar información.
 
 ## Cuando algo no se entiende
 
-Pulsar `What problem does this solve?`, `Guiame` o `¿Qué querés organizar?` en cualquier momento.
+Volvé a la pantalla inicial tocando el logo de Exovia y elegí una de estas dos opciones:
+
+```text
+Probar un ejemplo de 60 segundos
+Usar mi propia información
+```
