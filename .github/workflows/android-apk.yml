@@ -35,8 +35,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Initialize diagnostic log
-        shell: bash
+      - name: Initialize diagnostics
         run: |
           : > android-build.log
           echo "Android build started for ${GITHUB_SHA}" | tee -a android-build.log
@@ -55,57 +54,34 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Install dependencies and repair lockfile
+      - name: Install locked dependencies
         id: install
         shell: bash
         run: |
           set -euo pipefail
-          {
-            echo '=== npm install ==='
-            npm install --no-audit --no-fund
-            npm ls --depth=0
-          } 2>&1 | tee -a android-build.log
+          { npm ci --no-audit --no-fund; npm ls --depth=0; } 2>&1 | tee -a android-build.log
 
-      - name: Persist synchronized lockfile
+      - name: Verify synchronized lockfile
         id: lockfile
         shell: bash
         run: |
           set -euo pipefail
-          {
-            if git diff --quiet -- package-lock.json; then
-              echo 'package-lock.json already synchronized.'
-            else
-              git config user.name 'github-actions[bot]'
-              git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-              git add package-lock.json
-              git commit -m 'build: synchronize npm lockfile [skip ci]'
-              git push origin HEAD:main
-              echo 'Synchronized package-lock.json was committed to main.'
-            fi
-          } 2>&1 | tee -a android-build.log
+          git diff --exit-code -- package-lock.json | tee -a android-build.log
+          echo 'package-lock.json is synchronized and was not modified.' | tee -a android-build.log
 
       - name: Verify web application
         id: verify
         shell: bash
         run: |
           set -euo pipefail
-          {
-            echo '=== validate web application ==='
-            npm run validate
-            npm run verify:static
-            npm test
-          } 2>&1 | tee -a android-build.log
+          { npm run validate; npm run verify:static; npm test; } 2>&1 | tee -a android-build.log
 
       - name: Build Android web assets
         id: web_assets
         shell: bash
         run: |
           set -euo pipefail
-          {
-            echo '=== build Android web assets ==='
-            npm run build:android:web
-            test -s dist/index.html
-          } 2>&1 | tee -a android-build.log
+          { npm run build:android:web; test -s dist/index.html; } 2>&1 | tee -a android-build.log
 
       - name: Generate sync and brand Android project
         id: capacitor
@@ -113,10 +89,7 @@ jobs:
         run: |
           set -euo pipefail
           {
-            echo '=== generate/sync/brand Capacitor Android project ==='
-            if [[ ! -d android ]]; then
-              npx cap add android
-            fi
+            if [[ ! -d android ]]; then npx cap add android; fi
             npx cap sync android
             npm run android:brand
             test -f android/gradlew
@@ -124,16 +97,12 @@ jobs:
             chmod +x android/gradlew
           } 2>&1 | tee -a android-build.log
 
-      - name: Build installable debug APK
+      - name: Build installable APK
         id: gradle
         shell: bash
         run: |
           set -euo pipefail
-          {
-            echo '=== Gradle assembleDebug ==='
-            cd android
-            ./gradlew assembleDebug --no-daemon --stacktrace
-          } 2>&1 | tee -a android-build.log
+          { cd android; ./gradlew assembleDebug --no-daemon --stacktrace; } 2>&1 | tee -a android-build.log
 
       - name: Verify and prepare APK
         id: prepare
@@ -141,14 +110,14 @@ jobs:
         run: |
           set -euo pipefail
           {
-            APK_SOURCE='android/app/build/outputs/apk/debug/app-debug.apk'
-            APK_TARGET='Exovia-NeuroCanvas-Android.apk'
-            test -s "$APK_SOURCE"
-            cp "$APK_SOURCE" "$APK_TARGET"
-            unzip -t "$APK_TARGET"
-            sha256sum "$APK_TARGET" > "$APK_TARGET.sha256"
-            cat "$APK_TARGET.sha256"
-            ls -lh "$APK_TARGET" "$APK_TARGET.sha256"
+            source='android/app/build/outputs/apk/debug/app-debug.apk'
+            target='Exovia-NeuroCanvas-Android.apk'
+            test -s "$source"
+            cp "$source" "$target"
+            unzip -t "$target"
+            sha256sum "$target" > "$target.sha256"
+            cat "$target.sha256"
+            ls -lh "$target" "$target.sha256"
           } 2>&1 | tee -a android-build.log
 
       - name: Upload workflow artifact
@@ -163,61 +132,39 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
-      - name: Publish or update stable prerelease
+      - name: Publish and independently verify release
         id: release
-        if: github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
           {
-            BUILD_COMMIT="$(git rev-parse HEAD)"
-            git tag -f android-latest "$BUILD_COMMIT"
+            build_commit="$(git rev-parse HEAD)"
+            git tag -f android-latest "$build_commit"
             git push origin refs/tags/android-latest --force
-
             if gh release view android-latest >/dev/null 2>&1; then
-              gh release upload android-latest \
-                Exovia-NeuroCanvas-Android.apk \
-                Exovia-NeuroCanvas-Android.apk.sha256 \
-                --clobber
-              gh release edit android-latest \
-                --prerelease \
-                --title 'Exovia NeuroCanvas Android - AI Reliability Workspace' \
-                --notes "Professional AI Reliability Workspace built from commit $BUILD_COMMIT. Includes Trust Scan, Context Capsule, Safe Router, Proof Pack and SHA-256 verification."
+              gh release upload android-latest Exovia-NeuroCanvas-Android.apk Exovia-NeuroCanvas-Android.apk.sha256 --clobber
+              gh release edit android-latest --prerelease --title 'Exovia NeuroCanvas Android - AI Reliability Workspace' --notes "Professional AI Reliability Workspace built from commit $build_commit. Trust Scan, Context Capsule, Safe Router, Proof Pack and SHA-256 verification included."
             else
-              gh release create android-latest \
-                Exovia-NeuroCanvas-Android.apk \
-                Exovia-NeuroCanvas-Android.apk.sha256 \
-                --target "$BUILD_COMMIT" \
-                --prerelease \
-                --title 'Exovia NeuroCanvas Android - AI Reliability Workspace' \
-                --notes "Professional AI Reliability Workspace built from commit $BUILD_COMMIT. Includes Trust Scan, Context Capsule, Safe Router, Proof Pack and SHA-256 verification."
+              gh release create android-latest Exovia-NeuroCanvas-Android.apk Exovia-NeuroCanvas-Android.apk.sha256 --target "$build_commit" --prerelease --title 'Exovia NeuroCanvas Android - AI Reliability Workspace' --notes "Professional AI Reliability Workspace built from commit $build_commit. Trust Scan, Context Capsule, Safe Router, Proof Pack and SHA-256 verification included."
             fi
-
-            rm -rf release-verification
-            mkdir release-verification
-            gh release download android-latest \
-              --pattern 'Exovia-NeuroCanvas-Android.apk*' \
-              --dir release-verification
+            rm -rf release-verification && mkdir release-verification
+            gh release download android-latest --pattern 'Exovia-NeuroCanvas-Android.apk*' --dir release-verification
             cmp Exovia-NeuroCanvas-Android.apk release-verification/Exovia-NeuroCanvas-Android.apk
             (cd release-verification && sha256sum --check Exovia-NeuroCanvas-Android.apk.sha256)
-            echo 'Release assets downloaded and verified successfully.'
+            echo 'Published assets downloaded and verified successfully.'
           } 2>&1 | tee -a android-build.log
 
-      - name: Record verified Android release metadata
+      - name: Record verified release metadata
         id: metadata
-        if: success() && github.ref == 'refs/heads/main'
         shell: bash
         run: |
           set -euo pipefail
-          APK_SHA="$(awk '{print $1}' Exovia-NeuroCanvas-Android.apk.sha256)"
-          APK_SIZE="$(stat -c '%s' Exovia-NeuroCanvas-Android.apk)"
-          RELEASE_COMMIT="$(git rev-list -n 1 android-latest)"
-          VERIFIED_AT="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
-          ASSET_URL="https://github.com/${GITHUB_REPOSITORY}/releases/download/android-latest/Exovia-NeuroCanvas-Android.apk"
-          CHECKSUM_URL="https://github.com/${GITHUB_REPOSITORY}/releases/download/android-latest/Exovia-NeuroCanvas-Android.apk.sha256"
-
+          apk_sha="$(awk '{print $1}' Exovia-NeuroCanvas-Android.apk.sha256)"
+          apk_size="$(stat -c '%s' Exovia-NeuroCanvas-Android.apk)"
+          release_commit="$(git rev-list -n 1 android-latest)"
+          verified_at="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
           git fetch origin main
           git rebase origin/main
           mkdir -p release-metadata
@@ -226,39 +173,33 @@ jobs:
           {
             "tag": "android-latest",
             "asset": "Exovia-NeuroCanvas-Android.apk",
-            "assetUrl": "$ASSET_URL",
-            "checksumUrl": "$CHECKSUM_URL",
-            "sha256": "$APK_SHA",
-            "sizeBytes": $APK_SIZE,
+            "assetUrl": "https://github.com/${GITHUB_REPOSITORY}/releases/download/android-latest/Exovia-NeuroCanvas-Android.apk",
+            "checksumUrl": "https://github.com/${GITHUB_REPOSITORY}/releases/download/android-latest/Exovia-NeuroCanvas-Android.apk.sha256",
+            "sha256": "$apk_sha",
+            "sizeBytes": $apk_size,
             "sourceCommit": "$GITHUB_SHA",
-            "releaseCommit": "$RELEASE_COMMIT",
+            "releaseCommit": "$release_commit",
             "workflowRun": "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID",
             "verified": true,
-            "verification": "The published release assets were downloaded again, byte-compared and checked with SHA-256.",
-            "verifiedAt": "$VERIFIED_AT"
+            "verification": "Published assets were downloaded again, byte-compared and checked with SHA-256.",
+            "verifiedAt": "$verified_at"
           }
           EOF
-
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add release-metadata/android-latest.json release-metadata/Exovia-NeuroCanvas-Android.apk.sha256
-          if git diff --cached --quiet; then
-            echo 'Verified release metadata is already current.'
-          else
+          if ! git diff --cached --quiet; then
             git commit -m 'release: record verified Android APK [skip ci]'
             git push origin HEAD:main
           fi
 
-      - name: Close previous automatic failure report
+      - name: Close automatic failure report
         if: success()
         env:
           GH_TOKEN: ${{ github.token }}
-        shell: bash
         run: |
-          issue_number="$(gh issue list --state open --search '"[Android Build] Automatic failure report" in:title' --json number --jq '.[0].number' 2>/dev/null || true)"
-          if [[ -n "$issue_number" && "$issue_number" != "null" ]]; then
-            gh issue close "$issue_number" --comment "Android APK build completed successfully in run $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID."
-          fi
+          issue="$(gh issue list --state open --search '"[Android Build] Automatic failure report" in:title' --json number --jq '.[0].number' 2>/dev/null || true)"
+          if [[ -n "$issue" && "$issue" != "null" ]]; then gh issue close "$issue" --comment "Android APK build completed successfully in $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID."; fi
 
       - name: Publish automatic failure report
         if: failure()
@@ -268,36 +209,23 @@ jobs:
         run: |
           set +e
           {
-            echo '## Android APK build failed'
-            echo
+            echo '## Android APK build failed'; echo
             echo "- Commit: \`$GITHUB_SHA\`"
-            echo "- Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
-            echo
+            echo "- Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"; echo
             echo '### Step outcomes'
             echo "- Install: ${{ steps.install.outcome }}"
             echo "- Lockfile: ${{ steps.lockfile.outcome }}"
             echo "- Web verification: ${{ steps.verify.outcome }}"
             echo "- Web assets: ${{ steps.web_assets.outcome }}"
-            echo "- Capacitor: ${{ steps.capacitor.outcome }}"
+            echo "- Capacitor and branding: ${{ steps.capacitor.outcome }}"
             echo "- Gradle: ${{ steps.gradle.outcome }}"
             echo "- APK preparation: ${{ steps.prepare.outcome }}"
             echo "- Artifact upload: ${{ steps.artifact.outcome }}"
             echo "- Release publication: ${{ steps.release.outcome }}"
-            echo "- Release metadata: ${{ steps.metadata.outcome }}"
-            echo
-            echo '### Last diagnostic lines'
-            echo '```text'
-            if [[ -f android-build.log ]]; then
-              tail -n 180 android-build.log | sed -r 's/\x1B\[[0-9;]*[mK]//g'
-            else
-              echo 'The diagnostic log was not created.'
-            fi
+            echo "- Release metadata: ${{ steps.metadata.outcome }}"; echo
+            echo '### Last diagnostic lines'; echo '```text'
+            if [[ -f android-build.log ]]; then tail -n 180 android-build.log | sed -r 's/\x1B\[[0-9;]*[mK]//g'; else echo 'No diagnostic log was created.'; fi
             echo '```'
           } > android-failure.md
-
-          issue_number="$(gh issue list --state open --search '"[Android Build] Automatic failure report" in:title' --json number --jq '.[0].number' 2>/dev/null || true)"
-          if [[ -n "$issue_number" && "$issue_number" != "null" ]]; then
-            gh issue edit "$issue_number" --body-file android-failure.md
-          else
-            gh issue create --title '[Android Build] Automatic failure report' --body-file android-failure.md
-          fi
+          issue="$(gh issue list --state open --search '"[Android Build] Automatic failure report" in:title' --json number --jq '.[0].number' 2>/dev/null || true)"
+          if [[ -n "$issue" && "$issue" != "null" ]]; then gh issue edit "$issue" --body-file android-failure.md; else gh issue create --title '[Android Build] Automatic failure report' --body-file android-failure.md; fi
