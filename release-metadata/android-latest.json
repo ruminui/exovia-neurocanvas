@@ -1,0 +1,14 @@
+{
+  "tag": "android-latest",
+  "asset": "Exovia-NeuroCanvas-Android.apk",
+  "assetUrl": "https://github.com/ruminui/exovia-neurocanvas/releases/download/android-latest/Exovia-NeuroCanvas-Android.apk",
+  "checksumUrl": "https://github.com/ruminui/exovia-neurocanvas/releases/download/android-latest/Exovia-NeuroCanvas-Android.apk.sha256",
+  "sha256": "a21ddddd0bddc9501f260fe9065e213f6e0c4beae3e5742553eb52f7f472f106",
+  "sizeBytes": 4212776,
+  "sourceCommit": "6631e910d4e771836b17e1115002f494affd13b3",
+  "releaseCommit": "6631e910d4e771836b17e1115002f494affd13b3",
+  "workflowRun": "https://github.com/ruminui/exovia-neurocanvas/actions/runs/29838805980",
+  "verified": true,
+  "verification": "The published release assets were downloaded again, byte-compared and checked with SHA-256.",
+  "verifiedAt": "2026-07-21T14:23:40Z"
+}
