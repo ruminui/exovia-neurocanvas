@@ -1,7 +1,11 @@
 import { readFile, access } from 'node:fs/promises';
 
 const required = [
-  'index.html','manifest.webmanifest','sw.js','src/core.js','src/product.js','src/intelligence.js','src/diagnostics.js','src/ai-bridge.js','src/live-room.js','src/trust-center.js','src/styles.css','src/live-room.css','src/trust-center.css','src/professional.css','src/exovia-icon.svg','README.md','LICENSE','SECURITY.md','docs/ARCHITECTURE.md','docs/MASTER_GAP_AUDIT.md','docs/LIVE_COLLABORATION_ARCHITECTURE.md','schemas/live-evidence-room.schema.json','examples/live-evidence-room.json','scripts/configure-android-brand.mjs'
+  'index.html','manifest.webmanifest','sw.js','src/core.js','src/product.js','src/intelligence.js','src/diagnostics.js','src/ai-bridge.js','src/live-room.js','src/trust-center.js','src/styles.css','src/live-room.css','src/trust-center.css','src/professional.css','src/exovia-icon.svg',
+  'README.md','USER_START_HERE.md','JUDGE_START_HERE.md','LEEME_PRIMERO.txt','LICENSE','SECURITY.md','package.json',
+  'docs/ARCHITECTURE.md','docs/MASTER_GAP_AUDIT.md','docs/LIVE_COLLABORATION_ARCHITECTURE.md','docs/MANUAL_USUARIO.md','docs/JUDGE_SCORECARD.md',
+  'schemas/live-evidence-room.schema.json','examples/live-evidence-room.json','scripts/configure-android-brand.mjs','scripts/judge-preflight.mjs',
+  'release-metadata/android-latest.json','release-metadata/Exovia-NeuroCanvas-Android.apk.sha256'
 ];
 for (const file of required) await access(file);
 
@@ -19,6 +23,13 @@ const trustCss = await readFile('src/trust-center.css', 'utf8');
 const professionalCss = await readFile('src/professional.css', 'utf8');
 const manifest = JSON.parse(await readFile('manifest.webmanifest', 'utf8'));
 const roomExample = JSON.parse(await readFile('examples/live-evidence-room.json', 'utf8'));
+const rootPackage = JSON.parse(await readFile('package.json', 'utf8'));
+const androidRelease = JSON.parse(await readFile('release-metadata/android-latest.json', 'utf8'));
+const androidChecksum = (await readFile('release-metadata/Exovia-NeuroCanvas-Android.apk.sha256', 'utf8')).trim();
+const userGuide = await readFile('USER_START_HERE.md', 'utf8');
+const judgeGuide = await readFile('JUDGE_START_HERE.md', 'utf8');
+const scorecard = await readFile('docs/JUDGE_SCORECARD.md', 'utf8');
+const manual = await readFile('docs/MANUAL_USUARIO.md', 'utf8');
 
 const requiredIds = ['canvas','demoBtn','pulseDemoBtn','fileInput','pasteBtn','intentBtn','exportBtn','fitBtn','searchInput','searchBtn','homeBtn','trustCenterBtn','capsuleBtn','homeStartBtn','homeVerifyBtn','homeCapsuleBtn'];
 for (const id of requiredIds) if (!html.includes(`id="${id}"`)) throw new Error(`Missing required UI element: ${id}`);
@@ -43,6 +54,15 @@ for (const key of ['participants','evidenceAssets','decisions','executions','eve
 if (!Array.isArray(manifest.icons) || !manifest.icons.some(icon => icon.src === 'src/exovia-icon.svg')) throw new Error('Professional Exovia application icon is missing from the manifest');
 if (!Array.isArray(manifest.shortcuts) || manifest.shortcuts.length < 2) throw new Error('AI reliability app shortcuts are missing');
 
+if (!rootPackage.scripts?.doctor || !rootPackage.scripts?.judge || !rootPackage.scripts?.start) throw new Error('Judge, doctor or start command is missing');
+if (rootPackage.engines?.node !== '>=24') throw new Error('Main product Node.js requirement must remain explicit');
+if (!userGuide.includes('Five-minute first run') || !userGuide.includes('Primer recorrido de cinco minutos')) throw new Error('Bilingual first-run guide is incomplete');
+if (!judgeGuide.includes('EXOVIA JUDGE PREFLIGHT: PASS') || !judgeGuide.includes('EXOVIA HACKATHON JUDGE CHECK: PASS')) throw new Error('Judge guide success markers are incomplete');
+for (const criterion of ['Technological implementation','Design and complete product experience','Potential impact','Quality and originality of the idea']) if (!scorecard.includes(criterion)) throw new Error(`Judge scorecard is missing: ${criterion}`);
+if (!manual.includes('Node.js 24 LTS') || !manual.includes('`.exo`')) throw new Error('Spanish user manual is stale');
+if (androidRelease.verified !== true || !/^[a-f0-9]{64}$/.test(androidRelease.sha256 || '')) throw new Error('Verified Android release metadata is invalid');
+if (!androidChecksum.startsWith(`${androidRelease.sha256}  ${androidRelease.asset}`)) throw new Error('Android checksum does not match release metadata');
+
 const clientSource = [html,core,product,intelligence,diagnostics,bridge,liveRoom,trustCenter].join('\n');
 if (/sk-(?:proj-)?[A-Za-z0-9_-]{20,}/.test(clientSource) || clientSource.includes('OPENAI_API_KEY=')) throw new Error('Potential secret exposed in client files');
-console.log('Exovia NeuroCanvas professional AI reliability runtime validation passed.');
+console.log('Exovia NeuroCanvas professional AI reliability runtime and judge/user readiness validation passed.');
