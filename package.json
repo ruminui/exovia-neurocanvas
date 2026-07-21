@@ -13,6 +13,7 @@
     "qa:report": "node scripts/collect-qa-evidence.mjs",
     "test:e2e": "playwright test",
     "verify": "npm run validate && npm run verify:static && npm run readiness && npm run test && npm run test:e2e",
+    "finish:solo": "node scripts/autonomous-finish.mjs",
     "serve": "node scripts/serve.mjs"
   },
   "devDependencies": {
