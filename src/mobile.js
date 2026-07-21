@@ -207,7 +207,7 @@
     if (!localStorage.getItem('exovia:language') && /^es\b/i.test(navigator.language || '')) window.ExoviaLanguage?.set?.('es');
     setTimeout(() => {
       if (!window.ExoviaSimpleMode?.isEnabled?.()) document.getElementById('simpleModeBtn')?.click();
-      document.getElementById('useCaseBtn')?.click();
+      document.getElementById('purposeBtn')?.click();
     }, 700);
   }
 
